@@ -19,19 +19,20 @@
                     <{$result.res_text}>
                 <{/if}>
             </div>
-            <br style="clear:both"/>
+            <br style="clear:both;">
         <{/foreach}>
     <{/if}>
 <{/if}>
 
 <form name="search" action="search.php" method="post">
+    <{securityToken}><{*//mb*}>
     <table class="outer" border="0" cellpadding="1" cellspacing="0" align="center" width="95%">
         <tr>
             <td>
                 <table border="0" cellpadding="1" cellspacing="1" width="100%" class="head">
                     <tr>
                         <td class="head" width="10%" align="right"><strong><{$smarty.const._SR_KEYWORDS}></strong></td>
-                        <td class="even"><input type="text" name="term" value="<{$search_term}>" size="80"/></td>
+                        <td class="even"><input type="text" name="term" value="<{$search_term}>" size="80"></td>
                     </tr>
                     <tr>
                         <td class="head" align="right"><strong><{$smarty.const._SR_TYPE}></strong></td>
@@ -54,12 +55,12 @@
                     <{/if}>
                     <tr>
                         <td class="head" align="right">&nbsp;
-                            <input type="hidden" name="category" value="<{$category}>"/>
-                            <input type="hidden" name="blog" value="<{$blog}>"/>
-                            <input type="hidden" name="uid" value="<{$uid}>"/>
+                            <input type="hidden" name="category" value="<{$category}>">
+                            <input type="hidden" name="blog" value="<{$blog}>">
+                            <input type="hidden" name="uid" value="<{$uid}>">
                         </td>
-                        <td class="even"><input type="submit" name="submit" value="<{$smarty.const._SUBMIT}>"/>&nbsp;
-                            <input type="reset" name="cancel" value="<{$smarty.const._CANCEL}>"/></td>
+                        <td class="even"><input type="submit" name="submit" value="<{$smarty.const._SUBMIT}>">&nbsp;
+                            <input type="reset" name="cancel" value="<{$smarty.const._CANCEL}>"></td>
                 </table>
             </td>
         </tr>

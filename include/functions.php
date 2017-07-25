@@ -24,6 +24,7 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
 
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
 
@@ -38,8 +39,8 @@ if (!defined('planet_FUNCTIONS')):
     define('planet_FUNCTIONS', 1);
 
     require XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/include/vars.php';
-    include_once XOOPS_ROOT_PATH . '/class/xoopslists.php';
-    include_once XOOPS_ROOT_PATH . '/Frameworks/art/functions.php';
+    require_once XOOPS_ROOT_PATH . '/class/xoopslists.php';
+    require_once XOOPS_ROOT_PATH . '/Frameworks/art/functions.php';
 
     /**
      * Function to display messages
@@ -47,7 +48,8 @@ if (!defined('planet_FUNCTIONS')):
      * @var mixed $messages
      * @return bool
      */
-    function planet_message($message) {
+    function planetDisplayMessage($message)
+    {
         return mod_message($message);
     }
 
@@ -65,7 +67,8 @@ if (!defined('planet_FUNCTIONS')):
      * - "/" in a string
      * - "&" in a string
     */
-    function planet_parse_args(&$args_numeric, &$args, &$args_string) {
+    function planetParseArguments(&$args_numeric, &$args, &$args_string)
+    {
         $args_abb     = array(
             'a' => 'article',
             'b' => 'blog',
@@ -78,7 +81,7 @@ if (!defined('planet_FUNCTIONS')):
         $args         = array();
         $args_numeric = array();
         $args_string  = array();
-        if (preg_match("/[^\?]*\.php[\/|\?]([^\?]*)/i", $_SERVER['REQUEST_URI'], $matches)) {
+        if (preg_match("/[^\?]*\.php[\/|\?]([^\?]*)/i", Request::getUrl('REQUEST_URI', '', 'SERVER'), $matches)) {
             $vars = preg_split("/[\/|&]/", $matches[1]);
             $vars = array_map('trim', $vars);
             if (count($vars) > 0) {
@@ -110,7 +113,8 @@ if (!defined('planet_FUNCTIONS')):
      *
      * @return bool true on success
      */
-    function planet_parse_class($class_string, $pattern = '', $replacement = '') {
+    function planetParseClass($class_string, $pattern = '', $replacement = '')
+    {
         if (empty($class_string)) {
             return;
         }
@@ -145,7 +149,8 @@ if (!defined('planet_FUNCTIONS')):
      *
      * @return bool true on success
      */
-    function planet_parse_function($function_string, $pattern = '', $replacement = '') {
+    function planetParseFunction($function_string, $pattern = '', $replacement = '')
+    {
         if (empty($function_string)) {
             return;
         }
@@ -177,7 +182,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param string $format
      * @return string
      */
-    function planet_formatTimestamp($time, $format = '') {
+    function planet_formatTimestamp($time, $format = '')
+    {
         if (empty($time)) {
             return '';
         }
@@ -187,12 +193,13 @@ if (!defined('planet_FUNCTIONS')):
 
     /**
      * Function to a list of user names associated with their user IDs
-     * @param      $userid
+     * @param int  $userid
      * @param int  $usereal
      * @param bool $linked
      * @return array
      */
-    function &planet_getUnameFromId($userid, $usereal = 0, $linked = false) {
+    function &planetGetUnameFromId($userid, $usereal = 0, $linked = false)
+    {
         if (!is_array($userid)) {
             $userid = array($userid);
         }
@@ -208,7 +215,8 @@ if (!defined('planet_FUNCTIONS')):
      *
      * @return array associative array of link url and title
      */
-    function &planet_parseLinks($text) {
+    function &planetParseLinks($text)
+    {
         $myts       = MyTextSanitizer::getInstance();
         $link_array = preg_split("/(\r\n|\r|\n)( *)/", $text);
         $links      = array();
@@ -230,14 +238,16 @@ if (!defined('planet_FUNCTIONS')):
      * @param $pagename
      * @return string
      */
-    function planet_getTemplate($pagename) {
+    function planetGetTemplate($pagename)
+    {
         return $GLOBALS['VAR_PREFIX'] . '_' . $pagename . '.tpl';
     }
 
     /**
      * @param int $currentoption
      */
-    function planet_adminmenu($currentoption = -1) {
+    function planet_adminmenu($currentoption = -1)
+    {
         loadModuleAdminMenu($currentoption, '');
 
         return;
@@ -250,16 +260,17 @@ if (!defined('planet_FUNCTIONS')):
      * @param $comment
      * @return bool
      */
-    function planet_com_trackback(&$article, &$comment) {
-        $blog_handler = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
-        $blog_obj     = $blog_handler->get($article->getVar('blog_id'));
+    function planet_com_trackback(&$article, &$comment)
+    {
+        $blogHandler = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
+        $blog_obj    = $blogHandler->get($article->getVar('blog_id'));
         if (!$pattern = $blog_obj->getVar('blog_trackback')) {
             return false;
         }
         @list($pat, $rep) = array_map('trim', preg_split("#[\s]+#", $pattern));
         $trackback_url = preg_replace('#' . $pat . '#', $rep, $article_obj->getVar('art_link'));
 
-        return planet_trackback($trackback_url, $article);
+        return planetTrackback($trackback_url, $article);
     }
 
     /**
@@ -267,7 +278,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param $article
      * @return bool
      */
-    function planet_trackback($trackback_url, &$article) {
+    function planetTrackback($trackback_url, $article)
+    {
         global $myts, $xoopsConfig, $xoopsModule, $xoopsModuleConfig;
 
         $title         = $article->getVar('art_title');
@@ -280,14 +292,11 @@ if (!defined('planet_FUNCTIONS')):
         $title1        = urlencode($title);
         $excerpt1      = urlencode($excerpt);
         $name1         = urlencode($blog_name);
-        $url           = urlencode(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php'
-                                   . URL_DELIMITER . '' . $article->getVar('art_id'));
+        $url           = urlencode(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $article->getVar('art_id'));
         $query_string  = "title=$title1&url=$url&blog_name=$name1&excerpt=$excerpt1&charset=$charset";
         $trackback_url = parse_url($trackback_url);
 
-        $http_request = 'POST ' . $trackback_url['path'] . ($trackback_url['query'] ? '?'
-                                                                                      . $trackback_url['query'] : '')
-                        . " HTTP/1.0\r\n";
+        $http_request = 'POST ' . $trackback_url['path'] . ($trackback_url['query'] ? '?' . $trackback_url['query'] : '') . " HTTP/1.0\r\n";
         $http_request .= 'Host: ' . $trackback_url['host'] . "\r\n";
         $http_request .= 'Content-Type: application/x-www-form-urlencoded; charset=' . $charset . "\r\n";
         $http_request .= 'Content-Length: ' . strlen($query_string) . "\r\n";
@@ -302,10 +311,10 @@ if (!defined('planet_FUNCTIONS')):
         if ($xoopsModuleConfig['do_debug']) {
             $debug_file = XOOPS_CACHE_PATH . '/' . $GLOBALS['moddirname'] . '_trackback.log';
             $fr         = "\n*****\nRequest:\n\n$http_request\n\nResponse:\n\n";
-            $fr .= "CHARSET:$charset\n";
-            $fr .= "NAME:$blog_name\n";
-            $fr .= 'TITLE:' . $title . "\n";
-            $fr .= "EXCERPT:$excerpt\n\n";
+            $fr         .= "CHARSET:$charset\n";
+            $fr         .= "NAME:$blog_name\n";
+            $fr         .= 'TITLE:' . $title . "\n";
+            $fr         .= "EXCERPT:$excerpt\n\n";
             while (!@feof($fs)) {
                 $fr .= @fgets($fs, 4096);
             }
@@ -327,17 +336,18 @@ if (!defined('planet_FUNCTIONS')):
      * @param $server
      * @param $id
      */
-    function planet_ping($server, $id) {
+    function planetGetPing($server, $id)
+    {
         if (is_array($server)) {
             foreach ($server as $serv) {
-                planet_ping($serv, $id);
+                planetGetPing($serv, $id);
             }
         }
-        include_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/class-IXR.php';
+        require_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/class-IXR.php';
 
         // using a timeout of 3 seconds should be enough to cover slow servers
-        $client          = new IXR_Client($server, false);
-        $client->timeout = 3;
+        $client            = new IXR_Client($server, false);
+        $client->timeout   = 3;
         $client->useragent .= ' -- XOOPS Article/' . XOOPS_VERSION;
 
         // when set to true, this outputs debug messages by itself
@@ -357,7 +367,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param int    $error
      * @param string $error_message
      */
-    function planet_trackback_response($error = 0, $error_message = '') {
+    function planetRespondToTrackback($error = 0, $error_message = '')
+    {
         $charset       = 'utf-8';
         $error_message = xoops_utf8_encode($error_message);
         header('Content-Type: text/xml; charset="' . $charset . '"');
@@ -384,7 +395,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param string $string
      * @param int    $expire
      */
-    function planet_setcookie($name, $string = '', $expire = 0) {
+    function planetSetCookie($name, $string = '', $expire = 0)
+    {
         if (is_array($string)) {
             $value = array();
             foreach ($string as $key => $val) {
@@ -400,7 +412,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param bool $isArray
      * @return array|null
      */
-    function planet_getcookie($name, $isArray = false) {
+    function planetGetCookie($name, $isArray = false)
+    {
         $value = isset($_COOKIE[$GLOBALS['VAR_PREFIX'] . $name]) ? $_COOKIE[$GLOBALS['VAR_PREFIX'] . $name] : null;
         if ($isArray) {
             $_value = $value ? explode(',', $value) : array();
@@ -424,7 +437,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param $document
      * @return string filtered text
      */
-    function &planet_html2text(&$document) {
+    function &planetHtml2text(&$document)
+    {
         $document = strip_tags($document);
 
         return $document;
@@ -435,7 +449,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param bool $asString
      * @return mixed
      */
-    function planet_getIP($asString = false) {
+    function planetGetIP($asString = false)
+    {
         return mod_getIP($asString);
     }
 
@@ -443,7 +458,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param $url
      * @return bool|mixed|string
      */
-    function planet_remote_content($url) {
+    function planetGetRemoteContent($url)
+    {
         if ($data = planet_fetch_snoopy($url)) {
             return $data;
         }
@@ -461,7 +477,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param $url
      * @return string
      */
-    function planet_fetch_snoopy($url) {
+    function planet_fetch_snoopy($url)
+    {
         require_once XOOPS_ROOT_PATH . '/class/snoopy.php';
         $snoopy = new Snoopy;
         $data   = '';
@@ -476,7 +493,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param $url
      * @return bool|mixed
      */
-    function planet_fetch_CURL($url) {
+    function planet_fetch_CURL($url)
+    {
         if (!function_exists('curl_init')) {
             return false;
         }
@@ -496,7 +514,8 @@ if (!defined('planet_FUNCTIONS')):
      * @param $url
      * @return bool|string
      */
-    function planet_fetch_fopen($url) {
+    function planet_fetch_fopen($url)
+    {
         if (!$fp = @fopen($url, 'r')) {
             return false;
         }
@@ -515,8 +534,9 @@ if (!defined('planet_FUNCTIONS')):
      * @param int $offset
      * @return bool|int
      */
-    function planet_strrpos($haystack, $needle, $offset = 0) {
-        if (substr(phpversion(), 0, 1) == 5) {
+    function planetStrrPos($haystack, $needle, $offset = 0)
+    {
+        if (substr(PHP_VERSION, 0, 1) == 5) {
             return strrpos($haystack, $needle, $offset);
         }
         $index = strpos(strrev($haystack), strrev($needle));

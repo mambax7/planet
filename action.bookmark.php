@@ -24,37 +24,35 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
 
 include __DIR__ . '/header.php';
 
-$blog_id = (int)(isset($_GET['blog']) ? $_GET['blog'] : (isset($_POST['blog']) ? $_POST['blog'] : 0));
+$blog_id = Request::getInt('blog', Request::getInt('blog', 0, 'POST'), 'GET'); //(int)(isset($_GET['blog']) ? $_GET['blog'] : (isset($_POST['blog']) ? $_POST['blog'] : 0));
 
 if (!is_object($xoopsUser) || empty($blog_id)) {
     redirect_header('javascript:history.go(-1);', 1, planet_constant('MD_INVALID'));
 }
 
-$bookmark_handler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
-$uid              = is_object($xoopsUser) ? $xoopsUser->getVar('uid') : 0;
-$criteria         = new CriteriaCompo(new Criteria('blog_id', $blog_id));
+$bookmarkHandler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
+$uid             = is_object($xoopsUser) ? $xoopsUser->getVar('uid') : 0;
+$criteria        = new CriteriaCompo(new Criteria('blog_id', $blog_id));
 $criteria->add(new Criteria('bm_uid', $uid));
-if ($count = $bookmark_handler->getCount($criteria)) {
+if ($count = $bookmarkHandler->getCount($criteria)) {
     $message = planet_constant('MD_ALREADYBOOKMARKED');
-    redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'u' . $uid, 2,
-                    $message);
+    redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'u' . $uid, 2, $message);
 }
-$bookmark_obj =& $bookmark_handler->create();
+$bookmark_obj = $bookmarkHandler->create();
 $bookmark_obj->setVar('blog_id', $blog_id);
 $bookmark_obj->setVar('bm_uid', $uid);
-if (!$bookmark_id = $bookmark_handler->insert($bookmark_obj, true)) {
-    redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $blog_id, 2,
-                    planet_constant('MD_NOTSAVED'));
+if (!$bookmark_id = $bookmarkHandler->insert($bookmark_obj, true)) {
+    redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $blog_id, 2, planet_constant('MD_NOTSAVED'));
 }
-$blog_handler = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
-$blog_obj     =& $blog_handler->get($blog_id);
-$marks        = $blog_obj->getVar('blog_marks') + 1;
+$blogHandler = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
+$blog_obj    = $blogHandler->get($blog_id);
+$marks       = $blog_obj->getVar('blog_marks') + 1;
 $blog_obj->setVar('blog_marks', $blog_obj->getVar('blog_marks') + 1);
-$blog_handler->insert($blog_obj, true);
+$blogHandler->insert($blog_obj, true);
 $message = planet_constant('MD_ACTIONDONE');
-redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $blog_id, 2,
-                $message);
+redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $blog_id, 2, $message);
 include __DIR__ . '/footer.php';

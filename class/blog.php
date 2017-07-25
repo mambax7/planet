@@ -30,8 +30,8 @@
  */
 
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
-include_once dirname(__DIR__) . '/include/vars.php';
-mod_loadFunctions('', $GLOBALS['moddirname']);
+require_once __DIR__ . '/../include/vars.php';
+//mod_loadFunctions('', $GLOBALS['moddirname']);
 
 /**
  * Xtopic
@@ -52,7 +52,8 @@ if (!class_exists('Bblog')):
         /**
          * Constructor
          */
-        public function __construct() {
+        public function __construct()
+        {
             //            parent:__construct();
             $this->table = planet_DB_prefix('blog');
             $this->initVar('blog_id', XOBJ_DTYPE_INT, null, false);
@@ -103,8 +104,9 @@ if (!class_exists('Bblog')):
          * @param  string $format format of time
          * @return string
          */
-        public function getTime($format = '') {
-            $time = planet_formatTimestamp($this->getVar('blog_time'), $format);
+        public function getTime($format = '')
+        {
+            $time = PlanetUtility::planetFormatTimestamp($this->getVar('blog_time'), $format);
 
             return $time;
         }
@@ -114,7 +116,8 @@ if (!class_exists('Bblog')):
          *
          * @return string
          */
-        public function getImage() {
+        public function getImage()
+        {
             $image = $this->getVar('blog_image');
 
             return $image;
@@ -126,7 +129,8 @@ if (!class_exists('Bblog')):
          * @param  int $decimals decimal length
          * @return numeric
          */
-        public function getRatingAverage($decimals = 1) {
+        public function getRatingAverage($decimals = 1)
+        {
             $ave = 3;
             if ($this->getVar('blog_rates')) {
                 $ave = number_format($this->getVar('blog_rating') / $this->getVar('blog_rates'), $decimals);
@@ -138,7 +142,8 @@ if (!class_exists('Bblog')):
         /**
          * @return numeric
          */
-        public function getStar() {
+        public function getStar()
+        {
             return $this->getRatingAverage(0);
         }
     }
@@ -155,7 +160,7 @@ endif;
  * @param CLASS_PREFIX variable prefix for the class name
  */
 
-planet_parse_class('
+PlanetUtility::planetParseClass('
 class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
 {
     /**
@@ -179,7 +184,7 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
     {
         $feed = formatURL($feed);
         $blog = $this->create();
-        $content = planet_remote_content($feed);
+        $content = PlanetUtility::planetGetRemoteContent($feed);
         if (empty($content)) {
             return $blog;
         }
@@ -211,18 +216,18 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
      */
     function do_update(&$blog, $update = true)
     {
-        $content = planet_remote_content($blog->getVar("blog_feed"));
+        $content = PlanetUtility::planetGetRemoteContent($blog->getVar("blog_feed"));
         if (empty($content)) {
-            planet_message("Empty content");
+            PlanetUtility::planetDisplayMessage("Empty content");
 
             return false;
         }
 
         /* quick fetch items */
         $is_rss = true;
-        if ( !$pos_end = planet_strrpos($content, "</item>") ) {
-            if (!$pos_end = planet_strrpos($content, "</entry>")) {
-                planet_message("blog ID ".$blog->getVar("blog_id").": No item/entry found!");
+        if ( !$pos_end = PlanetUtility::planetStrrPos($content, "</item>") ) {
+            if (!$pos_end = PlanetUtility::planetStrrPos($content, "</entry>")) {
+                PlanetUtility::planetDisplayMessage("blog ID ".$blog->getVar("blog_id").": No item/entry found!");
 
                 return false;
             }
@@ -231,13 +236,13 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
         if (!empty($is_rss)) {
             if (!$pos_start = strpos($content, "<item>")) {
                 if (!$pos_start = strpos($content, "<item ")) {
-                    planet_message("blog ID ".$blog->getVar("blog_id").": No item found!");
+                    PlanetUtility::planetDisplayMessage("blog ID ".$blog->getVar("blog_id").": No item found!");
 
                     return false;
                 }
             }
         } elseif ((!$pos_start = strpos($content, "<entry>")) && (!$pos_start = strpos($content, "<entry "))) {
-            planet_message("blog ID ".$blog->getVar("blog_id").": No entry found!");
+            PlanetUtility::planetDisplayMessage("blog ID ".$blog->getVar("blog_id").": No entry found!");
 
             return false;
         }
@@ -245,7 +250,7 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
         /* check if content has changed */
         $key = md5(substr($pos_start, $pos_end, $content));
         if ($key == $blog->getVar("blog_key")) {
-            planet_message("key identical!");
+            PlanetUtility::planetDisplayMessage("key identical!");
 
             return false;
         }
@@ -298,15 +303,15 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
         }
 
         /* update articles */
-        $article_handler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
-        $count = $article_handler->do_update($articles);
+        $articleHandler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
+        $count = $articleHandler->do_update($articles);
 
         if ($count>0 && !empty($GLOBALS["xoopsModuleConfig"]["notification_enabled"])) {
-            $notification_handler = xoops_getHandler("notification");
+            $notificationHandler = xoops_getHandler("notification");
             $tags = array();
             $tags["BLOG_TITLE"] = $blog->getVar("blog_title");
             $tags["BLOG_URL"] = XOOPS_URL . "/modules/" . $GLOBALS["moddirname"] . "/index.php".URL_DELIMITER."b" .$blog->getVar("blog_id");
-            $notification_handler->triggerEvent("blog", $blog->getVar("blog_id"), "blog_update", $tags);
+            $notificationHandler->triggerEvent("blog", $blog->getVar("blog_id"), "blog_update", $tags);
         }
 
         return $count;
@@ -504,8 +509,8 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
         $queryFunc = empty($force)?"query":"queryF";
 
         /* remove bookmarks */
-        $bookmark_handler = xoops_getModuleHandler("bookmark", $GLOBALS["moddirname"]);
-        $bookmark_handler->deleteAll(new Criteria("blog_id", $blog->getVar("blog_id")));
+        $bookmarkHandler = xoops_getModuleHandler("bookmark", $GLOBALS["moddirname"]);
+        $bookmarkHandler->deleteAll(new Criteria("blog_id", $blog->getVar("blog_id")));
 
         /* remove category-blog links */
         $sql = "DELETE FROM ".planet_DB_prefix("blogcat")." WHERE blog_id = ".$blog->getVar("blog_id");
@@ -513,10 +518,10 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
         }
 
         /* remove articles */
-        $article_handler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
-        $arts_obj = $article_handler->getAll(new Criteria("blog_id", $blog->getVar("blog_id")));
+        $articleHandler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
+        $arts_obj = $articleHandler->getAll(new Criteria("blog_id", $blog->getVar("blog_id")));
         foreach (array_keys($arts_obj) as $id) {
-            $article_handler->delete($arts_obj[$id]);
+            $articleHandler->delete($arts_obj[$id]);
         }
 
         xoops_notification_deletebyitem($GLOBALS["xoopsModule"]->getVar("mid"), "blog", $blog->getVar("blog_id"));
@@ -528,10 +533,10 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
     function do_empty(&$blog)
     {
         /* remove articles */
-        $article_handler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
-        $arts_obj = $article_handler->getAll(new Criteria("blog_id", $blog->getVar("blog_id")));
+        $articleHandler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
+        $arts_obj = $articleHandler->getAll(new Criteria("blog_id", $blog->getVar("blog_id")));
         foreach (array_keys($arts_obj) as $id) {
-            $article_handler->delete($arts_obj[$id]);
+            $articleHandler->delete($arts_obj[$id]);
         }
         $blog->setVar("blog_time", 0);
         $blog->setVar("blog_key", "");
@@ -549,9 +554,9 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
      */
        function setCategories($blog, $categories)
     {
-        $category_handler = xoops_getModuleHandler("category", $GLOBALS["moddirname"]);
+        $categoryHandler = xoops_getModuleHandler("category", $GLOBALS["moddirname"]);
         $crit = new Criteria("bc.blog_id", $blog);
-        $cats = array_keys($category_handler->getByBlog($crit));
+        $cats = array_keys($categoryHandler->getByBlog($crit));
         $cats_add = array_diff($categories, $cats);
         $cats_rmv = array_diff($cats, $categories);
         if (count($cats_add)>0) {
@@ -562,13 +567,13 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
             $values = implode(",",$_values);
             $sql = "INSERT INTO ".planet_DB_prefix("blogcat")." (blog_id, cat_id) VALUES ". $values;
             if (!$result = $this->db->queryF($sql)) {
-                planet_message("Insert blog-cat error:" . $sql);
+                PlanetUtility::planetDisplayMessage("Insert blog-cat error:" . $sql);
             }
           }
         if (count($cats_rmv)>0) {
             $sql = "DELETE FROM ".planet_DB_prefix("blogcat")." WHERE ( blog_id=".(int)($blog)." AND cat_id IN (".implode(",", $cats_rmv).") )";
             if (!$result = $this->db->queryF($sql)) {
-                planet_message("remove blog-cat error:" . $sql);
+                PlanetUtility::planetDisplayMessage("remove blog-cat error:" . $sql);
             }
           }
 

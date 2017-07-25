@@ -24,24 +24,26 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
+
 ob_start();
 include __DIR__ . '/header.php';
 
-if (planet_parse_args($args_num, $args, $args_str)) {
+if (PlanetUtility::planetParseArguments($args_num, $args, $args_str)) {
     $args['article'] = @$args_num[0];
     $args['type']    = @$args_str[0];
 }
 
 /* Specified Article */
-$article_id = (int)(empty($_GET['article']) ? @$args['article'] : $_GET['article']);
+$article_id = Request::getInt('article', @$args['article'], 'GET'); //(int)(empty($_GET['article']) ? @$args['article'] : $_GET['article']);
 /* Specified Category */
-$category_id = (int)(empty($_GET['category']) ? @$args['category'] : $_GET['category']);
+$category_id = Request::getInt('category', @$args['category'], 'GET'); //(int)(empty($_GET['category']) ? @$args['category'] : $_GET['category']);
 /* Specified Blog */
-$blog_id = (int)(empty($_GET['blog']) ? @$args['blog'] : $_GET['blog']);
+$blog_id = Request::getInt('blog', @$args['blog'], 'GET'); //(int)(empty($_GET['blog']) ? @$args['blog'] : $_GET['blog']);
 /* Specified Bookmar(Favorite) UID */
-$uid = (int)(empty($_GET['uid']) ? @$args['uid'] : $_GET['uid']);
+$uid = Request::getInt('uid', @$args['uid'], 'GET'); //(int)(empty($_GET['uid']) ? @$args['uid'] : $_GET['uid']);
 
-$type = empty($_GET['type']) ? (empty($_GET['op']) ? @$args['type'] : $_GET['op']) : $_GET['type'];
+$type = Request::getString('type', Request::getString('op', @$args['type'], 'POST'), 'GET'); // empty($_GET['type']) ? (empty($_GET['op']) ? @$args['type'] : $_GET['op']) : $_GET['type'];
 $type = strtoupper($type);
 
 $valid_format = array('RSS0.91', 'RSS1.0', 'RSS2.0', 'PIE0.1', 'MBOX', 'OPML', 'ATOM', 'ATOM0.3', 'HTML', 'JS');
@@ -52,34 +54,34 @@ if ($type === 'RSS') {
     $type = 'RSS0.91';
 }
 if (empty($type) || !in_array($type, $valid_format)) {
-    planet_trackback_response(1, planet_constant('MD_INVALID'));
+    PlanetUtility::planetRespondToTrackback(1, planet_constant('MD_INVALID'));
     exit();
 }
 
-$category_handler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
-$blog_handler     = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
-$article_handler  = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
-$bookmark_handler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
+$categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
+$blogHandler     = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
+$articleHandler  = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
+$bookmarkHandler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
 
 if (!empty($article_id)) {
-    $article_obj =& $article_handler->get($article_id);
+    $article_obj = $articleHandler->get($article_id);
     if (!$article_obj->getVar('art_id')) {
-        planet_trackback_response(1, planet_constant('MD_EXPIRED'));
+        PlanetUtility::planetRespondToTrackback(1, planet_constant('MD_EXPIRED'));
         exit();
     }
     $source = 'article';
 } elseif (!empty($blog_id)) {
-    $blog_obj =& $blog_handler->get($blog_id);
+    $blog_obj = $blogHandler->get($blog_id);
     if (!$blog_obj->getVar('blog_id')) {
-        planet_trackback_response(1, planet_constant('MD_INVALID'));
+        PlanetUtility::planetRespondToTrackback(1, planet_constant('MD_INVALID'));
         exit();
     }
     $source = 'blog';
 } elseif (!empty($category_id)) {
     $source       = 'category';
-    $category_obj =& $category_handler->get($category_id);
+    $category_obj = $categoryHandler->get($category_id);
     if (!$category_obj->getVar('cat_id')) {
-        planet_trackback_response(1, planet_constant('MD_INVALID'));
+        PlanetUtility::planetRespondToTrackback(1, planet_constant('MD_INVALID'));
         exit();
     }
 } elseif (!empty($uid)) {
@@ -89,12 +91,11 @@ if (!empty($article_id)) {
 }
 
 $xml_charset = 'UTF-8';
-include_once XOOPS_ROOT_PATH . '/class/template.php';
+require_once XOOPS_ROOT_PATH . '/class/template.php';
 $tpl = new XoopsTpl();
 $tpl->xoops_setCaching(2);
 $tpl->xoops_setCacheTime(3600);
-$xoopsCachedTemplateId = md5($xoopsModule->getVar('mid') . ',' . $article_id . ',' . $category_id . ',' . $blog_id . ','
-                             . $uid . ',' . $type);
+$xoopsCachedTemplateId = md5($xoopsModule->getVar('mid') . ',' . $article_id . ',' . $category_id . ',' . $blog_id . ',' . $uid . ',' . $type);
 if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
     $criteria = new CriteriaCompo();
     $criteria->setLimit($xoopsModuleConfig['articles_perpage']);
@@ -104,10 +105,9 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
             $pagetitle = planet_constant('MD_ARTICLE');
             $rssdesc   = planet_constant('MD_XMLDESC_ARTICLE');
 
-            $articles_obj[$article_id] =& $article_obj;
+            $articles_obj[$article_id] = $article_obj;
 
-            $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . ''
-                        . $article_obj->getVar('art_id');
+            $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $article_obj->getVar('art_id');
             break;
 
         case 'category':
@@ -115,10 +115,9 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
             $rssdesc   = sprintf(planet_constant('MD_XMLDESC_CATEGORY'), $category_obj->getVar('cat_title'));
 
             $criteria->add(new Criteria('bc.cat_id', $category_id));
-            $articles_obj =& $article_handler->getByCategory($criteria);
+            $articles_obj = $articleHandler->getByCategory($criteria);
 
-            $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'c'
-                        . $category_id;
+            $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'c' . $category_id;
             break;
 
         case 'blog':
@@ -126,10 +125,9 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
             $rssdesc   = sprintf(planet_constant('MD_XMLDESC_BLOG'), $blog_obj->getVar('blog_title'));
 
             $criteria->add(new Criteria('blog_id', $blog_id));
-            $articles_obj =& $article_handler->getAll($criteria);
+            $articles_obj = $articleHandler->getAll($criteria);
 
-            $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b'
-                        . $blog_id;
+            $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $blog_id;
             break;
 
         case 'bookmark':
@@ -138,7 +136,7 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
             $rssdesc     = sprintf(planet_constant('MD_XMLDESC_BOOKMARK'), $author_name);
 
             $criteria->add(new Criteria('bm.bm_uid', $uid));
-            $articles_obj =& $article_handler->getByBookmark($criteria);
+            $articles_obj = $articleHandler->getByBookmark($criteria);
 
             $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'u' . $uid;
 
@@ -148,7 +146,7 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
             $pagetitle = planet_constant('MD_INDEX');
             $rssdesc   = planet_constant('MD_XMLDESC_INDEX');
 
-            $articles_obj =& $article_handler->getAll($criteria);
+            $articles_obj = $articleHandler->getAll($criteria);
 
             $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php';
             break;
@@ -156,12 +154,10 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
     $items = array();
     foreach (array_keys($articles_obj) as $id) {
         $content = $articles_obj[$id]->getVar('art_content');
-        $content .= '<br>' . planet_constant('MD_SOURCE') . ': ' . $articles_obj[$id]->getVar('art_link') . ' '
-                    . $articles_obj[$id]->getVar('art_author');
+        $content .= '<br>' . planet_constant('MD_SOURCE') . ': ' . $articles_obj[$id]->getVar('art_link') . ' ' . $articles_obj[$id]->getVar('art_author');
         $items[] = array(
             'title'                     => $articles_obj[$id]->getVar('art_title'),
-            'link'                      => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php'
-                                           . URL_DELIMITER . '' . $articles_obj[$id]->getVar('art_id'),
+            'link'                      => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $articles_obj[$id]->getVar('art_id'),
             'description'               => $content,
             'descriptionHtmlSyndicated' => true,
             'date'                      => $articles_obj[$id]->getTime('rss'),
@@ -171,22 +167,21 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
     }
     unset($articles_obj, $criteria);
 
-    $xml_handler = xoops_getModuleHandler('xml', $GLOBALS['moddirname']);
-    $xml         = $xml_handler->create($type);
+    $xmlHandler = xoops_getModuleHandler('xml', $GLOBALS['moddirname']);
+    $xml        = $xmlHandler->create($type);
     $xml->setVar('encoding', $xml_charset);
     $xml->setVar('title', $xoopsConfig['sitename'] . ' :: ' . $pagetitle, 'UTF-8', $xml_charset, true);
     $xml->setVar('description', $rssdesc, true);
     $xml->setVar('descriptionHtmlSyndicated', true);
     $xml->setVar('link', $xml_link);
-    $xml->setVar('syndicationURL', XOOPS_URL . '/' . xoops_getenv('PHP_SELF'));
+    $xml->setVar('syndicationURL', XOOPS_URL . '/' . xoops_getenv('PHP_SELF'), 'post', true);
     $xml->setVar('webmaster', checkEmail($xoopsConfig['adminmail'], true));
     $xml->setVar('editor', checkEmail($xoopsConfig['adminmail'], true));
     $xml->setVar('category', $xoopsModule->getVar('name'), true);
     $xml->setVar('generator', $xoopsModule->getInfo('version'));
     $xml->setVar('language', _LANGCODE);
 
-    $dimention = @getimagesize(XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/'
-                               . $xoopsModule->getInfo('image'));
+    $dimention = @getimagesize(XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/' . $xoopsModule->getInfo('image'));
     $image     = array(
         'width'       => $dimention[0],
         'height'      => $dimention[1],
@@ -210,7 +205,7 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
     */
     $xml->addItems($items);
 
-    $dummy_content = $xml_handler->display($xml, XOOPS_CACHE_PATH . '/' . $GLOBALS['moddirname'] . '.xml.tmp');
+    $dummy_content = $xmlHandler->display($xml, XOOPS_CACHE_PATH . '/' . $GLOBALS['moddirname'] . '.xml.tmp');
 
     $tpl->assign_by_ref('dummy_content', $dummy_content);
 }

@@ -24,31 +24,32 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
 
 include __DIR__ . '/header.php';
 
 // trackback is done by a POST
-$art_id     = explode('/', $_SERVER['REQUEST_URI']);
+$art_id     = explode('/', Request::getString('REQUEST_URI', '', 'SERVER'));
 $article_id = (int)$art_id[count($art_id) - 1];
-$url        = $_POST['url'];
-$title      = $_POST['title'];
-$excerpt    = $_POST['excerpt'];
-$blog_name  = $_POST['blog_name'];
-$charset    = trim($_POST['charset']);
+$url        = Request::getString('url', '', 'POST');//$_POST['url'];
+$title      = Request::getString('title', '', 'POST');//$_POST['title'];
+$excerpt    = Request::getString('excerpt', '', 'POST');//$_POST['excerpt'];
+$blog_name  = Request::getString('blog_name', '', 'POST');//$_POST['blog_name'];
+$charset    = trim(Request::getString('charset', '', 'POST'));//trim($_POST['charset']);
 
 if (empty($xoopsModuleConfig['trackback_option'])) {
-    planet_trackback_response(1, 'Trackback is closed');
+    PlanetUtility::planetRespondToTrackback(1, 'Trackback is closed');
 }
 if (!strlen($title . $url . $blog_name)) {
-    planet_trackback_response(1, planet_constant('MD_INVALID'));
+    PlanetUtility::planetRespondToTrackback(1, planet_constant('MD_INVALID'));
 }
 
 if (!empty($article_id) && !empty($url)) {
-    $trackback_handler = xoops_getModuleHandler('trackback', $GLOBALS['moddirname']);
-    $criteria          = new CriteriaCompo(new Criteria('art_id', $article_id));
+    $trackbackHandler = xoops_getModuleHandler('trackback', $GLOBALS['moddirname']);
+    $criteria         = new CriteriaCompo(new Criteria('art_id', $article_id));
     $criteria->add(new Criteria('tb_url', $url));
-    if ($trackback_handler->getCount($criteria) > 0) {
-        planet_trackback_response(1, 'We already have a ping from that URI for this article.');
+    if ($trackbackHandler->getCount($criteria) > 0) {
+        PlanetUtility::planetRespondToTrackback(1, 'We already have a ping from that URI for this article.');
     }
 
     $charset   = empty($charset) ? 'utf-8' : $charset;
@@ -62,7 +63,7 @@ if (!empty($article_id) && !empty($url)) {
     $com_rootid = 0;
     $com_title  = $title;
     $com_text   = $excerpt;
-    $com_text .= "\n\n[TRACKBACK]" . _POSTEDBY . ': ';
+    $com_text   .= "\n\n[TRACKBACK]" . _POSTEDBY . ': ';
     if (!empty($url)) {
         $com_text .= '[url=' . $url . ']' . $blog_name . '[/url]';
     } else {
@@ -70,8 +71,8 @@ if (!empty($article_id) && !empty($url)) {
     }
     $com_modid = $xoopsModule->getVar('mid');
 
-    $comment_handler = xoops_getHandler('comment');
-    $comment         = $comment_handler->create();
+    $commentHandler = xoops_getHandler('comment');
+    $comment        = $commentHandler->create();
     $comment->setVar('com_created', time());
     $comment->setVar('com_pid', $com_pid);
     $comment->setVar('com_itemid', $com_itemid);
@@ -103,28 +104,26 @@ if (!empty($article_id) && !empty($url)) {
     $comment->setVar('com_icon', '');
     $comment->setVar('com_modified', time());
     $comment->setVar('com_modid', $com_modid);
-    if (false != $comment_handler->insert($comment)) {
+    if (false != $commentHandler->insert($comment)) {
         $newcid = $comment->getVar('com_id');
 
         // set own id as root id
         $com_rootid = $newcid;
-        if (!$comment_handler->updateByField($comment, 'com_rootid', $com_rootid)) {
-            $comment_handler->delete($comment);
-            planet_trackback_response(1, xoops_error());
+        if (!$commentHandler->updateByField($comment, 'com_rootid', $com_rootid)) {
+            $commentHandler->delete($comment);
+            PlanetUtility::planetRespondToTrackback(1, xoops_error());
         }
 
         // call custom approve function if any
         if (false != $call_approvefunc && isset($comment_config['callback']['approve'])
-            && trim($comment_config['callback']['approve']) != ''
-        ) {
+            && trim($comment_config['callback']['approve']) != '') {
             $skip = false;
             if (!function_exists($comment_config['callback']['approve'])) {
                 if (isset($comment_config['callbackFile'])) {
                     $callbackfile = trim($comment_config['callbackFile']);
                     if ($callbackfile != ''
-                        && file_exists(XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile)
-                    ) {
-                        include_once XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile;
+                        && file_exists(XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile)) {
+                        require_once XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile;
                     }
                     if (!function_exists($comment_config['callback']['approve'])) {
                         $skip = true;
@@ -140,16 +139,14 @@ if (!empty($article_id) && !empty($url)) {
 
         // call custom update function if any
         if (false != $call_updatefunc && isset($comment_config['callback']['update'])
-            && trim($comment_config['callback']['update']) != ''
-        ) {
+            && trim($comment_config['callback']['update']) != '') {
             $skip = false;
             if (!function_exists($comment_config['callback']['update'])) {
                 if (isset($comment_config['callbackFile'])) {
                     $callbackfile = trim($comment_config['callbackFile']);
                     if ($callbackfile != ''
-                        && file_exists(XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile)
-                    ) {
-                        include_once XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile;
+                        && file_exists(XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile)) {
+                        require_once XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile;
                     }
                     if (!function_exists($comment_config['callback']['update'])) {
                         $skip = true;
@@ -162,7 +159,7 @@ if (!empty($article_id) && !empty($url)) {
                 $criteria = new CriteriaCompo(new Criteria('com_modid', $com_modid));
                 $criteria->add(new Criteria('com_itemid', $com_itemid));
                 $criteria->add(new Criteria('com_status', XOOPS_COMMENT_ACTIVE));
-                $comment_count = $comment_handler->getCount($criteria);
+                $comment_count = $commentHandler->getCount($criteria);
                 $func          = $comment_config['callback']['update'];
                 call_user_func_array($func, array($com_itemid, $comment_count, $comment->getVar('com_id')));
             }
@@ -172,8 +169,8 @@ if (!empty($article_id) && !empty($url)) {
         // trigger notification event if necessary
         if ($notify_event) {
             $not_modid = $com_modid;
-            include_once XOOPS_ROOT_PATH . '/include/notification_functions.php';
-            $not_catinfo  =& notificationCommentCategoryInfo($not_modid);
+            //            require_once XOOPS_ROOT_PATH . '/include/notification_functions.php';
+            $not_catinfo  = notificationCommentCategoryInfo($not_modid);
             $not_category = $not_catinfo['name'];
             $not_itemid   = $com_itemid;
             $not_event    = $notify_event;
@@ -181,23 +178,19 @@ if (!empty($article_id) && !empty($url)) {
             // point to a viewable page (i.e. not the system administration
             // module).
             $comment_tags = array();
-            $not_module   =& $xoopsModule;
+            $not_module   = $xoopsModule;
             if (!isset($comment_url)) {
-                $com_config  =& $not_module->getInfo('comments');
+                $com_config  = $not_module->getInfo('comments');
                 $comment_url = $com_config['pageName'] . '?';
                 $comment_url .= $com_config['itemName'];
             }
-            $comment_tags['X_COMMENT_URL'] = XOOPS_URL . '/modules/' . $not_module->getVar('dirname') . '/'
-                                             . $comment_url . '=' . $com_itemid . '&amp;com_id=' . $newcid
-                                             . '&amp;com_rootid=' . $com_rootid . '&amp;com_mode=' . $com_mode
-                                             . '&amp;com_order=' . $com_order . '#comment' . $newcid;
-            $notification_handler          = xoops_getHandler('notification');
-            $notification_handler->triggerEvent($not_category, $not_itemid, $not_event, $comment_tags, false,
-                                                $not_modid);
+            $comment_tags['X_COMMENT_URL'] = XOOPS_URL . '/modules/' . $not_module->getVar('dirname') . '/' . $comment_url . '=' . $com_itemid . '&amp;com_id=' . $newcid . '&amp;com_rootid=' . $com_rootid . '&amp;com_mode=' . $com_mode . '&amp;com_order=' . $com_order . '#comment' . $newcid;
+            $notificationHandler           = xoops_getHandler('notification');
+            $notificationHandler->triggerEvent($not_category, $not_itemid, $not_event, $comment_tags, false, $not_modid);
         }
 
-        planet_trackback_response(0);
+        PlanetUtility::planetRespondToTrackback(0);
     } else {
-        planet_trackback_response(1, xoops_error($comment->getHtmlErrors()));
+        PlanetUtility::planetRespondToTrackback(1, xoops_error($comment->getHtmlErrors()));
     }
 }

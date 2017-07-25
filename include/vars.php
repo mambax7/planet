@@ -29,6 +29,7 @@ if (!defined('PLANET_INI')) {
     define('PLANET_INI', 1);
 }
 
+require_once __DIR__ . '/../class/utility.php';
 /*
  * The prefix for database table name prefix
  * You can change to any term but be consistent with the table names in /sql/mysql.sql, and be unique , no conflict with other modules
@@ -47,7 +48,7 @@ $GLOBALS['VAR_PREFIX'] = $GLOBALS['moddirname'];
 
 /*
  * The prefix for module language constants
- * You can chnage to any term but be capital and unique, no conflict with other modules
+ * You can change to any term but be capital and unique, no conflict with other modules
  */
 $GLOBALS['VAR_PREFIXU'] = strtoupper($GLOBALS['moddirname']);
 require_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/include/functions.ini.php';

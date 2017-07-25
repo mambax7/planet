@@ -101,37 +101,27 @@ define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_NOTIFY', 'Article');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_NOTIFYDSC', 'Article notification options');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_BLOGSUBMIT_NOTIFY', 'Article submission');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_BLOGSUBMIT_NOTIFYCAP', 'Notify me of any pending blog');
-define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_BLOGSUBMIT_NOTIFYDSC',
-       'Receive notification when a new blog is submitted');
-define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_BLOGSUBMIT_NOTIFYSBJ',
-       '[{X_SITENAME}] {X_MODULE} auto-notify : New blog submitted');
+define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_BLOGSUBMIT_NOTIFYDSC', 'Receive notification when a new blog is submitted');
+define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_BLOGSUBMIT_NOTIFYSBJ', '[{X_SITENAME}] {X_MODULE} auto-notify : New blog submitted');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_NEWBLOG_NOTIFY', 'New blog');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_NEWBLOG_NOTIFYCAP', 'Notify of any new blog published');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_NEWBLOG_NOTIFYDSC', 'Receive notification when a new blog is published');
-define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_NEWBLOG_NOTIFYSBJ',
-       '[{X_SITENAME}] {X_MODULE} auto-notify : New blog published');
+define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_NEWBLOG_NOTIFYSBJ', '[{X_SITENAME}] {X_MODULE} auto-notify : New blog published');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_ARTICLEMONITOR_NOTIFY', 'Article monitor');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_ARTICLEMONITOR_NOTIFYCAP', 'Notify me of all actions on my articles');
-define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_ARTICLEMONITOR_NOTIFYDSC',
-       'Receive notification when an action is taken over my articles');
-define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_ARTICLEMONITOR_NOTIFYSBJ',
-       '[{X_SITENAME}] {X_MODULE} auto-notify : New action');
+define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_ARTICLEMONITOR_NOTIFYDSC', 'Receive notification when an action is taken over my articles');
+define($GLOBALS['VAR_PREFIXU'] . '_MI_GLOBAL_ARTICLEMONITOR_NOTIFYSBJ', '[{X_SITENAME}] {X_MODULE} auto-notify : New action');
 
 define($GLOBALS['VAR_PREFIXU'] . '_MI_BLOG_BLOGAPPROVE_NOTIFY', 'Blog approved');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_BLOG_BLOGAPPROVE_NOTIFYCAP', 'Notify me of approval of this blog');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_BLOG_BLOGAPPROVE_NOTIFYDSC', 'Receive notification when the blog is approved');
-define($GLOBALS['VAR_PREFIXU'] . '_MI_BLOG_BLOGAPPROVE_NOTIFYSBJ',
-       '[{X_SITENAME}] {X_MODULE} auto-notify : blog approved');
+define($GLOBALS['VAR_PREFIXU'] . '_MI_BLOG_BLOGAPPROVE_NOTIFYSBJ', '[{X_SITENAME}] {X_MODULE} auto-notify : blog approved');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_BLOG_BLOGUPDATE_NOTIFY', 'Blog updated');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_BLOG_BLOGUPDATE_NOTIFYCAP', 'Notify me of update of this blog');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_BLOG_BLOGUPDATE_NOTIFYDSC', 'Receive notification when the blog is upated');
-define($GLOBALS['VAR_PREFIXU'] . '_MI_BLOG_BLOGUPDATE_NOTIFYSBJ',
-       '[{X_SITENAME}] {X_MODULE} auto-notify : blog updated');
+define($GLOBALS['VAR_PREFIXU'] . '_MI_BLOG_BLOGUPDATE_NOTIFYSBJ', '[{X_SITENAME}] {X_MODULE} auto-notify : blog updated');
 
 define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFY', 'Article monitor');
-define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFYCAP',
-       'Notify me of any action taken on this article');
-define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFYDSC',
-       'Receive notification when an action is taken on this article');
-define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFYSBJ',
-       '[{X_SITENAME}] {X_MODULE} auto-notify : New article published');
+define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFYCAP', 'Notify me of any action taken on this article');
+define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFYDSC', 'Receive notification when an action is taken on this article');
+define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFYSBJ', '[{X_SITENAME}] {X_MODULE} auto-notify : New article published');

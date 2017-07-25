@@ -33,7 +33,8 @@ if (DIRECTORY_SEPARATOR !== '/') {
 }
 $url_arr = explode('/', strstr($current_path, '/modules/'));
 include XOOPS_ROOT_PATH . '/modules/' . $url_arr[2] . '/include/vars.php';
-include_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/include/functions.php';
+include XOOPS_ROOT_PATH . '/modules/' . $url_arr[2] . '/class/utility.php';
+//require_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/include/functions.php';
 
 /**
  * Functions handling module blocks
@@ -45,7 +46,7 @@ include_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/include/
  * @param VAR_PREFIX variable prefix for the function name
  */
 
-planet_parse_function('
+PlanetUtility::planetParseFunction('
 /**#@+
  * Function to display articles
  *
@@ -110,10 +111,10 @@ function [VAR_PREFIX]_article_show($options)
         return false;
     }
     $rows = array();
-    $article_handler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
+    $articleHandler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
     while ($row = $xoopsDB->fetchArray($result)) {
         if(!empty($row["ave_rating"])) $row["art_rating"] = $row["ave_rating"];
-        $article = $article_handler->create(false);
+        $article = $articleHandler->create(false);
         $article->assignVars($row);
         $_art = array();
         foreach ($row as $tag=>$val) {
@@ -135,8 +136,8 @@ function [VAR_PREFIX]_article_show($options)
         $bids[$row["blog_id"]] = 1;
     }
 
-    $blog_handler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
-    $blogs = $blog_handler->getList(new Criteria("blog_id", "(".implode(",", array_keys($bids)).")", "IN"));
+    $blogHandler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
+    $blogs = $blogHandler->getList(new Criteria("blog_id", "(".implode(",", array_keys($bids)).")", "IN"));
 
     for ($i=0;$i<count($arts);++$i) {
         $arts[$i]["blog"] = @$blogs[$arts[$i]["blog_id"]];
@@ -168,9 +169,9 @@ function [VAR_PREFIX]_article_edit($options)
         $form .= ">".planet_constant("MB_TYPE_RANDOM")."</option>\n";
     $form .= "</select><br><br>";
 
-    $form .= planet_constant("MB_ITEMS")."&nbsp;&nbsp;<input type=\"text\" name=\"options[1]\" value=\"" . $options[1] . "\" /><br><br>";
-    $form .= planet_constant("MB_TITLE_LENGTH")."&nbsp;&nbsp;<input type=\"text\" name=\"options[2]\" value=\"" . $options[2] . "\" /><br><br>";
-    $form .= planet_constant("MB_SUMMARY_LENGTH")."&nbsp;&nbsp;<input type=\"text\" name=\"options[3]\" value=\"" . $options[3] . "\" /><br><br>";
+    $form .= planet_constant("MB_ITEMS")."&nbsp;&nbsp;<input type=\"text\" name=\"options[1]\" value=\"" . $options[1] . "\"><br><br>";
+    $form .= planet_constant("MB_TITLE_LENGTH")."&nbsp;&nbsp;<input type=\"text\" name=\"options[2]\" value=\"" . $options[2] . "\"><br><br>";
+    $form .= planet_constant("MB_SUMMARY_LENGTH")."&nbsp;&nbsp;<input type=\"text\" name=\"options[3]\" value=\"" . $options[3] . "\"><br><br>";
 
     return $form;
 }
@@ -245,10 +246,10 @@ function [VAR_PREFIX]_blog_show($options)
         return false;
     }
     $rows = array();
-    $blog_handler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
+    $blogHandler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
     while ($row = $xoopsDB->fetchArray($result)) {
         if(!empty($row["ave_rating"])) $row["art_rating"] = $row["ave_rating"];
-        $blog = $blog_handler->create(false);
+        $blog = $blogHandler->create(false);
         $blog->assignVars($row);
         $_art = array();
         foreach ($row as $tag=>$val) {
@@ -302,9 +303,9 @@ function [VAR_PREFIX]_blog_edit($options)
         $form .= ">".planet_constant("MB_TYPE_RANDOM")."</option>\n";
     $form .= "</select><br><br>";
 
-    $form .= planet_constant("MB_ITEMS")."&nbsp;&nbsp;<input type=\"text\" name=\"options[1]\" value=\"" . $options[1] . "\" /><br><br>";
-    $form .= planet_constant("MB_TITLE_LENGTH")."&nbsp;&nbsp;<input type=\"text\" name=\"options[2]\" value=\"" . $options[2] . "\" /><br><br>";
-    $form .= planet_constant("MB_SHOWDESC")."&nbsp;&nbsp;<input type=\"text\" name=\"options[3]\" value=\"" . $options[3] . "\" /><br><br>";
+    $form .= planet_constant("MB_ITEMS")."&nbsp;&nbsp;<input type=\"text\" name=\"options[1]\" value=\"" . $options[1] . "\"><br><br>";
+    $form .= planet_constant("MB_TITLE_LENGTH")."&nbsp;&nbsp;<input type=\"text\" name=\"options[2]\" value=\"" . $options[2] . "\"><br><br>";
+    $form .= planet_constant("MB_SHOWDESC")."&nbsp;&nbsp;<input type=\"text\" name=\"options[3]\" value=\"" . $options[3] . "\"><br><br>";
 
     return $form;
 }
@@ -323,13 +324,13 @@ function [VAR_PREFIX]_category_show($options)
 {
     planet_define_url_delimiter();
     $block = array();
-    $category_handler = xoops_getModuleHandler("category", $GLOBALS["moddirname"]);
-    $blog_handler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
+    $categoryHandler = xoops_getModuleHandler("category", $GLOBALS["moddirname"]);
+    $blogHandler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
     $crit = new Criteria("1", 1);
     $crit->setSort("cat_order");
     $crit->setOrder("ASC");
-    $categories = $category_handler->getList($crit);
-    $blog_counts = $blog_handler->getCountsByCategory();
+    $categories = $categoryHandler->getList($crit);
+    $blog_counts = $blogHandler->getCountsByCategory();
     foreach ($categories as $id=>$cat) {
         $block["categories"][]=array("id"=>$id, "title"=>$cat, "blogs"=> @(int)($blog_counts[$id]));
     }

@@ -24,5 +24,5 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
-include dirname(dirname(__DIR__)) . '/mainfile.php';
+include __DIR__ . '/../../mainfile.php';
 include XOOPS_ROOT_PATH . '/include/comment_reply.php';

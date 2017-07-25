@@ -24,28 +24,30 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
+
 include __DIR__ . '/header.php';
 
-if (preg_match("/\/notification_update\.php/i", $_SERVER['REQUEST_URI'], $matches)) {
+if (preg_match("/\/notification_update\.php/i", Request::getUrl('REQUEST_URI', '', 'SERVER'), $matches)) {
     include XOOPS_ROOT_PATH . '/include/notification_update.php';
     exit();
 }
 
-if ($REQUEST_URI_parsed = planet_parse_args($args_num, $args, $args_str)) {
+if ($REQUEST_URI_parsed = PlanetUtility::planetParseArguments($args_num, $args, $args_str)) {
     $args['start'] = @$args_num[0];
     $args['sort']  = @$args_str[0];
 }
 
 /* Start */
-$start = (int)(empty($_GET['start']) ? @$args['start'] : $_GET['start']);
+$start = Request::getInt('start', @$args['start'], 'GET'); //(int)(empty($_GET['start']) ? @$args['start'] : $_GET['start']);
 /* Specified Category */
-$category_id = (int)(empty($_GET['category']) ? @$args['category'] : $_GET['category']);
+$category_id = Request::getInt('category', @$args['category'], 'GET'); //(int)(empty($_GET['category']) ? @$args['category'] : $_GET['category']);
 /* Specified Bookmar(Favorite) UID */
-$uid = (int)(empty($_GET['uid']) ? @$args['uid'] : $_GET['uid']);
+$uid = Request::getInt('uid', @$args['uid'], 'GET'); //(int)(empty($_GET['uid']) ? @$args['uid'] : $_GET['uid']);
 /* Sort by term */
-$sort = empty($_GET['sort']) ? @$args['sort'] : $_GET['sort'];
+$sort = Request::getString('sort', @$args['sort'], 'GET'); // empty($_GET['sort']) ? @$args['sort'] : $_GET['sort'];
 /* Display as list */
-$list = (int)(empty($_GET['list']) ? @$args['list'] : $_GET['list']);
+$list = Request::getInt('list', @$args['list'], 'GET'); //(int)(empty($_GET['list']) ? @$args['list'] : $_GET['list']);
 /*
 // restore $_SERVER['REQUEST_URI']
 if (!empty($REQUEST_URI_parsed)) {
@@ -65,13 +67,13 @@ if (!empty($REQUEST_URI_parsed)) {
 */
 
 $xoopsOption['xoops_pagetitle'] = $xoopsModule->getVar('name') . ' - ' . planet_constant('MD_BLOGS');
-$xoopsOption['template_main']   = planet_getTemplate('blogs');
-include_once XOOPS_ROOT_PATH . '/header.php';
+$xoopsOption['template_main']   = PlanetUtility::planetGetTemplate('blogs');
+require_once XOOPS_ROOT_PATH . '/header.php';
 include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
 
 // Following part will not be executed after cache
-$category_handler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
-$blog_handler     = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
+$categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
+$blogHandler     = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
 
 $limit = empty($list) ? $xoopsModuleConfig['articles_perpage'] : $xoopsModuleConfig['list_perpage'];
 
@@ -80,7 +82,7 @@ $criteria    = new CriteriaCompo();
 $blog_prefix = '';
 /* Specific category */
 if ($category_id > 0) {
-    $category_obj = $category_handler->get($category_id);
+    $category_obj = $categoryHandler->get($category_id);
     $criteria->add(new Criteria('bc.cat_id', $category_id));
     $uid           = 0;
     $blog_id       = 0;
@@ -92,16 +94,16 @@ if ($category_id > 0) {
 /* User bookmarks(favorites) */
 if ($uid > 0) {
     $criteria->add(new Criteria('bm.bm_uid', $uid));
-    $category_id      = 0;
-    $blog_id          = 0;
-    $bookmark_handler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
-    $user_data        = array(
+    $category_id     = 0;
+    $blog_id         = 0;
+    $bookmarkHandler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
+    $user_data       = array(
         'uid'   => $uid,
         'name'  => XoopsUser::getUnameFromId($uid),
-        'marks' => $bookmark_handler->getCount(new Criteria('bm_uid', $uid))
+        'marks' => $bookmarkHandler->getCount(new Criteria('bm_uid', $uid))
     );
-    $query_type       = 'bookmark';
-    $blog_prefix      = 'b.';
+    $query_type      = 'bookmark';
+    $blog_prefix     = 'b.';
 }
 
 $criteria->add(new Criteria($blog_prefix . 'blog_status', 0, '>'));
@@ -133,16 +135,16 @@ $criteria->setLimit($limit);
 $tags = empty($list) ? '' : array($blog_prefix . 'blog_title', $blog_prefix . 'blog_time');
 switch ($query_type) {
     case 'category':
-        $blogs_obj  =& $blog_handler->getByCategory($criteria, $tags);
-        $count_blog = $blog_handler->getCountByCategory($criteria);
+        $blogs_obj  = $blogHandler->getByCategory($criteria, $tags);
+        $count_blog = $blogHandler->getCountByCategory($criteria);
         break;
     case 'bookmark':
-        $blogs_obj  =& $blog_handler->getByBookmark($criteria, $tags);
-        $count_blog = $blog_handler->getCountByBookmark($criteria);
+        $blogs_obj  = $blogHandler->getByBookmark($criteria, $tags);
+        $count_blog = $blogHandler->getCountByBookmark($criteria);
         break;
     default:
-        $blogs_obj  =& $blog_handler->getAll($criteria, $tags);
-        $count_blog = $blog_handler->getCount($criteria);
+        $blogs_obj  = $blogHandler->getAll($criteria, $tags);
+        $count_blog = $blogHandler->getCount($criteria);
         break;
 }
 
@@ -189,40 +191,36 @@ if ($count_blog > $limit) {
 }
 
 $xoopsTpl->assign('xoops_pagetitle', $xoopsOption['xoops_pagetitle']);
-$xoopsTpl->assign('link_home', "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . "/index.php\" title=\""
-                               . planet_constant('MD_HOME') . "\" target=\"_self\">" . planet_constant('MD_HOME')
-                               . '</a>');
+$xoopsTpl->assign('link_home', "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . "/index.php\" title=\"" . planet_constant('MD_HOME') . "\" target=\"_self\">" . planet_constant('MD_HOME') . '</a>');
 
 if ($category_id || $uid) {
-    $xoopsTpl->assign('link_index',
-                      "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . "/view.blogs.php\" title=\""
-                      . planet_constant('MD_INDEX') . "\" target=\"_self\">" . planet_constant('MD_INDEX') . '</a>');
+    $xoopsTpl->assign('link_index', "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . "/view.blogs.php\" title=\"" . planet_constant('MD_INDEX') . "\" target=\"_self\">" . planet_constant('MD_INDEX') . '</a>');
 
-    $link_articles = "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php'
-                     . (empty($category_id) ? '' : '/c' . $category_id) . (empty($uid) ? '' : '/u' . $uid)
-                     . "\" title=\"" . planet_constant('MD_ARTICLES') . "\">" . planet_constant('MD_ARTICLES') . '</a>';
+    $link_articles = "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . (empty($category_id) ? '' : '/c' . $category_id) . (empty($uid) ? '' : '/u' . $uid) . "\" title=\"" . planet_constant('MD_ARTICLES') . "\">" . planet_constant('MD_ARTICLES') . '</a>';
     $xoopsTpl->assign('link_articles', $link_articles);
 }
 
-$link_switch = "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.blogs.php'
-               . (empty($category_id) ? '' : '/c' . $category_id) . (empty($uid) ? '' : '/u' . $uid)
-               . (empty($list) ? '/l1' : '') . "\" title=\""
-               . (empty($list) ? planet_constant('MD_LISTVIEW') : planet_constant('MD_FULLVIEW')) . "\">"
-               . (empty($list) ? planet_constant('MD_LISTVIEW') : planet_constant('MD_FULLVIEW')) . '</a>';
+$link_switch = "<a href=\""
+               . XOOPS_URL
+               . '/modules/'
+               . $GLOBALS['moddirname']
+               . '/view.blogs.php'
+               . (empty($category_id) ? '' : '/c' . $category_id)
+               . (empty($uid) ? '' : '/u' . $uid)
+               . (empty($list) ? '/l1' : '')
+               . "\" title=\""
+               . (empty($list) ? planet_constant('MD_LISTVIEW') : planet_constant('MD_FULLVIEW'))
+               . "\">"
+               . (empty($list) ? planet_constant('MD_LISTVIEW') : planet_constant('MD_FULLVIEW'))
+               . '</a>';
 $xoopsTpl->assign('link_switch', $link_switch);
 
 if (empty($uid) && is_object($xoopsUser)) {
-    $xoopsTpl->assign('link_bookmark',
-                      "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.blogs.php'
-                      . URL_DELIMITER . 'u' . $xoopsUser->getVar('uid') . "\" title=\""
-                      . planet_constant('MD_BOOKMARKS') . "\" target=\"_self\">" . planet_constant('MD_BOOKMARKS')
-                      . '</a>');
+    $xoopsTpl->assign('link_bookmark', "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.blogs.php' . URL_DELIMITER . 'u' . $xoopsUser->getVar('uid') . "\" title=\"" . planet_constant('MD_BOOKMARKS') . "\" target=\"_self\">" . planet_constant('MD_BOOKMARKS') . '</a>');
 }
 
 if ($xoopsModuleConfig['newblog_submit'] == 1 || is_object($xoopsUser)) {
-    $xoopsTpl->assign('link_submit',
-                      "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . "/action.blog.php\" title=\""
-                      . _SUBMIT . "\" target=\"_blank\">" . _SUBMIT . '</a>');
+    $xoopsTpl->assign('link_submit', "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . "/action.blog.php\" title=\"" . _SUBMIT . "\" target=\"_blank\">" . _SUBMIT . '</a>');
 }
 
 $xoopsTpl->assign('pagetitle', $xoopsModule->getVar('name') . '::' . planet_constant('MD_BLOGS'));
@@ -268,4 +266,4 @@ foreach ($valid_sorts as $val => $name) {
 }
 $xoopsTpl->assign('link_sort', implode(' | ', $sortlinks));
 
-include_once __DIR__ . '/footer.php';
+require_once __DIR__ . '/footer.php';

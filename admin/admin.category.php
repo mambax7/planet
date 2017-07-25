@@ -24,12 +24,12 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
-include_once __DIR__ . '/admin_header.php';
+require_once __DIR__ . '/admin_header.php';
 require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
 
 xoops_cp_header();
-$indexAdmin = new ModuleAdmin();
-echo $indexAdmin->addNavigation(basename(__FILE__));
+$adminObject = \Xmf\Module\Admin::getInstance();
+$adminObject->displayNavigation(basename(__FILE__));
 require XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
 //planet_adminmenu(1);
 
@@ -37,21 +37,21 @@ $op     = !empty($_POST['op']) ? $_POST['op'] : (!empty($_GET['op']) ? $_GET['op
 $cat_id = !empty($_POST['category']) ? $_POST['category'] : (!empty($_GET['category']) ? $_GET['category'] : 0);
 $cat_id = is_array($cat_id) ? array_map('intval', $cat_id) : (int)$cat_id;
 
-$category_handler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
-$blog_handler     = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
+$categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
+$blogHandler     = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
 
 switch ($op) {
     case 'save':
         if ($cat_id) {
-            $category_obj =& $category_handler->get($cat_id);
+            $category_obj = $categoryHandler->get($cat_id);
         } else {
-            $category_obj =& $category_handler->create();
+            $category_obj = $categoryHandler->create();
         }
 
         $category_obj->setVar('cat_title', $_POST['cat_title']);
         $category_obj->setVar('cat_order', $_POST['cat_order']);
 
-        if (!$category_handler->insert($category_obj)) {
+        if (!$categoryHandler->insert($category_obj)) {
             $message = planet_constant('AM_ERROR');
         } else {
             $message = planet_constant('AM_DBUPDATED');
@@ -63,8 +63,8 @@ switch ($op) {
             $cat_id = array($cat_id);
         }
         foreach ($cat_id as $cid) {
-            $category_obj =& $category_handler->get($cid);
-            if (!$category_handler->delete($category_obj)) {
+            $category_obj = $categoryHandler->get($cid);
+            if (!$categoryHandler->delete($category_obj)) {
             }
         }
         $message = planet_constant('AM_DBUPDATED');
@@ -73,21 +73,19 @@ switch ($op) {
     case 'order':
         $count = count($_POST['cat_order']);
         for ($i = 0; $i < $count; ++$i) {
-            $category_obj =& $category_handler->get($_POST['cat'][$i]);
+            $category_obj = $categoryHandler->get($_POST['cat'][$i]);
             $category_obj->setVar('cat_order', $_POST['cat_order'][$i]);
-            $category_handler->insert($category_obj, true);
+            $categoryHandler->insert($category_obj, true);
             unset($category_obj);
         }
         $message = planet_constant('AM_DBUPDATED');
         redirect_header('admin.category.php', 2, $message);
 
     case 'edit':
-        $category_obj =& $category_handler->get($cat_id);
-        $form         = new XoopsThemeForm(_EDIT, 'edit', xoops_getenv('PHP_SELF'));
-        $form->addElement(new XoopsFormText(planet_constant('AM_TITLE'), 'cat_title', 50, 80,
-                                            $category_obj->getVar('cat_title', 'E')), true);
-        $form->addElement(new XoopsFormText(planet_constant('AM_ORDER'), 'cat_order', 5, 10,
-                                            $category_obj->getVar('cat_order')), false);
+        $category_obj = $categoryHandler->get($cat_id);
+        $form         = new XoopsThemeForm(_EDIT, 'edit', xoops_getenv('PHP_SELF'), 'post', true);
+        $form->addElement(new XoopsFormText(planet_constant('AM_TITLE'), 'cat_title', 50, 80, $category_obj->getVar('cat_title', 'E')), true);
+        $form->addElement(new XoopsFormText(planet_constant('AM_ORDER'), 'cat_order', 5, 10, $category_obj->getVar('cat_order')), false);
         $form->addElement(new XoopsFormHidden('category', $cat_id));
         $form->addElement(new XoopsFormHidden('op', 'save'));
 
@@ -108,8 +106,8 @@ switch ($op) {
         $crit = new Criteria('1', 1);
         $crit->setSort('cat_order');
         $crit->setOrder('ASC');
-        $categories  = $category_handler->getList($crit);
-        $blog_counts = $blog_handler->getCountsByCategory();
+        $categories  = $categoryHandler->getList($crit);
+        $blog_counts = $blogHandler->getCountsByCategory();
         foreach (array_keys($categories) as $cid) {
             if (!empty($blog_counts[$cid])) {
                 $categories[$cid] .= ' (' . (int)$blog_counts[$cid] . ')';
@@ -117,7 +115,7 @@ switch ($op) {
         }
 
         echo "<fieldset><legend style='font-weight: bold; color: #900;'>" . planet_constant('AM_LIST') . '</legend>';
-        echo "<br style=\"clear:both;\" />";
+        echo "<br style=\"clear:both;\">";
 
         echo "<form name='list' method='post'>";
         echo "<table border='0' cellpadding='4' cellspacing='1' width='100%' class='outer'>";
@@ -133,29 +131,27 @@ switch ($op) {
         $ii = 0;
         foreach (array_keys($categories) as $cid) {
             echo "<tr class='odd' align='left'>";
-            echo "<td><input type='hidden' name='cat[]' value='" . $cid . "' />";
-            echo "<input type='text' name='cat_order[]' value='" . ($ii * 10) . "' /></td>";
+            echo "<td><input type='hidden' name='cat[]' value='" . $cid . "'>";
+            echo "<input type='text' name='cat_order[]' value='" . ($ii * 10) . "'></td>";
             echo '<td>' . $categories[$cid] . '</td>';
             echo "<td align='center'>" . @$blog_counts[$cid] . '</td>';
 
-            echo "<td align='center'><a href='admin.category.php?op=edit &amp;category='" . $cid . "' title='" . _EDIT
-                 . "'><img src='" . $pathIcon16 . "/edit.png '" . "alt='" . _EDIT . "' title='" . _EDIT . "' </a>&nbsp;
-                  <a href='admin.category.php?op=del &amp;category='" . $cid . "' title='" . _DELETE . "'><img src='"
-                 . $pathIcon16 . "/delete.png '" . " alt='" . _EDIT . "' title='" . _DELETE . "' </a></td>";
+            echo "<td align='center'><a href='admin.category.php?op=edit &amp;category='" . $cid . "' title='" . _EDIT . "'><img src='" . $pathIcon16 . "/edit.png '" . "alt='" . _EDIT . "' title='" . _EDIT . "' </a>&nbsp;
+                  <a href='admin.category.php?op=del &amp;category='" . $cid . "' title='" . _DELETE . "'><img src='" . $pathIcon16 . "/delete.png '" . " alt='" . _EDIT . "' title='" . _DELETE . "' </a></td>";
             echo '</tr>';
             ++$ii;
         }
         echo "<tr class='even' align='center'>";
         echo "<td colspan='5'>";
-        echo "<input name='submit' value='" . _SUBMIT . "' type='submit' />";
-        echo "<input name='' value='" . _CANCEL . "' type='reset' />";
-        echo "<input name='op' value='order' type='hidden' />";
+        echo "<input name='submit' value='" . _SUBMIT . "' type='submit'>";
+        echo "<input name='' value='" . _CANCEL . "' type='reset'>";
+        echo "<input name='op' value='order' type='hidden'>";
         echo '</td>';
         echo '</tr>';
         echo '</table></form>';
         echo "</fieldset><br style='clear:both;'>";
 
-        $form = new XoopsThemeForm(_ADD, 'mod', xoops_getenv('PHP_SELF'));
+        $form = new XoopsThemeForm(_ADD, 'mod', xoops_getenv('PHP_SELF'), 'post', true);
         $form->addElement(new XoopsFormText(planet_constant('AM_TITLE'), 'cat_title', 50, 80), true);
         $form->addElement(new XoopsFormText(planet_constant('AM_ORDER'), 'cat_order', 5, 10), false);
         $form->addElement(new XoopsFormHidden('op', 'save'));

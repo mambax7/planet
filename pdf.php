@@ -26,23 +26,27 @@
  *      <li>filename</li>
  * </ul>
  */
+
+use Xmf\Request;
+
+include __DIR__ . '/header.php';
 global $pdf_data;
 if (!empty($_POST['pdf_data'])) {
-    $pdf_data = unserialize(base64_decode($_POST['pdf_data']));
+    $pdf_data = unserialize(base64_decode(Request::getText('pdf_data', '', 'POST')));
 } elseif (!empty($pdf_data)) {
 } else {
     error_reporting(0);
     include __DIR__ . '/header.php';
     error_reporting(0);
 
-    if (planet_parse_args($args_num, $args, $args_str)) {
+    if (PlanetUtility::planetParseArguments($args_num, $args, $args_str)) {
         $args['article'] = @$args_num[0];
     }
 
     $article_id = (int)(empty($_GET['article']) ? @$args['article'] : $_GET['article']);
 
-    $article_handler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
-    $article_obj     =& $article_handler->get($article_id);
+    $articleHandler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
+    $article_obj    = $articleHandler->get($article_id);
 
     $article_data = array();
 
@@ -72,8 +76,7 @@ if (!empty($_POST['pdf_data'])) {
         $pdf_data['content'] .= planet_constant('MD_SUMMARY') . ': ' . $article_data['summary'] . '<br><br>';
     }
     $pdf_data['content'] .= $article_data['text'] . '<br>';
-    $pdf_data['url'] = XOOPS_URL . '/modules/' . $GLOBALS['artdirname'] . '/view.article.php' . URL_DELIMITER
-                       . $article_obj->getVar('art_id');
+    $pdf_data['url']     = XOOPS_URL . '/modules/' . $GLOBALS['artdirname'] . '/view.article.php' . URL_DELIMITER . $article_obj->getVar('art_id');
 }
 $pdf_data['filename'] = preg_replace("/[^0-9a-z\-_\.]/i", '', $pdf_data['title']);
 

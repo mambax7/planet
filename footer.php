@@ -25,4 +25,4 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 
-include_once XOOPS_ROOT_PATH . '/footer.php';
+require_once XOOPS_ROOT_PATH . '/footer.php';

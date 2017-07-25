@@ -64,7 +64,8 @@ class xmlparser extends MagpieRSS
      *                                Leave blank and Magpie will try to figure it
      *                                out.
      */
-    public function __construct($content, $input_charset, $output_charset = _CHARSET, $tags = array()) {
+    public function __construct($content, $input_charset, $output_charset = _CHARSET, $tags = array())
+    {
         if (!in_array(strtoupper($input_charset), array('UTF-8', 'US-ASCII', 'ISO-8859-1'))) {
             $content       = XoopsLocal::convert_encoding($content, 'UTF-8', $input_charset);
             $content       = preg_replace('/(<\?xml.*encoding=[\'"])(.*?)([\'"].*\?>)/m', '$1UTF-8$3', $content);
@@ -85,7 +86,8 @@ class xmlparser extends MagpieRSS
     /**
      * @return bool|string
      */
-    public function is_atom() {
+    public function is_atom()
+    {
         if ($this->feed_type == ATOM) {
             $this->feed_version = empty($this->feed_version) ? '0.3' : $this->feed_version;
 
@@ -95,33 +97,33 @@ class xmlparser extends MagpieRSS
         }
     }
 
-    public function normalize() {
+    public function normalize()
+    {
         if ($this->is_atom()):
             if (empty($this->channel['tagline'])) {
                 /* ATOM */
                 $this->channel['tagline'] = @$this->channel['subtitle'];
                 unset($this->channel['subtitle']);
             }
-            for ($i = 0, $iMax = count($this->items); $i < $iMax; ++$i) {
-                // ATOM time
+        for ($i = 0, $iMax = count($this->items); $i < $iMax; ++$i) {
+            // ATOM time
                 if ($date = @$this->items[$i]['modified']) {
                     continue;
                 }
-                if (empty($date)) {
-                    $date = @$this->items[$i]['updated'];
-                }
-                if (empty($date)) {
-                    $date = @$this->items[$i]['issued'];
-                }
-                if (empty($date)) {
-                    $date = @$this->items[$i]['created'];
-                }
-                if (empty($date)) {
-                    $date = @$this->items[$i]['created'];
-                }
-                $this->items[$i]['modified'] = $date;
+            if (empty($date)) {
+                $date = @$this->items[$i]['updated'];
             }
-        elseif ($this->is_rss() !== '1.0'):
+            if (empty($date)) {
+                $date = @$this->items[$i]['issued'];
+            }
+            if (empty($date)) {
+                $date = @$this->items[$i]['created'];
+            }
+            if (empty($date)) {
+                $date = @$this->items[$i]['created'];
+            }
+            $this->items[$i]['modified'] = $date;
+        } elseif ($this->is_rss() !== '1.0'):
             for ($i = 0, $iMax = count($this->items); $i < $iMax; ++$i) {
                 if ($date = @$this->items[$i]['pubdate']) {
                     continue;
@@ -136,13 +138,11 @@ class xmlparser extends MagpieRSS
             unset($this->channel['dc']['language']);
         }
         if (empty($this->channel['language'])
-            && preg_match('/<link.*hreflang=[\'"](.*?)[\'"].*?>/m', $this->content, $match)
-        ) {
+            && preg_match('/<link.*hreflang=[\'"](.*?)[\'"].*?>/m', $this->content, $match)) {
             $this->channel['language'] = $match[1];
         }
         if (empty($this->channel['language'])
-            && preg_match('/<feed.*xml:lang=[\'"](.*?)[\'"].*?>/m', $this->content, $match)
-        ) {
+            && preg_match('/<feed.*xml:lang=[\'"](.*?)[\'"].*?>/m', $this->content, $match)) {
             $this->channel['language'] = $match[1];
         }
         /* remove to avoid redundant encoding conversion */
@@ -184,7 +184,8 @@ class xmlparser extends MagpieRSS
     /**
      * @param array $tags
      */
-    public function encoding_convert($tags = array()) {
+    public function encoding_convert($tags = array())
+    {
         if (empty($tags) || in_array('channel', $tags)) {
             $this->channel = $this->_encoding($this->channel);
         }
@@ -197,7 +198,8 @@ class xmlparser extends MagpieRSS
      * @param $val
      * @return array|mixed|string
      */
-    public function _encoding($val) {
+    public function _encoding($val)
+    {
         if (is_array($val)) {
             foreach (array_keys($val) as $key) {
                 $val[$key] = $this->_encoding($val[$key]);

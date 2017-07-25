@@ -30,8 +30,8 @@
  */
 
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
-include_once dirname(__DIR__) . '/include/vars.php';
-mod_loadFunctions('', $GLOBALS['moddirname']);
+require_once __DIR__ . '/../include/vars.php';
+//mod_loadFunctions('', $GLOBALS['moddirname']);
 
 /**
  * Xcategory
@@ -52,7 +52,8 @@ if (!class_exists('Bcategory')):
         /**
          * Constructor
          */
-        public function __construct() {
+        public function __construct()
+        {
             //            $this->ArtObject();
             $this->table = planet_DB_prefix('category');
             $this->initVar('cat_id', XOBJ_DTYPE_INT, null, false);
@@ -74,7 +75,7 @@ endif;
  * @param CLASS_PREFIX variable prefix for the class name
  */
 
-planet_parse_class('
+PlanetUtility::planetParseClass('
 class [CLASS_PREFIX]CategoryHandler extends XoopsPersistableObjectHandler
 {
     /**
@@ -158,7 +159,7 @@ class [CLASS_PREFIX]CategoryHandler extends XoopsPersistableObjectHandler
         $values = implode(",",$_values);
         $sql = "INSERT INTO ".planet_DB_prefix("blogcat")." (blog_id, cat_id) VALUES ". $values;
         if (!$result = $this->db->queryF($sql)) {
-            planet_message("Insert blog-cat error:" . $sql);
+            PlanetUtility::planetDisplayMessage("Insert blog-cat error:" . $sql);
 
             return false;
         }
@@ -177,7 +178,7 @@ class [CLASS_PREFIX]CategoryHandler extends XoopsPersistableObjectHandler
         if (count($blogs)>0) {
             $sql = "DELETE FROM ".planet_DB_prefix("blogcat")." WHERE cat_id=".(int)($category)." AND blog_id IN (".implode(",", $blogs).")";
             if (!$result = $this->db->queryF($sql)) {
-                planet_message("remove blog-cat error:" . $sql);
+                PlanetUtility::planetDisplayMessage("remove blog-cat error:" . $sql);
             }
           }
 

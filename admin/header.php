@@ -25,17 +25,14 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 
-include_once dirname(dirname(dirname(__DIR__))) . '/include/cp_header.php';
+require_once __DIR__ . '/../../../include/cp_header.php';
 require XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
-require_once XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/functions.php';
-include_once XOOPS_ROOT_PATH . '/Frameworks/art/functions.admin.php';
-
+//require_once XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/functions.php';
+require_once XOOPS_ROOT_PATH . '/Frameworks/art/functions.admin.php';
+require_once __DIR__ . '/../class/utility.php';
+$moduleDirName = basename(dirname(__DIR__));
 // include the default language file for the admin interface
-if (!@include_once XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/language/'
-                   . $xoopsConfig['language'] . '/main.php'
-) {
-    include_once XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/language/english/main.php';
-}
+xoops_loadLanguage('main', $moduleDirName);
 
 planet_define_url_delimiter();
 $myts = MyTextSanitizer::getInstance();

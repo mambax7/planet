@@ -28,17 +28,17 @@
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
 
 include __DIR__ . '/vars.php';
-mod_loadFunctions('', $GLOBALS['moddirname']);
+//mod_loadFunctions('', $GLOBALS['moddirname']);
 
-planet_parse_function('
-function xoops_module_install_[DIRNAME](&$module)
+PlanetUtility::planetParseFunction('
+function xoops_module_install_[DIRNAME](XoopsModule $module)
 {
     @$GLOBALS["xoopsDB"]->queryFromFile(XOOPS_ROOT_PATH."/modules/".$GLOBALS["moddirname"]."/sql/mysql.data.sql");
 
     return true;
 }
 
-function xoops_module_pre_install_[DIRNAME](&$module)
+function xoops_module_pre_install_[DIRNAME](XoopsModule $module)
 {
     $mod_tables = $module->getInfo("tables");
     foreach ($mod_tables as $table) {
@@ -48,19 +48,19 @@ function xoops_module_pre_install_[DIRNAME](&$module)
     return [DIRNAME]_setModuleConfig($module);
 }
 
-function xoops_module_pre_update_[DIRNAME](&$module)
+function xoops_module_pre_update_[DIRNAME](XoopsModule $module)
 {
     return [DIRNAME]_setModuleConfig($module);
 }
 
-function xoops_module_update_[DIRNAME](&$module)
+function xoops_module_update_[DIRNAME](XoopsModule $module)
 {
     global $xoopsModule;
 
     return true;
 }
 
-function [DIRNAME]_setModuleConfig(&$module)
+function [DIRNAME]_setModuleConfig(XoopsModule $module)
 {
 
     $modconfig = $module->getInfo("config");

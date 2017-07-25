@@ -15,7 +15,7 @@
  * magpierss-general@lists.sourceforge.net
  *
  * @author           Kellan Elliott-McCrea <kellan@protest.net>
-* @version          0.7a
+ * @version          0.7a
  * @license          GPL
  *
  */
@@ -101,15 +101,13 @@ class MagpieRSS
         # if PHP xml isn't compiled in, die
         #
         if (!function_exists('xml_parser_create')) {
-            $this->error("Failed to load PHP's XML Extension. " . 'http://www.php.net/manual/en/ref.xml.php',
-                         E_USER_ERROR);
+            $this->error("Failed to load PHP's XML Extension. " . 'http://www.php.net/manual/en/ref.xml.php', E_USER_ERROR);
         }
 
         list($parser, $source) = $this->create_parser($source, $output_encoding, $input_encoding, $detect_encoding);
 
         if (!is_resource($parser)) {
-            $this->error("Failed to create an instance of PHP's XML parser. "
-                         . 'http://www.php.net/manual/en/ref.xml.php', E_USER_ERROR);
+            $this->error("Failed to create an instance of PHP's XML parser. " . 'http://www.php.net/manual/en/ref.xml.php', E_USER_ERROR);
         }
 
         $this->parser = $parser;
@@ -118,9 +116,9 @@ class MagpieRSS
         # setup handlers
         #
         xml_set_object($this->parser, $this);
-        xml_set_element_handler($this->parser, 'feed_start_element', 'feed_end_element');
+        xml_set_elementHandler($this->parser, 'feed_start_element', 'feed_end_element');
 
-        xml_set_character_data_handler($this->parser, 'feed_cdata');
+        xml_set_character_dataHandler($this->parser, 'feed_cdata');
 
         $status = @xml_parse($this->parser, $source);
 
@@ -146,7 +144,8 @@ class MagpieRSS
      * @param $element
      * @param $attrs
      */
-    public function feed_start_element($p, $element, &$attrs) {
+    public function feed_start_element($p, $element, &$attrs)
+    {
         $el    = $element = strtolower($element);
         $attrs = array_change_key_case($attrs, CASE_LOWER);
 
@@ -233,7 +232,8 @@ class MagpieRSS
      * @param $p
      * @param $text
      */
-    public function feed_cdata($p, $text) {
+    public function feed_cdata($p, $text)
+    {
         if ($this->feed_type == ATOM && $this->incontent) {
             $this->append_content($text);
         } else {
@@ -246,7 +246,8 @@ class MagpieRSS
      * @param $p
      * @param $el
      */
-    public function feed_end_element($p, $el) {
+    public function feed_end_element($p, $el)
+    {
         $el = strtolower($el);
 
         if ($el === 'item' || $el === 'entry') {
@@ -267,7 +268,7 @@ class MagpieRSS
             if ($this->stack[0] == $el) {
                 $this->append_content("</$el>");
             } else {
-                $this->append_content("<$el />");
+                $this->append_content("<$el>");
             }
 
             array_shift($this->stack);
@@ -282,7 +283,8 @@ class MagpieRSS
      * @param        $str1
      * @param string $str2
      */
-    public function concat(&$str1, $str2 = '') {
+    public function concat(&$str1, $str2 = '')
+    {
         if (!isset($str1)) {
             $str1 = '';
         }
@@ -292,7 +294,8 @@ class MagpieRSS
     /**
      * @param $text
      */
-    public function append_content($text) {
+    public function append_content($text)
+    {
         if ($this->initem) {
             $this->concat($this->current_item[$this->incontent], $text);
         } elseif ($this->inchannel) {
@@ -301,11 +304,13 @@ class MagpieRSS
     }
 
     // smart append - field and namespace aware
+
     /**
      * @param $el
      * @param $text
      */
-    public function append($el, $text) {
+    public function append($el, $text)
+    {
         if (!$el) {
             return;
         }
@@ -332,7 +337,8 @@ class MagpieRSS
         }
     }
 
-    public function normalize() {
+    public function normalize()
+    {
         // if atom populate rss fields
         if ($this->is_atom()) {
             $this->channel['description'] = $this->channel['tagline'];
@@ -386,7 +392,8 @@ class MagpieRSS
     /**
      * @return bool
      */
-    public function is_rss() {
+    public function is_rss()
+    {
         if ($this->feed_type == RSS) {
             return $this->feed_version;
         } else {
@@ -397,7 +404,8 @@ class MagpieRSS
     /**
      * @return bool
      */
-    public function is_atom() {
+    public function is_atom()
+    {
         if ($this->feed_type == ATOM) {
             return $this->feed_version;
         } else {
@@ -413,8 +421,9 @@ class MagpieRSS
      * @param $detect
      * @return array
      */
-    public function create_parser($source, $out_enc, $in_enc, $detect) {
-        if (substr(phpversion(), 0, 1) == 5) {
+    public function create_parser($source, $out_enc, $in_enc, $detect)
+    {
+        if (substr(PHP_VERSION, 0, 1) == 5) {
             $parser = $this->php5_create_parser($in_enc, $detect);
         } else {
             list($parser, $source) = $this->php4_create_parser($source, $in_enc, $detect);
@@ -438,7 +447,8 @@ class MagpieRSS
      * @param $detect
      * @return resource
      */
-    public function php5_create_parser($in_enc, $detect) {
+    public function php5_create_parser($in_enc, $detect)
+    {
         // by default php5 does a fine job of detecting input encodings
         if (!$detect && $in_enc) {
             return xml_parser_create($in_enc);
@@ -465,7 +475,8 @@ class MagpieRSS
      * @param $detect
      * @return array
      */
-    public function php4_create_parser($source, $in_enc, $detect) {
+    public function php4_create_parser($source, $in_enc, $detect)
+    {
         if (!$detect) {
             return array(xml_parser_create($in_enc), $source);
         }
@@ -519,7 +530,8 @@ class MagpieRSS
      * @param $enc
      * @return bool|string
      */
-    public function known_encoding($enc) {
+    public function known_encoding($enc)
+    {
         $enc = strtoupper($enc);
         if (in_array($enc, $this->_KNOWN_ENCODINGS)) {
             return $enc;
@@ -532,7 +544,8 @@ class MagpieRSS
      * @param     $errormsg
      * @param int $lvl
      */
-    public function error($errormsg, $lvl = E_USER_WARNING) {
+    public function error($errormsg, $lvl = E_USER_WARNING)
+    {
         // append PHP's error message if track_errors enabled
         if (!empty($php_errormsg)) {
             $errormsg .= " ($php_errormsg)";
@@ -557,7 +570,8 @@ class MagpieRSS
  * @param $v
  * @return string
  */
-function map_attrs($k, $v) {
+function map_attrs($k, $v)
+{
     return "$k=\"$v\"";
 }
 
@@ -565,7 +579,8 @@ function map_attrs($k, $v) {
  * @param $date_str
  * @return int
  */
-function parse_w3cdtf($date_str) {
+function parse_w3cdtf($date_str)
+{
     # regex to match wc3dtf
     $pat = "/(\d{4})-(\d{2})-(\d{2})[T]?(\d{2})?[:]?(\d{2})?(:(\d{2}))?(?:([-+])(\d{2}):?(\d{2})|(Z))?/";
 

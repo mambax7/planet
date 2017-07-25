@@ -5,7 +5,7 @@
 <{$article.title}>
 </span></h2>
 </div>
-<br style="clear:both"/>
+<br style="clear:both;">
 
 <div class="itemInfo">
     <{if $article.author}>
@@ -17,11 +17,11 @@
         |
     <{/if}>
     <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/index.php<{$smarty.const.URL_DELIMITER}>b<{$article.blog.id}>"><{$article.blog.title}></a>
-    <br style="clear:both"/>
+    <br style="clear:both;">
     <{php}>echo planet_constant("MD_DATE")<{/php}>: <{$article.time}>
     <{if $user_level gt 1}> | <a
         href="<{$xoops_url}>/modules/<{$xoops_dirname}>/action.article.php?article=<{$article.id}>"><{$smarty.const._EDIT}></a><{/if}>
-    <br style="clear:both"/>
+    <br style="clear:both;">
     <{php}>echo planet_constant("MD_VIEWS")<{/php}>: <{$article.views}>
     <{if $article.rates OR $canrate}>
         | <{php}>echo planet_constant("MD_RATE")<{/php}>:
@@ -52,7 +52,7 @@
 <a href="<{$sibling.next.url}>"><{$sibling.next.title}> <{php}>echo planet_constant("MD_NEXT")<{/php}></a>
 </span>
         <{/if}>
-        <br style="clear:both"/>
+        <br style="clear:both;">
     </div>
 <{/if}>
 
@@ -98,7 +98,7 @@
     <span class="copytext" onclick="copytext('a<{$article.id}>')" title="URI - <{php}>echo planet_constant("
           MD_CLICKTOCOPY")<{/php}>" ><{$xoops_url}>/modules/<{$xoops_dirname}>
     /view.article.php<{$smarty.const.URL_DELIMITER}><{$article.id}></span>
-    <br style="clear:both"/>
+    <br style="clear:both;">
     <{php}>echo planet_constant("MD_TRACKBACK")<{/php}>:
     <input name="t<{$article.id}>" id="t<{$article.id}>"
            value="<{$xoops_url}>/modules/<{$xoops_dirname}>/trackback.php<{$smarty.const.URL_DELIMITER}><{$article.id}>"
@@ -107,7 +107,7 @@
           MD_CLICKTOCOPY")<{/php}>" ><{$xoops_url}>/modules/<{$xoops_dirname}>
     /trackback.php<{$smarty.const.URL_DELIMITER}><{$article.id}></span>
     <{if $copyright}>
-    <br style="clear:both"/>
+    <br style="clear:both;">
     <{$copyright}>
     <{/if}>
 </div>
@@ -129,7 +129,7 @@
                    title="<{$transfer.desc}>"><{$transfer.title}></a>
             <{/if}>
             <{foreach item=opt key=op from=$transfer.list}>
-                <img src="<{$xoops_url}>/images/pointer.gif" alt=""/>
+                <img src="<{$xoops_url}>/images/pointer.gif" alt="">
                 <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/transfer.php<{$smarty.const.URL_DELIMITER}><{$article.id}>/<{$op}>"
                    target="<{$op}>" title="<{$opt.desc}>"><{$opt.title}></a>
             <{/foreach}>
@@ -143,7 +143,7 @@
              target="api"><{php}>echo planet_constant("MD_ATOM")<{/php}></a>
     </div>
 </div>
-<br style="clear:both"/>
+<br style="clear:both;">
 
 <{if $commentsnav}>
     <a id="comment" name="comment"></a>
@@ -167,4 +167,4 @@
 <{/if}>
 
 <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/counter.php?article=<{$article.id}>" alt="" width="1px"
-     height="1px"/>
+     height="1px">

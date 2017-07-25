@@ -14,7 +14,7 @@
 </span></h2>
 </div>
 
-<br style="clear:both"/>
+<br style="clear:both;">
 
 <{foreach item=blog from=$blogs}>
     <div class="itemHead" style="margin-top: 2px;">
@@ -51,7 +51,7 @@
                 )<{/if}>
             <{/if}>
         </div>
-        <br style="clear:both"/>
+        <br style="clear:both;">
     <{/if}>
 <{/foreach}>
 
@@ -59,7 +59,7 @@
     <div id="pagenav">
         <{$pagenav}>
     </div>
-    <br style="clear:both"/>
+    <br style="clear:both;">
 <{/if}>
 
 <div id="page_footer">
@@ -75,7 +75,7 @@
     <div style="text-align: right; float: right;">
         <{if $link_submit}><{$link_submit}><{/if}>
     </div>
-    <br style="clear:both"/>
+    <br style="clear:both;">
 </div>
 
 <{if $xoops_notification}>

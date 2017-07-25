@@ -24,6 +24,8 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
+
 include __DIR__ . '/header.php';
 
 /**
@@ -31,37 +33,36 @@ include __DIR__ . '/header.php';
  * The notification detection scripts should be removed once absolute url is used in notification_select.php
  *
  */
-if (preg_match("/(\/comment_[^\.]*\.php\?.*=.*)/i", $_SERVER['REQUEST_URI'], $matches)) {
+if (preg_match("/(\/comment_[^\.]*\.php\?.*=.*)/i", Request::getUrl('REQUEST_URI', '', 'SERVER'), $matches)) {//$_SERVER['REQUEST_URI']
     header('location: ' . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . $matches[1]);
     exit();
 }
-if (preg_match("/\/notification_update\.php/i", $_SERVER['REQUEST_URI'], $matches)) {
+if (preg_match("/\/notification_update\.php/i", Request::getUrl('REQUEST_URI', '', 'SERVER'), $matches)) {
     include XOOPS_ROOT_PATH . '/include/notification_update.php';
     exit();
 }
 
-if ($REQUEST_URI_parsed = planet_parse_args($args_num, $args, $args_str)) {
+if ($REQUEST_URI_parsed = PlanetUtility::planetParseArguments($args_num, $args, $args_str)) {
     $args['article'] = @$args_num[0];
     $args['blog']    = @$args['blog'];
 }
 
-$article_id = (int)(empty($_GET['article']) ? @$args['article'] : $_GET['article']);
-$blog_id    = (int)(empty($_GET['blog']) ? @$args['blog'] : $_GET['blog']);
+$article_id = Request::getInt('article', @$args['article'], 'POST');//(int)(empty($_GET['article']) ? @$args['article'] : $_GET['article']);
+$blog_id    = Request::getInt('blog', @$args['blog'], 'POST');//(int)(empty($_GET['blog']) ? @$args['blog'] : $_GET['blog']);
 
-$article_handler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
-$blog_handler    = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
-$article_obj     =& $article_handler->get($article_id);
-$blog_obj        =& $blog_handler->get($article_obj->getVar('blog_id'));
+$articleHandler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
+$blogHandler    = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
+$article_obj    = $articleHandler->get($article_id);
+$blog_obj       = $blogHandler->get($article_obj->getVar('blog_id'));
 
 // restore $_SERVER['REQUEST_URI']
 if (!empty($REQUEST_URI_parsed)) {
-    $_SERVER['REQUEST_URI'] = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php'
-                              . (empty($article_id) ? '' : '?article=' . $article_id);
+    $_SERVER['REQUEST_URI'] = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . (empty($article_id) ? '' : '?article=' . $article_id);
 }
 
 $xoopsOption['xoops_pagetitle'] = $xoopsModule->getVar('name') . ' - ' . $article_obj->getVar('art_title');
-$xoopsOption['template_main']   = planet_getTemplate('article');
-include_once XOOPS_ROOT_PATH . '/header.php';
+$xoopsOption['template_main']   = PlanetUtility::planetGetTemplate('article');
+require_once XOOPS_ROOT_PATH . '/header.php';
 include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
 
 $article_data = array(
@@ -79,16 +80,13 @@ $article_data = array(
 );
 
 if (!empty($xoopsModuleConfig['do_sibling'])) {
-    $articles_sibling =& $article_handler->getSibling($article_obj, $blog_id);
+    $articles_sibling = $articleHandler->getSibling($article_obj, $blog_id);
     if (!empty($articles_sibling['previous'])) {
-        $articles_sibling['previous']['url']   = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php'
-                                                 . URL_DELIMITER . '' . $articles_sibling['previous']['id'] . '/b'
-                                                 . $blog_id;
+        $articles_sibling['previous']['url']   = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $articles_sibling['previous']['id'] . '/b' . $blog_id;
         $articles_sibling['previous']['title'] = $articles_sibling['previous']['title'];
     }
     if (!empty($articles_sibling['next'])) {
-        $articles_sibling['next']['url']   = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php'
-                                             . URL_DELIMITER . '' . $articles_sibling['next']['id'] . '/b' . $blog_id;
+        $articles_sibling['next']['url']   = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $articles_sibling['next']['id'] . '/b' . $blog_id;
         $articles_sibling['next']['title'] = $articles_sibling['next']['title'];
     }
 }
@@ -116,4 +114,4 @@ $xoopsTpl->assign('xoops_pagetitle', $xoopsOption['xoops_pagetitle']);
 $_GET['article'] = $article_id;
 include XOOPS_ROOT_PATH . '/include/comment_view.php';
 
-include_once __DIR__ . '/footer.php';
+require_once __DIR__ . '/footer.php';

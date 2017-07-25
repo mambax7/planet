@@ -30,8 +30,8 @@
  */
 
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
-include_once dirname(__DIR__) . '/include/vars.php';
-mod_loadFunctions('', $GLOBALS['moddirname']);
+require_once __DIR__ . '/../include/vars.php';
+//mod_loadFunctions('', $GLOBALS['moddirname']);
 
 /**
  * Bookmark
@@ -47,12 +47,13 @@ if (!class_exists('Bookmark')):
     /**
      * Class Bookmark
      */
-    class Bookmark extends XoopsObject
+    class bookmark extends XoopsObject
     {
         /**
          * Constructor
          */
-        public function __construct() {
+        public function __construct()
+        {
             //            $this->ArtObject();
             $this->table = planet_DB_prefix('bookmark');
             $this->initVar('bm_id', XOBJ_DTYPE_INT, null, false);
@@ -75,7 +76,7 @@ endif;
  * @param CLASS_PREFIX variable prefix for the class name
  */
 
-planet_parse_class('
+PlanetUtility::planetParseClass('
 class [CLASS_PREFIX]BookmarkHandler extends XoopsPersistableObjectHandler
 {
     /**

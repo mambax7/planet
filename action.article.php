@@ -24,10 +24,11 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
 
 include __DIR__ . '/header.php';
 
-$art_id = (int)(isset($_GET['article']) ? $_GET['article'] : (isset($_POST['article']) ? $_POST['article'] : 0));
+$art_id = Request::getInt('article', Request::getInt('article', 0, 'POST'), 'GET');//(int)(isset($_GET['article']) ? $_GET['article'] : (isset($_POST['article']) ? $_POST['article'] : 0));
 if (empty($art_id)) {
     redirect_header('javascript:history.go(-1);', 1, planet_constant('MD_INVALID'));
 }
@@ -37,13 +38,13 @@ if (!$xoopsUser->isAdmin()) {
 include XOOPS_ROOT_PATH . '/header.php';
 include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
 
-$article_handler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
-$article_obj     = $article_handler->get($art_id);
+$articleHandler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
+$article_obj    = $articleHandler->get($art_id);
 
-$op = isset($_POST['op']) ? $_POST['op'] : '';
+$op = Request::getCmd('op', 'check', 'POST');//isset($_POST['op']) ? $_POST['op'] : '';
 
-if ($op === 'del' || !empty($_POST['del'])) {
-    $article_handler->delete($article_obj);
+if ($op === 'del' || !empty(Request::getString('del', '', 'POST'))) {
+    $articleHandler->delete($article_obj);
     $redirect = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php';
     $message  = planet_constant('MD_SAVED');
     redirect_header($redirect, 2, $message);
@@ -58,34 +59,29 @@ if ($op === 'del' || !empty($_POST['del'])) {
                  'art_author',
                  'art_content'
              ) as $tag) {
-        if (@$_POST[$tag] != $article_obj->getVar($tag)) {
-            $article_obj->setVar($tag, @$_POST[$tag]);
+        if (@Request::getString('tag', '', 'POST') != $article_obj->getVar($tag)) {
+            $article_obj->setVar($tag, @Request::getString('tag', '', 'POST'));
         }
     }
 
-    $art_id_new = $article_handler->insert($article_obj);
+    $art_id_new = $articleHandler->insert($article_obj);
     if (!$article_obj->getVar('art_id')) {
         $redirect = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php';
         $message  = planet_constant('MD_INSERTERROR');
     } else {
-        $redirect = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . ''
-                    . $article_obj->getVar('art_id');
+        $redirect = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $article_obj->getVar('art_id');
         $message  = planet_constant('MD_SAVED');
     }
     redirect_header($redirect, 2, $message);
 } else {
     require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
 
-    $form = new XoopsThemeForm(_EDIT, 'formarticle', xoops_getenv('PHP_SELF'));
+    $form = new XoopsThemeForm(_EDIT, 'formarticle', xoops_getenv('PHP_SELF'), 'post', true);
 
-    $form->addElement(new XoopsFormText(planet_constant('MD_TITLE'), 'art_title', 50, 255,
-                                        $article_obj->getVar('art_title', 'E')), true);
-    $form->addElement(new XoopsFormText(planet_constant('MD_LINK'), 'art_link', 50, 255,
-                                        $article_obj->getVar('art_link', 'E')), true);
-    $form->addElement(new XoopsFormText(planet_constant('MD_AUTHOR'), 'art_author', 80, 255,
-                                        $article_obj->getVar('art_author', 'E')));
-    $form->addElement(new XoopsFormTextArea(planet_constant('MD_CONTENT'), 'art_content',
-                                            $article_obj->getVar('art_content', 'E')), true);
+    $form->addElement(new XoopsFormText(planet_constant('MD_TITLE'), 'art_title', 50, 255, $article_obj->getVar('art_title', 'E')), true);
+    $form->addElement(new XoopsFormText(planet_constant('MD_LINK'), 'art_link', 50, 255, $article_obj->getVar('art_link', 'E')), true);
+    $form->addElement(new XoopsFormText(planet_constant('MD_AUTHOR'), 'art_author', 80, 255, $article_obj->getVar('art_author', 'E')));
+    $form->addElement(new XoopsFormTextArea(planet_constant('MD_CONTENT'), 'art_content', $article_obj->getVar('art_content', 'E')), true);
 
     $form->addElement(new XoopsFormHidden('article', $art_id));
     $form->addElement(new XoopsFormHidden('op', 'save'));
@@ -97,8 +93,7 @@ if ($op === 'del' || !empty($_POST['del'])) {
     $butt_del->setExtra("onClick='document.forms.formarticle.op.value=del'");
     $button_tray->addElement($butt_del);
     $butt_cancel = new XoopsFormButton('', 'cancel', _CANCEL, 'button');
-    $butt_cancel->setExtra("onclick='window.document.location=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname']
-                           . '/view.article.php' . URL_DELIMITER . '' . (int)$art_id . "\"'");
+    $butt_cancel->setExtra("onclick='window.document.location=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . (int)$art_id . "\"'");
     $button_tray->addElement($butt_cancel);
     $form->addElement($button_tray);
     $form->display();

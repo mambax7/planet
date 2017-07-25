@@ -12,35 +12,37 @@
  * @package     Frameworks::transfer ; module::planet
  */
 
+use Xmf\Request;
+
 include __DIR__ . '/header.php';
 
-if (planet_parse_args($args_num, $args, $args_str)) {
+if (PlanetUtility::planetParseArguments($args_num, $args, $args_str)) {
     $args['article'] = @$args_num[0];
     $args['op']      = @$args_str[0];
 }
 
-$article_id = (int)(empty($_GET['article']) ? (empty($_POST['article']) ? @$args['article'] : $_POST['article']) : $_GET['article']);
+$article_id = Request::getInt('article', Request::getInt('article', @$args['article'], 'POST'), 'GET');//(int)(empty($_GET['article']) ? (empty($_POST['article']) ? @$args['article'] : $_POST['article']) : $_GET['article']);
 
-$op = empty($_GET['op']) ? (empty($_POST['op']) ? @$args['op'] : $_POST['op']) : $_GET['op'];
+$op = Request::getString('op', Request::getString('op', @$args['op'], 'POST'), 'GET');//empty($_GET['op']) ? (empty($_POST['op']) ? @$args['op'] : $_POST['op']) : $_GET['op'];
 $op = strtolower(trim($op));
 
 if (empty($article_id)) {
-    if (empty($_SERVER['HTTP_REFERER'])) {
+    if (empty(Request::getUrl('HTTP_REFERER', '', 'SERVER'))) {
+        //$_SERVER['HTTP_REFERER']))
+
         include XOOPS_ROOT_PATH . '/header.php';
         xoops_error(_NOPERM);
         $xoopsOption['output_type'] = 'plain';
         include XOOPS_ROOT_PATH . '/footer.php';
         exit();
     } else {
-        $ref_parser = parse_url($_SERVER['HTTP_REFERER']);
-        $uri_parser = parse_url($_SERVER['REQUEST_URI']);
+        $ref_parser = parse_url(Request::getUrl('HTTP_REFERER', '', 'SERVER')); //$_SERVER['HTTP_REFERER']);
+        $uri_parser = parse_url(Request::getUrl('REQUEST_URI', '', 'SERVER'));// $_SERVER['REQUEST_URI']);
         if ((!empty($ref_parser['host']) && !empty($uri_parser['host']) && $uri_parser['host'] != $ref_parser['host'])
-            || ($ref_parser['path'] != $uri_parser['path'])
-        ) {
+            || ($ref_parser['path'] != $uri_parser['path'])) {
             include XOOPS_ROOT_PATH . '/header.php';
             include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
-            xoops_confirm(array(), 'javascript: window.close();', sprintf(planet_constant('MD_TRANSFER_DONE'), ''),
-                          _CLOSE, $_SERVER['HTTP_REFERER']);
+            xoops_confirm(array(), 'javascript: window.close();', sprintf(planet_constant('MD_TRANSFER_DONE'), ''), _CLOSE, Request::getUrl('HTTP_REFERER', '', 'SERVER'));
             $xoopsOption['output_type'] = 'plain';
             include XOOPS_ROOT_PATH . '/footer.php';
             exit();
@@ -54,8 +56,8 @@ if (empty($article_id)) {
     }
 }
 
-$article_handler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
-$article_obj     =& $article_handler->get($article_id);
+$articleHandler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
+$article_obj    = $articleHandler->get($article_id);
 
 // Display option form
 if (empty($op)) {
@@ -69,14 +71,13 @@ if (empty($op)) {
     $data['time']   = $article_obj->getTime('l');
     $data['image']  = '';
     $data['source'] = $article_obj->getVar('art_link');
-    $data['url']    = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . ''
-                      . $article_obj->getVar('art_id');
+    $data['url']    = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $article_obj->getVar('art_id');
     $data['author'] = $article_obj->getVar('art_author');
 
     switch ($op) {
 
         // Use title
-        case 'bookmark';
+        case 'bookmark':
             break;
 
         case 'print':

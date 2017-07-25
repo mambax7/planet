@@ -26,12 +26,12 @@
 // ------------------------------------------------------------------------ //
 
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
-include_once dirname(__DIR__) . '/include/vars.php';
-mod_loadFunctions('', $GLOBALS['moddirname']);
+require_once __DIR__ . '/../include/vars.php';
+//mod_loadFunctions('', $GLOBALS['moddirname']);
 
 /*** GENERAL USAGE *********************************************************
- * $xml_handler = xoops_getModuleHandler("xml", $xoopsModule->getVar("dirname"));
- * $xml = $xml_handler->create("RSS0.91");
+ * $xmlHandler = xoops_getModuleHandler("xml", $xoopsModule->getVar("dirname"));
+ * $xml = $xmlHandler->create("RSS0.91");
  * $xml->setVar("title", $title);
  * $xml->setVar("description", $description);
  * $xml->setVar("descriptionHtmlSyndicated", true);
@@ -60,7 +60,7 @@ mod_loadFunctions('', $GLOBALS['moddirname']);
  * $xml->setImage($image);
  * $xml->addItem($item);
  *
- * $xml_handler->display($xml);
+ * $xmlHandler->display($xml);
  */
 
 // your local timezone, set to "" to disable or for GMT
@@ -93,7 +93,8 @@ if (!class_exists('Xmlfeed')) {
          * Bxmlfeed constructor.
          * @param $version
          */
-        public function __construct($version) {
+        public function __construct($version)
+        {
             $this->filename = XOOPS_CACHE_PATH . '/feed.xml';
             $this->version  = $version;
         }
@@ -103,7 +104,8 @@ if (!class_exists('Xmlfeed')) {
          * @param      $val
          * @param bool $encoding
          */
-        public function setVar($var, $val, $encoding = false) {
+        public function setVar($var, $val, $encoding = false)
+        {
             if (!empty($encoding)) {
                 $val = $this->convert_encoding($val);
             }
@@ -114,7 +116,8 @@ if (!class_exists('Xmlfeed')) {
          * @param $val
          * @return array|mixed|string
          */
-        public function convert_encoding($val) {
+        public function convert_encoding($val)
+        {
             if (is_array($val)) {
                 foreach (array_keys($val) as $key) {
                     $val[$key] = $this->convert_encoding($val[$key]);
@@ -130,14 +133,16 @@ if (!class_exists('Xmlfeed')) {
          * @param $var
          * @return mixed
          */
-        public function getVar($var) {
+        public function getVar($var)
+        {
             return $this->$var;
         }
 
         /**
          * @param $img
          */
-        public function setImage(&$img) {
+        public function setImage(&$img)
+        {
             $image = new FeedImage();
             foreach ($img as $key => $val) {
                 $image->$key = $this->convert_encoding($val);
@@ -148,7 +153,8 @@ if (!class_exists('Xmlfeed')) {
         /**
          * @param $itm
          */
-        public function _addItem(&$itm) {
+        public function _addItem(&$itm)
+        {
             $item = new FeedItem();
             foreach ($itm as $key => $val) {
                 $item->$key = $this->convert_encoding($val);
@@ -159,7 +165,8 @@ if (!class_exists('Xmlfeed')) {
         /**
          * @param $items
          */
-        public function addItems(&$items) {
+        public function addItems(&$items)
+        {
             if (!is_array($items) || count($items) == 0) {
                 return;
             }
@@ -170,7 +177,7 @@ if (!class_exists('Xmlfeed')) {
     }
 }
 
-planet_parse_class('
+PlanetUtility::planetParseClass('
 class [CLASS_PREFIX]XmlHandler
 {
     public function &create($format = "RSS0.91")

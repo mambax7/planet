@@ -24,34 +24,35 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
 
 $xoopsOption['pagetype'] = 'search';
 include __DIR__ . '/header.php';
 $xoopsModule->loadLanguage('main');
-$config_handler    = xoops_getHandler('config');
-$xoopsConfigSearch =& $config_handler->getConfigsByCat(XOOPS_CONF_SEARCH);
+$configHandler     = xoops_getHandler('config');
+$xoopsConfigSearch = $configHandler->getConfigsByCat(XOOPS_CONF_SEARCH);
 if (empty($xoopsConfigSearch['enable_search'])) {
     redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php', 2, planet_constant('MD_NOACCESS'));
 }
 
 $xoopsConfig['module_cache'][$xoopsModule->getVar('mid')] = 0;
-$xoopsOption['template_main']                             = planet_getTemplate('search');
+$xoopsOption['template_main']                             = PlanetUtility::planetGetTemplate('search');
 include XOOPS_ROOT_PATH . '/header.php';
 include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
 
-include_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/include/search.inc.php';
+require_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/include/search.inc.php';
 $limit = $xoopsModuleConfig['articles_perpage'];
 
 $queries  = array();
-$andor    = isset($_POST['andor']) ? $_POST['andor'] : (isset($_GET['andor']) ? $_GET['andor'] : '');
-$start    = isset($_GET['start']) ? $_GET['start'] : 0;
-$category = (int)(isset($_POST['category']) ? $_POST['category'] : (isset($_GET['category']) ? $_GET['category'] : null));
-$blog     = (int)(isset($_POST['blog']) ? $_POST['blog'] : (isset($_GET['blog']) ? $_GET['blog'] : null));
-$uid      = (int)(isset($_POST['uid']) ? $_POST['uid'] : (isset($_GET['uid']) ? $_GET['uid'] : null));
-$searchin = isset($_POST['searchin']) ? $_POST['searchin'] : (isset($_GET['searchin']) ? explode('|',
-                                                                                                 $_GET['searchin']) : array());
-$sortby   = isset($_POST['sortby']) ? $_POST['sortby'] : (isset($_GET['sortby']) ? $_GET['sortby'] : null);
-$term     = isset($_POST['term']) ? $_POST['term'] : (isset($_GET['term']) ? $_GET['term'] : '');
+$andor    = Request::getString('andor', Request::getString('andor', '', 'GET'), 'POST');//isset($_POST['andor']) ? $_POST['andor'] : (isset($_GET['andor']) ? $_GET['andor'] : '');
+$start    = Request::getInt('start', 0, 'GET');//isset($_GET['start']) ? $_GET['start'] : 0;
+$category = Request::getInt('category', Request::getInt('category', 0, 'GET'), 'POST'); //(int)(isset($_POST['category']) ? $_POST['category'] : (isset($_GET['category']) ? $_GET['category'] : null));
+$blog     = Request::getInt('blog', Request::getInt('blog', 0, 'GET'), 'POST');//(int)(isset($_POST['blog']) ? $_POST['blog'] : (isset($_GET['blog']) ? $_GET['blog'] : null));
+$uid      = Request::getInt('uid', Request::getInt('uid', 0, 'GET'), 'POST');//(int)(isset($_POST['uid']) ? $_POST['uid'] : (isset($_GET['uid']) ? $_GET['uid'] : null));
+$searchin = Request::getArray('searchin', 0 !== count(Request::getArray('searchin', array(), 'GET')) ? explode('|', Request::getArray('searchin', array(), 'GET')) : array(),
+                              'POST'); //isset($_POST['searchin']) ? $_POST['searchin'] : (isset($_GET['searchin']) ? explode('|', $_GET['searchin']) : array());
+$sortby   = Request::getString('sortby', Request::getString('sortby', null, 'GET'), 'POST');//isset($_POST['sortby']) ? $_POST['sortby'] : (isset($_GET['sortby']) ? $_GET['sortby'] : null);
+$term     = Request::getString('term', Request::getString('term', '', 'GET'), 'POST');//isset($_POST['term']) ? $_POST['term'] : (isset($_GET['term']) ? $_GET['term'] : '');
 
 $andor  = in_array(strtoupper($andor), array('OR', 'AND', 'EXACT')) ? strtoupper($andor) : 'OR';
 $sortby = in_array(strtolower($sortby), array(
@@ -65,7 +66,7 @@ $sortby = in_array(strtolower($sortby), array(
     'b.blog_time'
 )) ? strtolower($sortby) : '';
 
-if (!(empty($_POST['submit']) && empty($_GET['term']))) {
+if (!(empty(Request::getString('submit', '', 'POST')) && empty(Request::getString('term', '', 'GET')))) {
     $next_search['category'] = $category;
     $next_search['blog']     = $blog;
     $next_search['uid']      = $uid;
@@ -86,13 +87,11 @@ if (!(empty($_POST['submit']) && empty($_GET['term']))) {
             }
         }
         if (count($queries) == 0) {
-            redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/search.php', 2,
-                            sprintf(_SR_KEYTOOSHORT, $xoopsConfigSearch['keyword_min']));
+            redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/search.php', 2, sprintf(_SR_KEYTOOSHORT, $xoopsConfigSearch['keyword_min']));
         }
     } else {
         if (strlen($query) < $xoopsConfigSearch['keyword_min']) {
-            redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/search.php', 2,
-                            sprintf(_SR_KEYTOOSHORT, $xoopsConfigSearch['keyword_min']));
+            redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/search.php', 2, sprintf(_SR_KEYTOOSHORT, $xoopsConfigSearch['keyword_min']));
         }
         $queries = array($myts->addSlashes($query));
     }
@@ -188,32 +187,32 @@ $searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"title\
 if (in_array('title', $searchin)) {
     $searchin_select .= ' checked';
 }
-$searchin_select .= ' />' . planet_constant('MD_TITLE') . '&nbsp;&nbsp;';
+$searchin_select .= '>' . planet_constant('MD_TITLE') . '&nbsp;&nbsp;';
 $searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"text\"";
 if (in_array('text', $searchin)) {
     $searchin_select .= ' checked';
 }
-$searchin_select .= ' />' . planet_constant('MD_BODY') . '&nbsp;&nbsp;||&nbsp;&nbsp;';
+$searchin_select .= '>' . planet_constant('MD_BODY') . '&nbsp;&nbsp;||&nbsp;&nbsp;';
 $searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"blog\"";
 if (in_array('blog', $searchin)) {
     $searchin_select .= ' checked';
 }
-$searchin_select .= ' />' . planet_constant('MD_BLOG') . '&nbsp;&nbsp;';
+$searchin_select .= '>' . planet_constant('MD_BLOG') . '&nbsp;&nbsp;';
 $searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"feed\"";
 if (in_array('feed', $searchin)) {
     $searchin_select .= ' checked';
 }
-$searchin_select .= ' />' . planet_constant('MD_FEED') . '&nbsp;&nbsp;';
+$searchin_select .= '>' . planet_constant('MD_FEED') . '&nbsp;&nbsp;';
 $searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"desc\"";
 if (in_array('desc', $searchin)) {
     $searchin_select .= ' checked';
 }
-$searchin_select .= ' />' . planet_constant('MD_DESC') . '&nbsp;&nbsp;';
+$searchin_select .= '>' . planet_constant('MD_DESC') . '&nbsp;&nbsp;';
 $searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"all\"";
 if (empty($searchin)) {
     $searchin_select .= ' checked';
 }
-$searchin_select .= ' />' . _ALL . '&nbsp;&nbsp;';
+$searchin_select .= '>' . _ALL . '&nbsp;&nbsp;';
 
 /* sortby */
 $sortby_select = "<select name=\"sortby\">";

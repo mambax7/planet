@@ -27,28 +27,20 @@
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
 
 require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
-$category_handler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
+$categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
 
 $form = new XoopsThemeForm(_EDIT, 'formblog', xoops_getenv('PHP_SELF'), 'POST', true);
 
-$form->addElement(new XoopsFormText(planet_constant('MD_FEED'), 'blog_feed', 50, 255,
-                                    $blog_obj->getVar('blog_feed', 'E')), true);
-$form->addElement(new XoopsFormText(planet_constant('MD_TITLE'), 'blog_title', 50, 255,
-                                    $blog_obj->getVar('blog_title', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_DESC'), 'blog_desc', 50, 255,
-                                    $blog_obj->getVar('blog_desc', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_LINK'), 'blog_link', 50, 255,
-                                    $blog_obj->getVar('blog_link', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_LANGUAGE'), 'blog_language', 50, 255,
-                                    $blog_obj->getVar('blog_language', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_CHARSET'), 'blog_charset', 50, 255,
-                                    $blog_obj->getVar('blog_charset', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_TRACKBACKPATTERN'), 'blog_trackback', 80, 255,
-                                    $blog_obj->getVar('blog_trackback', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_IMAGE'), 'blog_image', 50, 255,
-                                    $blog_obj->getVar('blog_image', 'E')));
+$form->addElement(new XoopsFormText(planet_constant('MD_FEED'), 'blog_feed', 50, 255, $blog_obj->getVar('blog_feed', 'E')), true);
+$form->addElement(new XoopsFormText(planet_constant('MD_TITLE'), 'blog_title', 50, 255, $blog_obj->getVar('blog_title', 'E')));
+$form->addElement(new XoopsFormText(planet_constant('MD_DESC'), 'blog_desc', 50, 255, $blog_obj->getVar('blog_desc', 'E')));
+$form->addElement(new XoopsFormText(planet_constant('MD_LINK'), 'blog_link', 50, 255, $blog_obj->getVar('blog_link', 'E')));
+$form->addElement(new XoopsFormText(planet_constant('MD_LANGUAGE'), 'blog_language', 50, 255, $blog_obj->getVar('blog_language', 'E')));
+$form->addElement(new XoopsFormText(planet_constant('MD_CHARSET'), 'blog_charset', 50, 255, $blog_obj->getVar('blog_charset', 'E')));
+$form->addElement(new XoopsFormText(planet_constant('MD_TRACKBACKPATTERN'), 'blog_trackback', 80, 255, $blog_obj->getVar('blog_trackback', 'E')));
+$form->addElement(new XoopsFormText(planet_constant('MD_IMAGE'), 'blog_image', 50, 255, $blog_obj->getVar('blog_image', 'E')));
 
-$categories_option = $category_handler->getList();
+$categories_option = $categoryHandler->getList();
 natsort($categories_option);
 if (count($categories_option)) {
     $cat_option_tray = new XoopsFormElementTray(planet_constant('MD_CATEGORY'), '<br>');
@@ -84,8 +76,7 @@ $button_tray->addElement($butt_fetch);
 $butt_save = new XoopsFormButton('', 'submit', _SUBMIT, 'submit');
 $button_tray->addElement($butt_save);
 $butt_cancel = new XoopsFormButton('', 'cancel', _CANCEL, 'button');
-$butt_cancel->setExtra("onclick='window.document.location=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname']
-                       . '/index.php' . URL_DELIMITER . 'b' . (int)$blog_id . "\"'");
+$butt_cancel->setExtra("onclick='window.document.location=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . (int)$blog_id . "\"'");
 $button_tray->addElement($butt_cancel);
 $form->addElement($button_tray);
 $form->display();

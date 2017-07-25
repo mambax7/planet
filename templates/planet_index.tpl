@@ -50,7 +50,7 @@
     </div>
 <{/if}>
 
-<br style="clear:both"/>
+<br style="clear:both;">
 
 <{foreach item=article from=$articles}>
     <div class="itemHead">
@@ -77,7 +77,7 @@
             "><{php}>echo planet_constant("MD_COMMENTS")<{/php}> (<{$article.comments}>)</a> |
             <a href="#top" title="Top">T</a> : <a href="#page_footer" title="Bottom">B</a>
         </div>
-        <br style="clear:both"/>
+        <br style="clear:both;">
     <{/if}>
 <{/foreach}>
 
@@ -85,7 +85,7 @@
     <div id="pagenav">
         <{$pagenav}>
     </div>
-    <br style="clear:both"/>
+    <br style="clear:both;">
 <{/if}>
 
 <div id="page_footer">
@@ -110,15 +110,15 @@
         <br><a href="https://xoops.org" target="_blank" title="Powered by Xoops Planet v<{$version}>"><img
                     src="<{$xoops_url}>/modules/planet/assets/images/planet.png"
                     alt="Powered by Xoops Planet v<{$version}>"
-                    title="Powered by Xoops Planet v<{$version}>"/></a>
+                    title="Powered by Xoops Planet v<{$version}>"></a>
     </div>
 </div>
-<br style="clear:both"/>
+<br style="clear:both;">
 
 <{if $xoops_notification}>
     <{include file='db:system_notification_select.tpl'}>
 <{/if}>
 
 <{if $do_pseudocron}>
-    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/update.php" alt="" width="1px" height="1px"/>
+    <img src="<{$xoops_url}>/modules/<{$xoops_dirname}>/update.php" alt="" width="1px" height="1px">
 <{/if}>

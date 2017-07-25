@@ -14,7 +14,7 @@
 
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
 
-if (!@include_once XOOPS_ROOT_PATH . '/Frameworks/transfer/transfer.php') {
+if (!@require_once XOOPS_ROOT_PATH . '/Frameworks/transfer/transfer.php') {
     return null;
 }
 
@@ -31,7 +31,8 @@ class ModuleTransferHandler extends TransferHandler
     /**
      * ModuleTransferHandler constructor.
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
     }
 
@@ -42,7 +43,8 @@ class ModuleTransferHandler extends TransferHandler
      * @param boolean $sort To sort the list upon 'level'
      *                      return  array   $list
      */
-    public function &getList($skip = array(), $sort = true) {
+    public function &getList($skip = array(), $sort = true)
+    {
         $list = parent::getList($skip, $sort);
 
         return $list;
@@ -57,7 +59,8 @@ class ModuleTransferHandler extends TransferHandler
      * @param $data
      * @return
      */
-    public function do_transfer($item, &$data) {
+    public function do_transfer($item, &$data)
+    {
         $ret = parent::do_transfer($item, $data);
 
         return $ret;

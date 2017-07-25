@@ -27,8 +27,8 @@
 include __DIR__ . '/header.php';
 $com_itemid = isset($_GET['com_itemid']) ? (int)$_GET['com_itemid'] : 0;
 if ($com_itemid > 0) {
-    $article_handler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
-    $article_obj     =& $article_handler->get($com_itemid);
-    $com_replytitle  = $article_obj->getVar('art_title');
-    include_once XOOPS_ROOT_PATH . '/include/comment_new.php';
+    $articleHandler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
+    $article_obj    = $articleHandler->get($com_itemid);
+    $com_replytitle = $article_obj->getVar('art_title');
+    require_once XOOPS_ROOT_PATH . '/include/comment_new.php';
 }

@@ -28,9 +28,9 @@
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
 
 include __DIR__ . '/vars.php';
-mod_loadFunctions('', $GLOBALS['moddirname']);
+//mod_loadFunctions('', $GLOBALS['moddirname']);
 
-planet_parse_function('
+PlanetUtility::planetParseFunction('
 function &[VAR_PREFIX]_search($queryarray, $andor, $limit, $offset,
     $uid = 0, $category = 0, $blog = 0,
     $sortby = "", $searchin = "", $extra = "")
@@ -113,13 +113,13 @@ function &[VAR_PREFIX]_search($queryarray, $andor, $limit, $offset,
     $result = $xoopsDB->query($sql,$limit,$offset);
 
     $ret = array();
-    $article_handler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
-    $blog_handler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
+    $articleHandler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
+    $blogHandler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
      while ($myrow = $xoopsDB->fetchArray($result)) {
         if(empty($isArticle)):
-        $object = $blog_handler->create(false);
+        $object = $blogHandler->create(false);
         else:
-        $object = $article_handler->create(false);
+        $object = $articleHandler->create(false);
         endif;
         $object->assignVars($myrow);
 

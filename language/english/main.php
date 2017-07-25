@@ -27,7 +27,7 @@ define($GLOBALS['VAR_PREFIXU'] . '_MD_SUMMARY', 'Summary');
 define($GLOBALS['VAR_PREFIXU'] . '_MD_BODY', 'Text body');
 define($GLOBALS['VAR_PREFIXU'] . '_MD_SORTBY', 'Sort');
 
-define($GLOBALS['VAR_PREFIXU'] . '_MD_SAVED', 'Data saved');;
+define($GLOBALS['VAR_PREFIXU'] . '_MD_SAVED', 'Data saved');
 //define($GLOBALS["VAR_PREFIXU"]."_MD_SUBMITTED","Submitted");;
 
 define($GLOBALS['VAR_PREFIXU'] . '_MD_ALREADYBOOKMARKED', 'You have already bookmarked the blog');

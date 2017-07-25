@@ -30,8 +30,8 @@
  */
 
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
-include_once dirname(__DIR__) . '/include/vars.php';
-mod_loadFunctions('', $GLOBALS['moddirname']);
+require_once __DIR__ . '/../include/vars.php';
+//mod_loadFunctions('', $GLOBALS['moddirname']);
 
 /**
  * Article
@@ -54,7 +54,8 @@ if (!class_exists('Barticle')):
          *
          * @param int $id ID of the article
          */
-        public function __construct($id = null) {
+        public function __construct($id = null)
+        {
             //            $this->ArtObject();
             $this->table = planet_DB_prefix('article');
             $this->initVar('art_id', XOBJ_DTYPE_INT, null, false);
@@ -83,7 +84,8 @@ if (!class_exists('Barticle')):
          *
          * @return string
          */
-        public function getTitle() {
+        public function getTitle()
+        {
             $title = $this->getVar('art_title');
 
             return $title;
@@ -97,12 +99,13 @@ if (!class_exists('Barticle')):
          * @param  string $format format of time
          * @return string
          */
-        public function getTime($format = 'c') {
+        public function getTime($format = 'c')
+        {
             $time = $this->getVar('art_time');
             if (empty($time)) {
                 $time = time();
             }
-            $time = planet_formatTimestamp($time, $format);
+            $time = PlanetUtility::planetFormatTimestamp($time, $format);
 
             return $time;
         }
@@ -113,9 +116,10 @@ if (!class_exists('Barticle')):
          * @param int $length
          * @return string $summary
          */
-        public function &getSummary($length = 0) {
+        public function &getSummary($length = 0)
+        {
             $content = $this->getVar('art_content');
-            $summary =& planet_html2text($content);
+            $summary =& PlanetUtility::planetHtml2text($content);
             if (empty($length)) {
                 $length = $GLOBALS['xoopsModuleConfig']['display_summary'];
             }
@@ -132,7 +136,8 @@ if (!class_exists('Barticle')):
          * @param  int $decimals decimal length
          * @return numeric
          */
-        public function getRatingAverage($decimals = 1) {
+        public function getRatingAverage($decimals = 1)
+        {
             $ave = 3;
             if ($this->getVar('art_rates')) {
                 $ave = number_format($this->getVar('art_rating') / $this->getVar('art_rates'), $decimals);
@@ -144,7 +149,8 @@ if (!class_exists('Barticle')):
         /**
          * @return numeric
          */
-        public function getStar() {
+        public function getStar()
+        {
             return $this->getRatingAverage(0);
         }
     }
@@ -162,7 +168,7 @@ endif;
  * @param CLASS_PREFIX variable prefix for the class name
  */
 
-planet_parse_class('
+PlanetUtility::planetParseClass('
 class [CLASS_PREFIX]ArticleHandler extends XoopsPersistableObjectHandler
 {
     /**
@@ -438,8 +444,8 @@ class [CLASS_PREFIX]ArticleHandler extends XoopsPersistableObjectHandler
      */
     public function delete(XoopsObject $article, $force = true)
     {
-        $rate_handler = xoops_getModuleHandler("rate", $GLOBALS["moddirname"]);
-        $rate_handler->deleteAll(new Criteria("art_id", $article->getVar("art_id")));
+        $rateHandler = xoops_getModuleHandler("rate", $GLOBALS["moddirname"]);
+        $rateHandler->deleteAll(new Criteria("art_id", $article->getVar("art_id")));
 
         xoops_comment_delete($GLOBALS["xoopsModule"]->getVar("mid"), $article->getVar("art_id"));
         xoops_notification_deletebyitem($GLOBALS["xoopsModule"]->getVar("mid"), "article", $article->getVar("art_id"));

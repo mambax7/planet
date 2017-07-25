@@ -88,3 +88,6 @@ define($GLOBALS['VAR_PREFIXU'] . '_AM_ABOUT_CHANGELOG', 'Changelog');
 define($GLOBALS['VAR_PREFIXU'] . '_AM_BLOGEXISTS', 'A blog with the feed already exists');
 
 define($GLOBALS['VAR_PREFIXU'] . '_AM_ACTIONS', 'Actions');
+
+//2.11
+define($GLOBALS['VAR_PREFIXU'] . '_AM_ACTIVE', 'Active');

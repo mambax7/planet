@@ -30,14 +30,16 @@
 include __DIR__ . '/include/vars.php';
 
 $modversion                 = array(
-    'name'        => planet_constant('MI_NAME'),
-    'version'     => 2.10,
-    'description' => planet_constant('MI_DESC'),
-    'credits'     => 'XOOPS Project',
-    'image'       => 'assets/images/logoModule.png',
-    'dirname'     => $GLOBALS['moddirname'],
-    'author'      => 'D.J. (phppp)',
-    'help'        => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/readme.html'
+    'name'          => planet_constant('MI_NAME'),
+    'version'       => 2.10,
+    'module_status' => 'Final',
+    'release_date'  => '2016/08/01',
+    'description'   => planet_constant('MI_DESC'),
+    'author'        => 'D.J. (phppp)',
+    'credits'       => 'XOOPS Project',
+    'image'         => 'assets/images/logoModule.png',
+    'dirname'       => $GLOBALS['moddirname'],
+    'help'          => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/readme.html'
 );
 $modversion['help']         = 'page=help';
 $modversion['license']      = 'GNU see LICENSE';
@@ -45,21 +47,17 @@ $modversion['license_file'] = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] .
 $modversion['author_word']  = '';
 $modversion['module_team']  = '';
 
-$modversion['dirmoduleadmin'] = '/Frameworks/moduleclasses/moduleadmin';
-$modversion['icons16']        = '../../Frameworks/moduleclasses/icons/16';
-$modversion['icons32']        = '../../Frameworks/moduleclasses/icons/32';
-//about
-$modversion['module_status']       = 'Final';
-$modversion['release_date']        = '2016/08/01';
+//$modversion['dirmoduleadmin']      = '/Frameworks/moduleclasses/moduleadmin';
+//$modversion['icons16']             = '../../Frameworks/moduleclasses/icons/16';
+//$modversion['icons32']             = '../../Frameworks/moduleclasses/icons/32';
+$modversion['modicons16']          = 'assets/images/icons/16';
+$modversion['modicons32']          = 'assets/images/icons/32';
 $modversion['module_website_url']  = 'www.xoops.org';
 $modversion['module_website_name'] = 'XOOPS';
 $modversion['min_php']             = '5.5';
-$modversion['min_xoops']           = '2.5.8';
+$modversion['min_xoops']           = '2.5.9';
 $modversion['min_admin']           = '1.2';
-$modversion['min_db']              = array(
-    'mysql'  => '5.0.7',
-    'mysqli' => '5.0.7'
-);
+$modversion['min_db']              = array('mysql' => '5.5');
 
 // database tables
 $modversion['sqlfile']['mysql'] = 'sql/mysql.sql';

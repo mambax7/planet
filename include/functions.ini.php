@@ -42,7 +42,8 @@ if (!defined('PLANET_FUNCTIONS_INI')):
      * @param $name
      * @return mixed
      */
-    function planet_constant($name) {
+    function planet_constant($name)
+    {
         return mod_constant($name);
     }
 
@@ -51,39 +52,42 @@ if (!defined('PLANET_FUNCTIONS_INI')):
      * @param bool $isRel
      * @return string
      */
-    function planet_DB_prefix($name, $isRel = false) {
+    function planet_DB_prefix($name, $isRel = false)
+    {
         return mod_DB_prefix($name, $isRel);
     }
 
     /**
      * @return bool
      */
-    function planet_load_object() {
+    function planet_load_object()
+    {
         return load_object();
     }
 
     /**
      * @return array|mixed
      */
-    function planet_load_config() {
+    function planet_load_config()
+    {
         static $moduleConfig;
         if (isset($moduleConfig)) {
             return $moduleConfig;
         }
 
         if (is_object($GLOBALS['xoopsModule'])
-            && $GLOBALS['xoopsModule']->getVar('dirname') == $GLOBALS['moddirname']
-        ) {
+            && $GLOBALS['xoopsModule']->getVar('dirname') == $GLOBALS['moddirname']) {
             if (isset($GLOBALS['xoopsModuleConfig'])) {
                 $moduleConfig = $GLOBALS['xoopsModuleConfig'];
             }
         } else {
+            /** @var XoopsModuleHandler $moduleHandler */
             $moduleHandler = xoops_getHandler('module');
             $module        = $moduleHandler->getByDirname($GLOBALS['moddirname']);
 
-            $config_handler = xoops_getHandler('config');
-            $criteria       = new CriteriaCompo(new Criteria('conf_modid', $module->getVar('mid')));
-            $configs        = $config_handler->getConfigs($criteria);
+            $configHandler = xoops_getHandler('config');
+            $criteria      = new CriteriaCompo(new Criteria('conf_modid', $module->getVar('mid')));
+            $configs       = $configHandler->getConfigs($criteria);
             foreach (array_keys($configs) as $i) {
                 $moduleConfig[$configs[$i]->getVar('conf_name')] = $configs[$i]->getConfValueForOutput();
             }
@@ -96,7 +100,8 @@ if (!defined('PLANET_FUNCTIONS_INI')):
         return $moduleConfig;
     }
 
-    function planet_define_url_delimiter() {
+    function planet_define_url_delimiter()
+    {
         if (defined('URL_DELIMITER')) {
             if (!in_array(URL_DELIMITER, array('?', '/'))) {
                 die('Exit on security');

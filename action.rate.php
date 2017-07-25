@@ -24,24 +24,25 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
 
 include __DIR__ . '/header.php';
 
-$rate       = (int)(!empty($_POST['rate']) ? $_POST['rate'] : (!empty($_GET['rate']) ? $_GET['rate'] : 0));
-$article_id = (int)(!empty($_POST['article']) ? $_POST['article'] : (!empty($_GET['article']) ? $_GET['article'] : 0));
-$blog_id    = (int)(!empty($_POST['blog']) ? $_POST['blog'] : (!empty($_GET['blog']) ? $_GET['blog'] : 0));
+$rate       = Request::getInt('rate', Request::getInt('rate', 0, 'POST'), 'GET'); //(int)(!empty($_POST['rate']) ? $_POST['rate'] : (!empty($_GET['rate']) ? $_GET['rate'] : 0));
+$article_id = Request::getInt('article', Request::getInt('article', 0, 'POST'), 'GET'); //(int)(!empty($_POST['article']) ? $_POST['article'] : (!empty($_GET['article']) ? $_GET['article'] : 0));
+$blog_id    = Request::getInt('blog', Request::getInt('blog', 0, 'POST'), 'GET'); //(int)(!empty($_POST['blog']) ? $_POST['blog'] : (!empty($_GET['blog']) ? $_GET['blog'] : 0));
 
 if (empty($article_id) && empty($blog_id)) {
     redirect_header('javascript:history.go(-1);', 1, planet_constant('MD_INVALID'));
 }
 
-$article_handler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
-$blog_handler    = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
+$articleHandler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
+$blogHandler    = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
 if (empty($xoopsModuleConfig['anonymous_rate']) && !is_object($xoopsUser)) {
     $message = planet_constant('MD_NOACCESS');
 } else {
     $uid = is_object($xoopsUser) ? $xoopsUser->getVar('uid') : 0;
-    $ip  = planet_getIP();
+    $ip  = PlanetUtility::planetGetIP();
     if ($article_id > 0) {
         $criteria = new CriteriaCompo(new Criteria('art_id', $article_id));
     } else {
@@ -53,11 +54,11 @@ if (empty($xoopsModuleConfig['anonymous_rate']) && !is_object($xoopsUser)) {
         $criteria->add(new Criteria('rate_ip', $ip));
         $criteria->add(new Criteria('rate_time', time() - 24 * 3600, '>'));
     }
-    $rate_handler = xoops_getModuleHandler('rate', $GLOBALS['moddirname']);
-    if ($count = $rate_handler->getCount($criteria)) {
+    $rateHandler = xoops_getModuleHandler('rate', $GLOBALS['moddirname']);
+    if ($count = $rateHandler->getCount($criteria)) {
         $message = planet_constant('MD_ALREADYRATED');
     } else {
-        $rate_obj =& $rate_handler->create();
+        $rate_obj = $rateHandler->create();
         if ($article_id > 0) {
             $rate_obj->setVar('art_id', $article_id);
         } else {
@@ -67,28 +68,26 @@ if (empty($xoopsModuleConfig['anonymous_rate']) && !is_object($xoopsUser)) {
         $rate_obj->setVar('rate_ip', $ip);
         $rate_obj->setVar('rate_rating', $rate);
         $rate_obj->setVar('rate_time', time());
-        if (!$rate_id = $rate_handler->insert($rate_obj, true)) {
+        if (!$rate_id = $rateHandler->insert($rate_obj, true)) {
             redirect_header('javascript:history.go(-1);', 1, planet_constant('MD_NOTSAVED'));
         }
         if ($article_id > 0) {
-            $article_obj =& $article_handler->get($article_id);
+            $article_obj = $articleHandler->get($article_id);
             $article_obj->setVar('art_rating', $article_obj->getVar('art_rating') + $rate);
             $article_obj->setVar('art_rates', $article_obj->getVar('art_rates') + 1);
-            $article_handler->insert($article_obj, true);
+            $articleHandler->insert($article_obj, true);
         } else {
-            $blog_obj =& $blog_handler->get($blog_id);
+            $blog_obj = $blogHandler->get($blog_id);
             $blog_obj->setVar('blog_rating', $blog_obj->getVar('blog_rating') + $rate);
             $blog_obj->setVar('blog_rates', $blog_obj->getVar('blog_rates') + 1);
-            $blog_handler->insert($blog_obj, true);
+            $blogHandler->insert($blog_obj, true);
         }
         $message = planet_constant('MD_ACTIONDONE');
     }
 }
 if ($article_id > 0) {
-    redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . ''
-                    . $article_id, 2, $message);
+    redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $article_id, 2, $message);
 } else {
-    redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $blog_id, 2,
-                    $message);
+    redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $blog_id, 2, $message);
 }
 include __DIR__ . '/footer.php';

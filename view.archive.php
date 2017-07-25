@@ -24,28 +24,30 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
+
 include __DIR__ . '/header.php';
 
-if (planet_parse_args($args_num, $args, $args_str)) {
+if (PlanetUtility::planetParseArguments($args_num, $args, $args_str)) {
     $args['year']  = @$args_num[0];
     $args['month'] = @$args_num[1];
     $args['day']   = @$args_num[2];
 }
 
-$day     = (int)(empty($_GET['day']) ? @$args['day'] : $_GET['day']);
-$year    = (int)(empty($_GET['year']) ? @$args['year'] : $_GET['year']);
-$month   = (int)(empty($_GET['month']) ? @$args['month'] : $_GET['month']);
-$blog_id = (int)(empty($_GET['blog']) ? @$args['blog'] : $_GET['blog']);
-$start   = (int)(empty($_GET['start']) ? @$args['start'] : $_GET['start']);
+$day     = Request::getInt('day', @$args['day'], 'GET'); //(int)(empty($_GET['day']) ? @$args['day'] : $_GET['day']);
+$year    = Request::getInt('year', @$args['year'], 'GET'); //(int)(empty($_GET['year']) ? @$args['year'] : $_GET['year']);
+$month   = Request::getInt('month', @$args['month'], 'GET'); //(int)(empty($_GET['month']) ? @$args['month'] : $_GET['month']);
+$blog_id = Request::getInt('blog', @$args['blog'], 'GET'); //(int)(empty($_GET['blog']) ? @$args['blog'] : $_GET['blog']);
+$start   = Request::getInt('start', @$args['start'], 'GET'); //(int)(empty($_GET['start']) ? @$args['start'] : $_GET['start']);
 
 $page['title'] = planet_constant('MD_ACHIVE');
 
-$article_handler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
-$blog_handler    = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
+$articleHandler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
+$blogHandler    = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
 
 $xoopsOption['xoops_pagetitle'] = $xoopsModule->getVar('name') . ' - ' . planet_constant('MD_ACHIVE');
-$xoopsOption['template_main']   = planet_getTemplate('archive');
-include_once XOOPS_ROOT_PATH . '/header.php';
+$xoopsOption['template_main']   = PlanetUtility::planetGetTemplate('archive');
+require_once XOOPS_ROOT_PATH . '/header.php';
 include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
 
 $year = empty($year) ? date('Y') : $year;
@@ -79,8 +81,8 @@ if ($month) {
 $criteria->setStart($start);
 $criteria->setLimit($xoopsModuleConfig['articles_perpage']);
 
-$articles_obj   =& $article_handler->getAll($criteria, array('uid', 'art_title', 'art_time', 'blog_id', 'art_content'));
-$articles_count = $article_handler->getCount($criteria);
+$articles_obj   = $articleHandler->getAll($criteria, array('uid', 'art_title', 'art_time', 'blog_id', 'art_content'));
+$articles_count = $articleHandler->getCount($criteria);
 
 $articles = array();
 $blogs_id = array();
@@ -97,19 +99,17 @@ foreach ($articles_obj as $id => $article) {
     unset($_article);
 }
 $criteria_blog = new Criteria('blog_id', '(' . implode(',', array_keys($blog_array)) . ')', 'IN');
-$blogs         = $blog_handler->getList($criteria_blog);
+$blogs         = $blogHandler->getList($criteria_blog);
 foreach (array_keys($articles) as $key) {
     $articles[$key]['blog']['title'] = $blogs[$articles[$key]['blog']['id']];
 }
 if ($blog_id > 0) {
-    $page['blog'] = $blogs[$blog_id];;
+    $page['blog'] = $blogs[$blog_id];
 }
 
 if ($articles_count > $xoopsModuleConfig['articles_perpage']) {
     include XOOPS_ROOT_PATH . '/class/pagenav.php';
-    $nav     = new XoopsPageNav($articles_count, $xoopsModuleConfig['articles_perpage'], $start, 'start',
-                                'month=' . $month . '&amp;day=' . $day . '&amp;year=' . $year . '&amp;blog='
-                                . (int)$blog_id);
+    $nav     = new XoopsPageNav($articles_count, $xoopsModuleConfig['articles_perpage'], $start, 'start', 'month=' . $month . '&amp;day=' . $day . '&amp;year=' . $year . '&amp;blog=' . (int)$blog_id);
     $pagenav = $nav->renderNav(4);
 } else {
     $pagenav = '';
@@ -137,19 +137,16 @@ if (empty($start)) {
         while ($myrow = $xoopsDB->fetchArray($result)) {
             $months[] = array(
                 'title' => planet_constant('MD_MONTH_' . (int)$myrow['mon']) . ' (' . (int)$myrow['count'] . ')',
-                'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . ''
-                           . $year . '/' . $myrow['mon'] . '/b' . $blog_id
+                'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . $year . '/' . $myrow['mon'] . '/b' . $blog_id
             );
         }
         $timenav['prev'] = array(
-            'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . ''
-                       . ($year - 1) . '/b' . $blog_id,
+            'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . ($year - 1) . '/b' . $blog_id,
             'title' => sprintf(planet_constant('MD_TIME_Y'), $year - 1)
         );
         if ($year < date('Y')) {
             $timenav['next'] = array(
-                'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . ''
-                           . ($year + 1) . '/b' . $blog_id,
+                'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . ($year + 1) . '/b' . $blog_id,
                 'title' => sprintf(planet_constant('MD_TIME_Y'), $year + 1)
             );
         }
@@ -173,8 +170,7 @@ if (empty($start)) {
             }
             $days[$i] = array(
                 'title' => $days[$i]['count'],
-                'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . ''
-                           . $year . '/' . $month . '/' . $i . '/b' . $blog_id
+                'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . $year . '/' . $month . '/' . $i . '/b' . $blog_id
             );
         }
         $calendar   = planet_getCalendar($year, $month, $days);
@@ -190,14 +186,12 @@ if (empty($start)) {
             $_year     = $year - 1;
         }
         $timenav['prev'] = array(
-            'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . ''
-                       . $_year . '/' . $month_prev . '/b' . $blog_id,
+            'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . $_year . '/' . $month_prev . '/b' . $blog_id,
             'title' => planet_constant('MD_MONTH_' . $month_prev)
         );
         if ($year < date('Y') || $month < date('n')) {
             $timenav['next'] = array(
-                'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . ''
-                           . $_year . '/' . $month_next . '/b' . $blog_id,
+                'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . $_year . '/' . $month_next . '/b' . $blog_id,
                 'title' => planet_constant('MD_MONTH_' . $month_next)
             );
         }
@@ -218,7 +212,7 @@ $xoopsTpl->assign('page', $page);
 $xoopsTpl->assign('timenav', $timenav);
 $xoopsTpl->assign('pagenav', $pagenav);
 
-include_once __DIR__ . '/footer.php';
+require_once __DIR__ . '/footer.php';
 
 /**
  * @param null $year
@@ -226,7 +220,8 @@ include_once __DIR__ . '/footer.php';
  * @param null $days
  * @return string
  */
-function planet_getCalendar($year = null, $month = null, $days = null) {
+function planet_getCalendar($year = null, $month = null, $days = null)
+{
     $year      = empty($year) ? date('Y') : $year;
     $month     = empty($month) ? date('n') : $month;
     $unixmonth = mktime(0, 0, 0, $month, 1, $year);
@@ -238,8 +233,7 @@ function planet_getCalendar($year = null, $month = null, $days = null) {
     echo '</caption>';
 
     for ($i = 1; $i <= 7; ++$i) {
-        echo "\n\t\t<th abbr=\"" . planet_constant('MD_WEEK_' . $i) . "\" scope=\"col\" title=\""
-             . planet_constant('MD_WEEK_' . $i) . "\">" . planet_constant('MD_WEEK_' . $i) . '</th>';
+        echo "\n\t\t<th abbr=\"" . planet_constant('MD_WEEK_' . $i) . "\" scope=\"col\" title=\"" . planet_constant('MD_WEEK_' . $i) . "\">" . planet_constant('MD_WEEK_' . $i) . '</th>';
     }
 
     echo '<tr>';
@@ -295,7 +289,8 @@ function planet_getCalendar($year = null, $month = null, $days = null) {
  * @param $num
  * @return mixed
  */
-function planet_calendar_week_mod($num) {
+function planet_calendar_week_mod($num)
+{
     $base = 7;
 
     return ($num - $base * floor($num / $base));

@@ -26,8 +26,8 @@
 // ------------------------------------------------------------------------ //
 
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
-include_once dirname(__DIR__) . '/include/vars.php';
-mod_loadFunctions('', $GLOBALS['moddirname']);
+require_once __DIR__ . '/../include/vars.php';
+//mod_loadFunctions('', $GLOBALS['moddirname']);
 
 if (!class_exists('Brate')):
     /**
@@ -39,7 +39,8 @@ if (!class_exists('Brate')):
          * Brate constructor.
          * @param null $id
          */
-        public function __construct($id = null) {
+        public function __construct($id = null)
+        {
             //            $this->ArtObject();
             $this->table = planet_DB_prefix('rate');
             $this->initVar('rate_id', XOBJ_DTYPE_INT, null, false);
@@ -52,7 +53,7 @@ if (!class_exists('Brate')):
     }
 endif;
 
-planet_parse_class('
+PlanetUtility::planetParseClass('
 class [CLASS_PREFIX]RateHandler extends XoopsPersistableObjectHandler
 {
     /**

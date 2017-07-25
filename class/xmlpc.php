@@ -26,8 +26,8 @@
 // ------------------------------------------------------------------------ //
 
 // defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
-include_once dirname(__DIR__) . '/include/vars.php';
-mod_loadFunctions('', $GLOBALS['moddirname']);
+require_once __DIR__ . '/../include/vars.php';
+//mod_loadFunctions('', $GLOBALS['moddirname']);
 
 if (!class_exists('Xmlrpc_client')) {
     /**
@@ -38,13 +38,15 @@ if (!class_exists('Xmlrpc_client')) {
         /**
          * Xmlrpc_client constructor.
          */
-        public function __construct() {
+        public function __construct()
+        {
         }
 
         /**
          * @param $article
          */
-        public function setObject(&$article) {
+        public function setObject(&$article)
+        {
             $this->$var = $val;
         }
 
@@ -52,7 +54,8 @@ if (!class_exists('Xmlrpc_client')) {
          * @param $var
          * @param $val
          */
-        public function setVar($var, $val) {
+        public function setVar($var, $val)
+        {
             $this->$var = $val;
         }
 
@@ -60,7 +63,8 @@ if (!class_exists('Xmlrpc_client')) {
          * @param $var
          * @return mixed
          */
-        public function getVar($var) {
+        public function getVar($var)
+        {
             return $this->$var;
         }
     }
@@ -75,14 +79,16 @@ if (!class_exists('Xmlrpc_server')) {
         /**
          * Xmlrpc_server constructor.
          */
-        public function __construct() {
+        public function __construct()
+        {
         }
 
         /**
          * @param $var
          * @param $val
          */
-        public function setVar($var, $val) {
+        public function setVar($var, $val)
+        {
             $this->$var = $val;
         }
 
@@ -90,13 +96,14 @@ if (!class_exists('Xmlrpc_server')) {
          * @param $var
          * @return mixed
          */
-        public function getVar($var) {
+        public function getVar($var)
+        {
             return $this->$var;
         }
     }
 }
 
-planet_parse_class('
+PlanetUtility::planetParseClass('
 class [CLASS_PREFIX]XmlrpcHandler
 {
     public function &get($type="c")

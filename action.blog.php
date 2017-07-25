@@ -24,18 +24,19 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+use Xmf\Request;
 
 include __DIR__ . '/header.php';
 
-$op      = !empty($_POST['op']) ? $_POST['op'] : (!empty($_GET['op']) ? $_GET['op'] : '');
-$blog_id = !empty($_POST['blog']) ? $_POST['blog'] : (!empty($_GET['blog']) ? $_GET['blog'] : 0);
+$op      = Request::getString('op', Request::getString('op', '', 'POST'), 'GET');//!empty($_POST['op']) ? $_POST['op'] : (!empty($_GET['op']) ? $_GET['op'] : '');
+$blog_id = Request::getArray('blog', Request::getArray('blog', array(), 'POST'), 'GET');//!empty($_POST['blog']) ? $_POST['blog'] : (!empty($_GET['blog']) ? $_GET['blog'] : 0);
 $blog_id = is_array($blog_id) ? array_map('intval', $blog_id) : (int)$blog_id;
 
 if (empty($xoopsModuleConfig['newblog_submit']) && (!is_object($xoopsUser) || !$xoopsUser->isAdmin())) {
     redirect_header('index.php', 2, _NOPERM);
 }
 
-if ($op === 'save' && !empty($_POST['fetch'])) {
+if ($op === 'save' && !empty(Request::getString('fetch', '', 'POST'))) {//!empty($_POST['fetch'])) {
     $op = 'edit';
 }
 
@@ -45,27 +46,26 @@ if ($op === 'save' && !$GLOBALS['xoopsSecurity']->check()) {
 include XOOPS_ROOT_PATH . '/header.php';
 include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
 
-$blog_handler     = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
-$category_handler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
+$blogHandler     = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
+$categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
 
 switch ($op) {
     /* save a single blog */
     case 'save':
 
         if ($blog_id) {
-            $blog_obj =& $blog_handler->get($blog_id);
+            $blog_obj = $blogHandler->get($blog_id);
             if ($xoopsUser->isAdmin()) {
-                $blog_obj->setVar('blog_status', @$_POST['blog_status']);
+                $blog_obj->setVar('blog_status', Request::getInt('blog_status', 0, 'POST'));// @$_POST['blog_status']);
             }
         } else {
-            if ($blog_exists = $blog_handler->getCount(new Criteria('blog_feed',
-                                                                    $myts->addSlashes(trim($_POST['blog_feed']))))
+            if ($blog_exists = $blogHandler->getCount(new Criteria('blog_feed', $myts->addSlashes(trim(Request::getText('blog_feed', '', 'POST')))))  //$_POST['blog_feed']))))
             ) {
                 redirect_header('index.php', 2, planet_constant('MD_BLOGEXISTS'));
             }
 
-            $blog_obj =& $blog_handler->create();
-            $blog_obj->setVar('blog_submitter', is_object($xoopsUser) ? $xoopsUser->getVar('uid') : planet_getIP(true));
+            $blog_obj = $blogHandler->create();
+            $blog_obj->setVar('blog_submitter', is_object($xoopsUser) ? $xoopsUser->getVar('uid') : PlanetUtility::planetGetIP(true));
 
             switch ($xoopsModuleConfig['newblog_submit']) {
                 case 2:
@@ -92,25 +92,25 @@ switch ($op) {
             $blog_obj->setVar('blog_status', $status);
         }
 
-        $blog_obj->setVar('blog_title', $_POST['blog_title']);
-        $blog_obj->setVar('blog_desc', $_POST['blog_desc']);
-        $blog_obj->setVar('blog_image', $_POST['blog_image']);
-        $blog_obj->setVar('blog_feed', $_POST['blog_feed']);
-        $blog_obj->setVar('blog_link', $_POST['blog_link']);
-        $blog_obj->setVar('blog_language', $_POST['blog_language']);
-        $blog_obj->setVar('blog_charset', $_POST['blog_charset']);
-        $blog_obj->setVar('blog_trackback', $_POST['blog_trackback']);
+        $blog_obj->setVar('blog_title', Request::getString('blog_title', '', 'POST'));//$_POST['blog_title']);
+        $blog_obj->setVar('blog_desc', Request::getString('blog_desc', '', 'POST'));//$_POST['blog_desc']);
+        $blog_obj->setVar('blog_image', Request::getString('blog_image', '', 'POST'));//$_POST['blog_image']);
+        $blog_obj->setVar('blog_feed', Request::getText('blog_feed', '', 'POST'));//$_POST['blog_feed']);
+        $blog_obj->setVar('blog_link', Request::getString('blog_link', '', 'POST'));//$_POST['blog_link']);
+        $blog_obj->setVar('blog_language', Request::getString('blog_language', '', 'POST'));//$_POST['blog_language']);
+        $blog_obj->setVar('blog_charset', Request::getString('blog_charset', '', 'POST'));//$_POST['blog_charset']);
+        $blog_obj->setVar('blog_trackback', Request::getString('blog_trackback', '', 'POST'));//$_POST['blog_trackback']);
         if ($blog_obj->isNew()) {
-            $blog_obj->setVar('blog_submitter', is_object($xoopsUser) ? $xoopsUser->getVar('uid') : planet_getIP(true));
+            $blog_obj->setVar('blog_submitter', is_object($xoopsUser) ? $xoopsUser->getVar('uid') : PlanetUtility::planetGetIP(true));
         }
 
-        if (!$blog_handler->insert($blog_obj)) {
-        } elseif (!empty($_POST['categories'])) {
+        if (!$blogHandler->insert($blog_obj)) {
+        } elseif (0 !== count(Request::getArray('categories', array(), 'POST'))) {
             $blog_id = $blog_obj->getVar('blog_id');
             if (in_array(0, $_POST['categories'])) {
                 $_POST['categories'] = array();
             }
-            $blog_handler->setCategories($blog_id, $_POST['categories']);
+            $blogHandler->setCategories($blog_id, Request::getString('andor', '', 'POST'));//$_POST['categories']);
         }
         $message = planet_constant('MD_DBUPDATED');
         redirect_header('index.php' . URL_DELIMITER . 'b' . $blog_id, 2, $message);
@@ -118,19 +118,19 @@ switch ($op) {
     /* edit a single blog */
     case 'edit':
     default:
-        if (!empty($_POST['fetch'])) {
-            $blog_obj =& $blog_handler->fetch($_POST['blog_feed']);
+        if (!empty(Request::getString('fetch', '', 'POST'))) {
+            $blog_obj = $blogHandler->fetch(Request::getText('blog_feed', '', 'POST'));
             $blog_obj->setVar('blog_id', $blog_id);
         } else {
-            $blog_obj =& $blog_handler->get($blog_id);
+            $blog_obj = $blogHandler->get($blog_id);
         }
-        $categories = isset($_POST['categories']) ? $_POST['categories'] : array();
+        $categories = Request::getArray('categories', array(), 'POST');//isset($_POST['categories']) ? $_POST['categories'] : array();
         if (in_array('-1', $categories)) {
             $categories = array();
         }
         if (empty($categories) && $blog_id > 0) {
             $crit       = new Criteria('bc.blog_id', $blog_id);
-            $categories = array_keys($category_handler->getByBlog($crit));
+            $categories = array_keys($categoryHandler->getByBlog($crit));
         }
         if (empty($categories)) {
             $categories = array(0 => _NONE);
@@ -140,12 +140,11 @@ switch ($op) {
         echo '<br>';
         if (empty($blog_id) && $blog_obj->getVar('blog_feed')) {
             $criteria  = new Criteria('blog_feed', $blog_obj->getVar('blog_feed'));
-            $blogs_obj =& $blog_handler->getList($criteria);
+            $blogs_obj = $blogHandler->getList($criteria);
             if (count($blogs_obj) > 0) {
                 echo "<div class=\"errorMsg\">" . planet_constant('MD_BLOGEXISTS');
                 foreach (array_keys($blogs_obj) as $bid) {
-                    echo "<br><a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php'
-                         . URL_DELIMITER . 'b' . $bid . "\" target=\"_blank\">" . $blogs_obj[$bid] . '</a>';
+                    echo "<br><a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $bid . "\" target=\"_blank\">" . $blogs_obj[$bid] . '</a>';
                 }
                 echo '</div>';
                 unset($blogs_obj, $criteria);

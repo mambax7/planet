@@ -1,4 +1,4 @@
-<!-- phppp (D.J.): http://xoopsforge.com; http://xoops.org.cn -->
+<!-- phppp (D.J.): http://xoopsforge.com; https://xoops.org.cn -->
 
 <div class="itemHead" style="text-align:center;">
     <h2><span class="itemTitle">

@@ -1,4 +1,4 @@
-<!-- phppp (D.J.): http://xoopsforge.com; http://xoops.org.cn -->
+<!-- phppp (D.J.): http://xoopsforge.com; https://xoops.org.cn -->
 <{foreach item=article from=$block.articles}>
     <div>
         <span><a href="<{$xoops_url}>/modules/<{$block.dirname}>/view.article.php<{$smarty.const.URL_DELIMITER}><{$article.art_id}>"><strong><{$article.art_title}></strong></a></span>

@@ -1,4 +1,4 @@
-<!-- phppp (D.J.): http://xoopsforge.com; http://xoops.org.cn -->
+<!-- phppp (D.J.): http://xoopsforge.com; https://xoops.org.cn -->
 <div id="top"></div>
 <div class="itemHead">
     <h2>
@@ -107,7 +107,7 @@
         |
         <a href="<{$xoops_url}>/modules/<{$xoops_dirname}>/xml.php<{$smarty.const.URL_DELIMITER}>atom/c<{$category.id}>/u<{$user.uid}>/b<{$blog.id}>"
            target="api"><{php}>echo planet_constant("MD_ATOM")<{/php}></a>
-        <br><a href="http://xoops.org" target="_blank" title="Powered by Xoops Planet v<{$version}>"><img
+        <br><a href="https://xoops.org" target="_blank" title="Powered by Xoops Planet v<{$version}>"><img
                     src="<{$xoops_url}>/modules/planet/assets/images/planet.png"
                     alt="Powered by Xoops Planet v<{$version}>"
                     title="Powered by Xoops Planet v<{$version}>"/></a>

@@ -4,7 +4,7 @@
  *
  * Supporting multi-byte languages as well as utf-8 charset
  *
- * @copyright   XOOPS Project (http://xoops.org)
+ * @copyright   XOOPS Project (https://xoops.org)
  * @license     http://www.fsf.org/copyleft/gpl.html GNU public license
  * @author      Taiwen Jiang (phppp or D.J.) <php_pp@hotmail.com>
  * @since       1.00

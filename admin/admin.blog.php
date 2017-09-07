@@ -43,7 +43,7 @@ require XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/incl
 //planet_adminmenu(2);
 
 $op          = Request::getString('op', Request::getString('op', '', 'POST'), 'GET');//!empty($_POST['op']) ? $_POST['op'] : (!empty($_GET['op']) ? $_GET['op'] : '');
-$blog_id     = Request::getArray('blog', Request::getArray('blog', array(), 'POST'), 'GET');//!empty($_POST['blog']) ? $_POST['blog'] : (!empty($_GET['blog']) ? $_GET['blog'] : 0);
+$blog_id     = Request::getArray('blog', Request::getArray('blog', [], 'POST'), 'GET');//!empty($_POST['blog']) ? $_POST['blog'] : (!empty($_GET['blog']) ? $_GET['blog'] : 0);
 $blog_id     = is_array($blog_id) ? array_map('intval', $blog_id) : (int)$blog_id;
 $category_id = Request::getInt('category', Request::getInt('category', 0, 'POST'), 'GET');//(int)(!empty($_POST['category']) ? $_POST['category'] : (!empty($_GET['category']) ? $_GET['category'] : 0));
 $start       = Request::getInt('start', Request::getInt('start', 0, 'POST'), 'GET');//(int)(!empty($_POST['start']) ? $_POST['start'] : (!empty($_GET['start']) ? $_GET['start'] : 0));
@@ -80,20 +80,21 @@ switch ($op) {
         $blog_obj->setVar('blog_status', Request::getInt('blog_status', 0, 'POST')); //$_POST['blog_status']);
 
         if (!$blogHandler->insert($blog_obj)) {
-        } elseif (!empty(Request::getArray('categories', array(), 'POST'))) {
+        } elseif (!empty(Request::getArray('categories', [], 'POST'))) {
             $blog_id = $blog_obj->getVar('blog_id');
-            if (in_array(0, Request::getArray('categories', array(), 'POST'))) {
-                $_POST['categories'] = array();
+            if (in_array(0, Request::getArray('categories', [], 'POST'))) {
+                $_POST['categories'] = [];
             }
-            $blogHandler->setCategories($blog_id, Request::getArray('categories', array(), 'POST'));
+            $blogHandler->setCategories($blog_id, Request::getArray('categories', [], 'POST'));
         }
         $message = planet_constant('AM_DBUPDATED');
         redirect_header('admin.blog.php', 2, $message);
 
     /* fetch and add a list of blogs to a category */
+    // no break
     case 'add':
-        $links = PlanetUtility::planetParseLinks(Request::getArray('links', array(), 'POST'));
-        $blogs = array();
+        $links = PlanetUtility::planetParseLinks(Request::getArray('links', [], 'POST'));
+        $blogs = [];
         foreach ($links as $link) {
             if ($blog_exist = $blogHandler->getCount(new Criteria('blog_feed', $link['url']))) {
                 continue;
@@ -106,9 +107,9 @@ switch ($op) {
             $blogs[] = $blog_obj->getVar('blog_id');
             unset($blog_obj);
         }
-        if (!empty(Request::getArray('categories', array(), 'POST'))) {
+        if (!empty(Request::getArray('categories', [], 'POST'))) {
             $categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
-            foreach (Request::getArray('categories', array(), 'POST') as $cat_id) {
+            foreach (Request::getArray('categories', [], 'POST') as $cat_id) {
                 $categoryHandler->addBlogs($cat_id, $blogs);
             }
         }
@@ -116,6 +117,7 @@ switch ($op) {
         redirect_header('admin.blog.php', 2, $message);
 
     /* update a list of blogs */
+    // no break
     case 'update':
         foreach ($blog_id as $bid) {
             $blog_obj = $blogHandler->fetch($bid);
@@ -127,21 +129,23 @@ switch ($op) {
         redirect_header('admin.blog.php?category=' . $category_id . '&amp;start=' . $start, 2, $message);
 
     /* add a list of blogs to a category */
+    // no break
     case 'register':
-        if (!empty(Request::getArray('category_dest', array(), 'POST'))) {
+        if (!empty(Request::getArray('category_dest', [], 'POST'))) {
             if (!is_array($blog_id)) {
-                $blog_id = array($blog_id);
+                $blog_id = [$blog_id];
             }
             $categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
-            $categoryHandler->addBlogs(Request::getArray('category_dest', array(), 'POST'), $blog_id);
+            $categoryHandler->addBlogs(Request::getArray('category_dest', [], 'POST'), $blog_id);
         }
         $message = planet_constant('AM_DBUPDATED');
-        redirect_header('admin.blog.php?category=' . Request::getArray('category_dest', array(), 'POST') . '&amp;start=' . $start, 2, $message);
+        redirect_header('admin.blog.php?category=' . Request::getArray('category_dest', [], 'POST') . '&amp;start=' . $start, 2, $message);
 
     /* remove a list of blogs from a category */
+    // no break
     case 'remove':
         if (!is_array($blog_id)) {
-            $blog_id = array($blog_id);
+            $blog_id = [$blog_id];
         }
         if (!empty($category_id)) {
             $categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
@@ -151,9 +155,10 @@ switch ($op) {
         redirect_header('admin.blog.php?category=' . $category_id . '&amp;start=' . $start, 2, $message);
 
     /* delete a single blog or a list blogs */
+    // no break
     case 'del':
         if (!is_array($blog_id)) {
-            $blog_id = array($blog_id);
+            $blog_id = [$blog_id];
         }
         foreach ($blog_id as $bid) {
             $blog_obj = $blogHandler->get($bid);
@@ -165,9 +170,10 @@ switch ($op) {
         redirect_header('admin.blog.php?category=' . $category_id . '&amp;start=' . $start, 2, $message);
 
     /* empty a single blog or a list blogs */
+    // no break
     case 'empty':
         if (!is_array($blog_id)) {
-            $blog_id = array($blog_id);
+            $blog_id = [$blog_id];
         }
         foreach ($blog_id as $bid) {
             $blog_obj = $blogHandler->get($bid);
@@ -178,9 +184,10 @@ switch ($op) {
         redirect_header('admin.blog.php?category=' . $category_id . '&amp;start=' . $start, 2, $message);
 
     /* approve a single blog or a list blogs */
+    // no break
     case 'approve':
         if (!is_array($blog_id)) {
-            $blog_id = array($blog_id);
+            $blog_id = [$blog_id];
         }
         $criteria = new Criteria('blog_id', '(' . implode(',', $blog_id) . ')', 'IN');
         $blogHandler->updateAll('blog_status', 1, $criteria, true);
@@ -188,9 +195,10 @@ switch ($op) {
         redirect_header('admin.blog.php?category=' . $category_id . '&amp;start=' . $start, 2, $message);
 
     /* mark a single blog or a list blogs as featured */
+    // no break
     case 'feature':
         if (!is_array($blog_id)) {
-            $blog_id = array($blog_id);
+            $blog_id = [$blog_id];
         }
         $criteria = new Criteria('blog_id', '(' . implode(',', $blog_id) . ')', 'IN');
         $blogHandler->updateAll('blog_status', 2, $criteria, true);
@@ -198,6 +206,7 @@ switch ($op) {
         redirect_header('admin.blog.php?category=' . $category_id . '&amp;start=' . $start, 2, $message);
 
     /* edit a single blog */
+    // no break
     case 'edit':
         if (!empty(Request::getString('fetch', '', 'POST'))) {
             $blog_obj = $blogHandler->fetch(Request::getString('blog_feed', '', 'POST'));
@@ -205,13 +214,13 @@ switch ($op) {
         } else {
             $blog_obj = $blogHandler->get($blog_id);
         }
-        $categories = Request::getArray('categories', array(), 'POST');
+        $categories = Request::getArray('categories', [], 'POST');
         if (empty($categories) && $blog_id > 0) {
             $crit       = new Criteria('bc.blog_id', $blog_id);
             $categories = array_keys($categoryHandler->getByBlog($crit));
         }
         if (empty($categories)) {
-            $categories = array(0 => _NONE);
+            $categories = [0 => _NONE];
         }
 
         echo "<fieldset><legend style='font-weight: bold; color: #900;'>" . _EDIT . '</legend>';
@@ -243,12 +252,12 @@ switch ($op) {
         $opform    = new XoopsSimpleForm('', 'opform', 'admin.blog.php', 'get');
         $op_select = new XoopsFormSelect('', 'category', $category_id);
         $op_select->setExtra('onchange="document.forms.opform.submit()"');
-        $options = array(
+        $options = [
             '0'  => _ALL,
             '-1' => planet_constant('MD_ACTIVE'),
             '-2' => planet_constant('MD_FEATURED'),
             '-3' => planet_constant('MD_PENDING')
-        );
+        ];
         foreach (array_keys($categories) as $key) {
             $options[$key] = $categories[$key];
         }
@@ -304,11 +313,11 @@ switch ($op) {
         echo "<th class='bg3' width='10%'>" . planet_constant('AM_ACTIONS') . '</td>';
         echo '</tr>';
 
-        $status = array(
+        $status = [
             '0' => planet_constant('MD_PENDING'),
             '1' => planet_constant('MD_ACTIVE'),
             '2' => planet_constant('MD_FEATURED')
-        );
+        ];
         foreach (array_keys($blog_objs) as $bid) {
             echo "<tr class='odd' align='left'>";
             echo "<td align='center'><input name='blog[]' value='" . $bid . "' type='checkbox'></td>";

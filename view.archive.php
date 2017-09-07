@@ -60,7 +60,7 @@ if ($month < 1) {
 } else {
     $page['time'] = sprintf(planet_constant('MD_TIME_YMD'), $year, $month, $day);
 }
-$time = array('year' => $year, 'month' => $month, 'day' => $day);
+$time = ['year' => $year, 'month' => $month, 'day' => $day];
 if ($xoopsUser) {
     $timeoffset = ($xoopsUser->getVar('timezone_offset') - $xoopsConfig['server_TZ']) * 3600;
 } else {
@@ -81,19 +81,19 @@ if ($month) {
 $criteria->setStart($start);
 $criteria->setLimit($xoopsModuleConfig['articles_perpage']);
 
-$articles_obj   = $articleHandler->getAll($criteria, array('uid', 'art_title', 'art_time', 'blog_id', 'art_content'));
+$articles_obj   = $articleHandler->getAll($criteria, ['uid', 'art_title', 'art_time', 'blog_id', 'art_content']);
 $articles_count = $articleHandler->getCount($criteria);
 
-$articles = array();
-$blogs_id = array();
+$articles = [];
+$blogs_id = [];
 foreach ($articles_obj as $id => $article) {
-    $articles[]                            = array(
+    $articles[]                            = [
         'id'      => $id,
-        'blog'    => array('id' => $article->getVar('blog_id'), 'title' => ''),
+        'blog'    => ['id' => $article->getVar('blog_id'), 'title' => ''],
         'title'   => $article->getVar('art_title'),
         'time'    => $article->getTime(),
         'content' => $article->getVar('art_content')
-    );
+    ];
     $articles[]                            = $_article;
     $blogs_id[$article->getVar('blog_id')] = 1;
     unset($_article);
@@ -133,22 +133,22 @@ if (empty($start)) {
             GROUP BY mon
             ';
         $result = $xoopsDB->query($sql);
-        $months = array();
+        $months = [];
         while ($myrow = $xoopsDB->fetchArray($result)) {
-            $months[] = array(
+            $months[] = [
                 'title' => planet_constant('MD_MONTH_' . (int)$myrow['mon']) . ' (' . (int)$myrow['count'] . ')',
                 'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . $year . '/' . $myrow['mon'] . '/b' . $blog_id
-            );
+            ];
         }
-        $timenav['prev'] = array(
+        $timenav['prev'] = [
             'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . ($year - 1) . '/b' . $blog_id,
             'title' => sprintf(planet_constant('MD_TIME_Y'), $year - 1)
-        );
+        ];
         if ($year < date('Y')) {
-            $timenav['next'] = array(
+            $timenav['next'] = [
                 'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . ($year + 1) . '/b' . $blog_id,
                 'title' => sprintf(planet_constant('MD_TIME_Y'), $year + 1)
-            );
+            ];
         }
     } // Get daily list
     elseif (empty($day)) {
@@ -160,7 +160,7 @@ if (empty($start)) {
             GROUP BY day
             ';
         $result = $xoopsDB->query($sql);
-        $days   = array();
+        $days   = [];
         while ($myrow = $xoopsDB->fetchArray($result)) {
             $days[$myrow['day']]['count'] = $myrow['count'];
         }
@@ -168,10 +168,10 @@ if (empty($start)) {
             if (!isset($days[$i])) {
                 continue;
             }
-            $days[$i] = array(
+            $days[$i] = [
                 'title' => $days[$i]['count'],
                 'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . $year . '/' . $month . '/' . $i . '/b' . $blog_id
-            );
+            ];
         }
         $calendar   = planet_getCalendar($year, $month, $days);
         $month_next = $month + 1;
@@ -185,15 +185,15 @@ if (empty($start)) {
             $month_pre = 12;
             $_year     = $year - 1;
         }
-        $timenav['prev'] = array(
+        $timenav['prev'] = [
             'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . $_year . '/' . $month_prev . '/b' . $blog_id,
             'title' => planet_constant('MD_MONTH_' . $month_prev)
-        );
+        ];
         if ($year < date('Y') || $month < date('n')) {
-            $timenav['next'] = array(
+            $timenav['next'] = [
                 'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . $_year . '/' . $month_next . '/b' . $blog_id,
                 'title' => planet_constant('MD_MONTH_' . $month_next)
-            );
+            ];
         }
     }
 }

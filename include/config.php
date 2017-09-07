@@ -19,14 +19,14 @@
  * @author          XOOPS Development Team - ( https://xoops.org )
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
+// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
 require_once __DIR__ . '/common.php';
 
 $moduleDirName = basename(dirname(__DIR__));
-$uploadFolders = array(
+$uploadFolders = [
     NEWBB_UPLOAD_PATH,
     NEWBB_UPLOAD_PATH . '/thumbs'
-);
+];
 
 //$copyFiles = array(
 //    NEWBB_UPLOAD_PATH,

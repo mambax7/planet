@@ -35,11 +35,11 @@ class MagpieRSS
 {
     public $parser;
 
-    public $current_item = array();  // item currently being parsed
-    public $items        = array();  // collection of parsed items
-    public $channel      = array();  // hash of channel fields
-    public $textinput    = array();
-    public $image        = array();
+    public $current_item = [];  // item currently being parsed
+    public $items        = [];  // collection of parsed items
+    public $channel      = [];  // hash of channel fields
+    public $textinput    = [];
+    public $image        = [];
     public $feed_type;
     public $feed_version;
     public $encoding     = '';       // output encoding of parsed rss
@@ -51,11 +51,11 @@ class MagpieRSS
 
     // define some constants
 
-    public $_CONTENT_CONSTRUCTS = array('content', 'summary', 'info', 'title', 'tagline', 'copyright');
-    public $_KNOWN_ENCODINGS    = array('UTF-8', 'US-ASCII', 'ISO-8859-1');
+    public $_CONTENT_CONSTRUCTS = ['content', 'summary', 'info', 'title', 'tagline', 'copyright'];
+    public $_KNOWN_ENCODINGS    = ['UTF-8', 'US-ASCII', 'ISO-8859-1'];
 
     // parser variables, useless if you're not a parser, treat as private
-    public $stack             = array(); // parser stack
+    public $stack             = []; // parser stack
     public $inchannel         = false;
     public $initem            = false;
     public $incontent         = false; // if in Atom <content mode="xml"> field
@@ -252,7 +252,7 @@ class MagpieRSS
 
         if ($el === 'item' || $el === 'entry') {
             $this->items[]      = $this->current_item;
-            $this->current_item = array();
+            $this->current_item = [];
             $this->initem       = false;
         } elseif ($this->feed_type == RSS && $this->current_namespace === '' && $el === 'textinput') {
             $this->intextinput = false;
@@ -433,7 +433,7 @@ class MagpieRSS
             xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, $out_enc);
         }
 
-        return array($parser, $source);
+        return [$parser, $source];
     }
 
     /**
@@ -478,7 +478,7 @@ class MagpieRSS
     public function php4_create_parser($source, $in_enc, $detect)
     {
         if (!$detect) {
-            return array(xml_parser_create($in_enc), $source);
+            return [xml_parser_create($in_enc), $source];
         }
 
         if (!$in_enc) {
@@ -491,7 +491,7 @@ class MagpieRSS
         }
 
         if ($this->known_encoding($in_enc)) {
-            return array(xml_parser_create($in_enc), $source);
+            return [xml_parser_create($in_enc), $source];
         }
 
         /*
@@ -523,7 +523,7 @@ class MagpieRSS
                      E_USER_NOTICE);
         */
 
-        return array(xml_parser_create(), $source);
+        return [xml_parser_create(), $source];
     }
 
     /**
@@ -585,14 +585,14 @@ function parse_w3cdtf($date_str)
     $pat = "/(\d{4})-(\d{2})-(\d{2})[T]?(\d{2})?[:]?(\d{2})?(:(\d{2}))?(?:([-+])(\d{2}):?(\d{2})|(Z))?/";
 
     if (preg_match($pat, $date_str, $match)) {
-        list($year, $month, $day, $hours, $minutes, $seconds) = array(
+        list($year, $month, $day, $hours, $minutes, $seconds) = [
             $match[1],
             $match[2],
             $match[3],
             $match[4],
             $match[5],
             $match[6]
-        );
+        ];
 
         # calc epoch for current date assuming GMT
         $epoch = gmmktime((int)$hours, (int)$minutes, (int)$seconds, (int)$month, (int)$day, (int)$year);
@@ -601,7 +601,7 @@ function parse_w3cdtf($date_str)
         if ($match[10] === 'Z') {
             # zulu time, aka GMT
         } else {
-            list($tz_mod, $tz_hour, $tz_min) = array($match[8], $match[9], $match[10]);
+            list($tz_mod, $tz_hour, $tz_min) = [$match[8], $match[9], $match[10]];
 
             # zero out the variables
             if (!$tz_hour) {

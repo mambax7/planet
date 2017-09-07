@@ -25,7 +25,7 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 
-// defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
+// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
 
 include __DIR__ . '/vars.php';
 //mod_loadFunctions('', $GLOBALS['moddirname']);

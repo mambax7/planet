@@ -64,9 +64,9 @@ class xmlparser extends MagpieRSS
      *                                Leave blank and Magpie will try to figure it
      *                                out.
      */
-    public function __construct($content, $input_charset, $output_charset = _CHARSET, $tags = array())
+    public function __construct($content, $input_charset, $output_charset = _CHARSET, $tags = [])
     {
-        if (!in_array(strtoupper($input_charset), array('UTF-8', 'US-ASCII', 'ISO-8859-1'))) {
+        if (!in_array(strtoupper($input_charset), ['UTF-8', 'US-ASCII', 'ISO-8859-1'])) {
             $content       = XoopsLocal::convert_encoding($content, 'UTF-8', $input_charset);
             $content       = preg_replace('/(<\?xml.*encoding=[\'"])(.*?)([\'"].*\?>)/m', '$1UTF-8$3', $content);
             $input_charset = 'UTF-8';
@@ -107,9 +107,9 @@ class xmlparser extends MagpieRSS
             }
         for ($i = 0, $iMax = count($this->items); $i < $iMax; ++$i) {
             // ATOM time
-                if ($date = @$this->items[$i]['modified']) {
-                    continue;
-                }
+            if ($date = @$this->items[$i]['modified']) {
+                continue;
+            }
             if (empty($date)) {
                 $date = @$this->items[$i]['updated'];
             }
@@ -184,7 +184,7 @@ class xmlparser extends MagpieRSS
     /**
      * @param array $tags
      */
-    public function encoding_convert($tags = array())
+    public function encoding_convert($tags = [])
     {
         if (empty($tags) || in_array('channel', $tags)) {
             $this->channel = $this->_encoding($this->channel);

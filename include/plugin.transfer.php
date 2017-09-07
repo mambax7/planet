@@ -12,14 +12,14 @@
  * @package     Frameworks::transfer
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
+// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
 
 if (!@require_once XOOPS_ROOT_PATH . '/Frameworks/transfer/transfer.php') {
     return null;
 }
 
 // Specify the addons to skip for the module
-$GLOBALS['addons_skip_module'] = array('pm', 'email');
+$GLOBALS['addons_skip_module'] = ['pm', 'email'];
 // Maximum items to show on page
 $GLOBALS['addons_limit_module'] = 5;
 
@@ -43,7 +43,7 @@ class ModuleTransferHandler extends TransferHandler
      * @param boolean $sort To sort the list upon 'level'
      *                      return  array   $list
      */
-    public function &getList($skip = array(), $sort = true)
+    public function &getList($skip = [], $sort = true)
     {
         $list = parent::getList($skip, $sort);
 

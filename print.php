@@ -42,7 +42,7 @@ if (empty(Request::getString('print_data', '', 'POST'))) {
     $articleHandler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
     $article_obj    = $articleHandler->get($article_id);
 
-    $article_data = array();
+    $article_data = [];
 
     // title
     $article_data['title'] = $article_obj->getVar('art_title');

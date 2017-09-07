@@ -29,7 +29,7 @@ use Xmf\Request;
 include __DIR__ . '/header.php';
 
 $op      = Request::getString('op', Request::getString('op', '', 'POST'), 'GET');//!empty($_POST['op']) ? $_POST['op'] : (!empty($_GET['op']) ? $_GET['op'] : '');
-$blog_id = Request::getArray('blog', Request::getArray('blog', array(), 'POST'), 'GET');//!empty($_POST['blog']) ? $_POST['blog'] : (!empty($_GET['blog']) ? $_GET['blog'] : 0);
+$blog_id = Request::getArray('blog', Request::getArray('blog', [], 'POST'), 'GET');//!empty($_POST['blog']) ? $_POST['blog'] : (!empty($_GET['blog']) ? $_GET['blog'] : 0);
 $blog_id = is_array($blog_id) ? array_map('intval', $blog_id) : (int)$blog_id;
 
 if (empty($xoopsModuleConfig['newblog_submit']) && (!is_object($xoopsUser) || !$xoopsUser->isAdmin())) {
@@ -105,10 +105,10 @@ switch ($op) {
         }
 
         if (!$blogHandler->insert($blog_obj)) {
-        } elseif (0 !== count(Request::getArray('categories', array(), 'POST'))) {
+        } elseif (0 !== count(Request::getArray('categories', [], 'POST'))) {
             $blog_id = $blog_obj->getVar('blog_id');
             if (in_array(0, $_POST['categories'])) {
-                $_POST['categories'] = array();
+                $_POST['categories'] = [];
             }
             $blogHandler->setCategories($blog_id, Request::getString('andor', '', 'POST'));//$_POST['categories']);
         }
@@ -116,6 +116,7 @@ switch ($op) {
         redirect_header('index.php' . URL_DELIMITER . 'b' . $blog_id, 2, $message);
 
     /* edit a single blog */
+    // no break
     case 'edit':
     default:
         if (!empty(Request::getString('fetch', '', 'POST'))) {
@@ -124,16 +125,16 @@ switch ($op) {
         } else {
             $blog_obj = $blogHandler->get($blog_id);
         }
-        $categories = Request::getArray('categories', array(), 'POST');//isset($_POST['categories']) ? $_POST['categories'] : array();
+        $categories = Request::getArray('categories', [], 'POST');//isset($_POST['categories']) ? $_POST['categories'] : array();
         if (in_array('-1', $categories)) {
-            $categories = array();
+            $categories = [];
         }
         if (empty($categories) && $blog_id > 0) {
             $crit       = new Criteria('bc.blog_id', $blog_id);
             $categories = array_keys($categoryHandler->getByBlog($crit));
         }
         if (empty($categories)) {
-            $categories = array(0 => _NONE);
+            $categories = [0 => _NONE];
         }
 
         echo "<fieldset><legend style='font-weight: bold; color: #900;'>" . _EDIT . '</legend>';

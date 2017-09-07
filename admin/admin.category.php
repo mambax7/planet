@@ -58,9 +58,10 @@ switch ($op) {
         }
         redirect_header('admin.category.php', 2, $message);
 
+        // no break
     case 'del':
         if (!is_array($cat_id)) {
-            $cat_id = array($cat_id);
+            $cat_id = [$cat_id];
         }
         foreach ($cat_id as $cid) {
             $category_obj = $categoryHandler->get($cid);
@@ -70,6 +71,7 @@ switch ($op) {
         $message = planet_constant('AM_DBUPDATED');
         redirect_header('admin.category.php', 2, $message);
 
+        // no break
     case 'order':
         $count = count($_POST['cat_order']);
         for ($i = 0; $i < $count; ++$i) {
@@ -81,6 +83,7 @@ switch ($op) {
         $message = planet_constant('AM_DBUPDATED');
         redirect_header('admin.category.php', 2, $message);
 
+        // no break
     case 'edit':
         $category_obj = $categoryHandler->get($cat_id);
         $form         = new XoopsThemeForm(_EDIT, 'edit', xoops_getenv('PHP_SELF'), 'post', true);

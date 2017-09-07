@@ -24,7 +24,7 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
-// defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
+// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
 
 require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
 $categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
@@ -44,7 +44,7 @@ $categories_option = $categoryHandler->getList();
 natsort($categories_option);
 if (count($categories_option)) {
     $cat_option_tray = new XoopsFormElementTray(planet_constant('MD_CATEGORY'), '<br>');
-    $options         = array(0 => _NONE);
+    $options         = [0 => _NONE];
     foreach ($categories_option as $id => $title) {
         $options[$id] = $title;
     }
@@ -58,11 +58,11 @@ if (count($categories_option)) {
 if (is_object($xoopsUser) && $xoopsUser->isAdmin()) {
     $status_option_tray = new XoopsFormElementTray(planet_constant('MD_STATUS'), '<br>');
     $status_select      = new XoopsFormSelect('', 'blog_status', $blog_obj->getVar('blog_status'));
-    $status_select->addOptionArray(array(
+    $status_select->addOptionArray([
                                        '0' => planet_constant('MD_PENDING'),
                                        '1' => planet_constant('MD_ACTIVE'),
                                        '2' => planet_constant('MD_FEATURED')
-                                   ));
+                                   ]);
     $status_option_tray->addElement($status_select);
     $form->addElement($status_option_tray);
 }

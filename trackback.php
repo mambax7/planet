@@ -161,7 +161,7 @@ if (!empty($article_id) && !empty($url)) {
                 $criteria->add(new Criteria('com_status', XOOPS_COMMENT_ACTIVE));
                 $comment_count = $commentHandler->getCount($criteria);
                 $func          = $comment_config['callback']['update'];
-                call_user_func_array($func, array($com_itemid, $comment_count, $comment->getVar('com_id')));
+                call_user_func_array($func, [$com_itemid, $comment_count, $comment->getVar('com_id')]);
             }
         }
 
@@ -177,7 +177,7 @@ if (!empty($article_id) && !empty($url)) {
             // Build an ABSOLUTE URL to view the comment.  Make sure we
             // point to a viewable page (i.e. not the system administration
             // module).
-            $comment_tags = array();
+            $comment_tags = [];
             $not_module   = $xoopsModule;
             if (!isset($comment_url)) {
                 $com_config  = $not_module->getInfo('comments');

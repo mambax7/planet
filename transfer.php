@@ -42,7 +42,7 @@ if (empty($article_id)) {
             || ($ref_parser['path'] != $uri_parser['path'])) {
             include XOOPS_ROOT_PATH . '/header.php';
             include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
-            xoops_confirm(array(), 'javascript: window.close();', sprintf(planet_constant('MD_TRANSFER_DONE'), ''), _CLOSE, Request::getUrl('HTTP_REFERER', '', 'SERVER'));
+            xoops_confirm([], 'javascript: window.close();', sprintf(planet_constant('MD_TRANSFER_DONE'), ''), _CLOSE, Request::getUrl('HTTP_REFERER', '', 'SERVER'));
             $xoopsOption['output_type'] = 'plain';
             include XOOPS_ROOT_PATH . '/footer.php';
             exit();
@@ -65,7 +65,7 @@ if (empty($op)) {
     include XOOPS_ROOT_PATH . '/Frameworks/transfer/option.transfer.php';
     exit();
 } else {
-    $data           = array();
+    $data           = [];
     $data['id']     = $article_id;
     $data['title']  = $article_obj->getVar('art_title');
     $data['time']   = $article_obj->getTime('l');

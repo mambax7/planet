@@ -26,7 +26,7 @@
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
 
-// defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
+// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
 
 $current_path = __FILE__;
 if (DIRECTORY_SEPARATOR !== '/') {
@@ -69,7 +69,7 @@ if (!defined('planet_FUNCTIONS')):
     */
     function planetParseArguments(&$args_numeric, &$args, &$args_string)
     {
-        $args_abb     = array(
+        $args_abb     = [
             'a' => 'article',
             'b' => 'blog',
             'c' => 'category',
@@ -77,10 +77,10 @@ if (!defined('planet_FUNCTIONS')):
             'o' => 'sort',
             's' => 'start',
             'u' => 'uid'
-        );
-        $args         = array();
-        $args_numeric = array();
-        $args_string  = array();
+        ];
+        $args         = [];
+        $args_numeric = [];
+        $args_string  = [];
         if (preg_match("/[^\?]*\.php[\/|\?]([^\?]*)/i", Request::getUrl('REQUEST_URI', '', 'SERVER'), $matches)) {
             $vars = preg_split("/[\/|&]/", $matches[1]);
             $vars = array_map('trim', $vars);
@@ -118,11 +118,11 @@ if (!defined('planet_FUNCTIONS')):
         if (empty($class_string)) {
             return;
         }
-        $patterns     = array("/\[CLASS_PREFIX\]/");
-        $replacements = array(ucfirst(strtolower($GLOBALS['moddirname'])));
+        $patterns     = ["/\[CLASS_PREFIX\]/"];
+        $replacements = [ucfirst(strtolower($GLOBALS['moddirname']))];
         if (!empty($pattern) && !is_array($pattern) && !is_array($replacement)) {
-            $pattern     = array($pattern);
-            $replacement = array($replacement);
+            $pattern     = [$pattern];
+            $replacement = [$replacement];
         }
         if (is_array($pattern) && count($pattern) > 0) {
             $ii = 0;
@@ -154,11 +154,11 @@ if (!defined('planet_FUNCTIONS')):
         if (empty($function_string)) {
             return;
         }
-        $patterns     = array("/\[DIRNAME\]/", "/\[VAR_PREFIX\]/");
-        $replacements = array($GLOBALS['moddirname'], $GLOBALS['VAR_PREFIX']);
+        $patterns     = ["/\[DIRNAME\]/", "/\[VAR_PREFIX\]/"];
+        $replacements = [$GLOBALS['moddirname'], $GLOBALS['VAR_PREFIX']];
         if (!empty($pattern) && !is_array($pattern) && !is_array($replacement)) {
-            $pattern     = array($pattern);
-            $replacement = array($replacement);
+            $pattern     = [$pattern];
+            $replacement = [$replacement];
         }
         if (is_array($pattern) && count($pattern) > 0) {
             $ii = 0;
@@ -201,7 +201,7 @@ if (!defined('planet_FUNCTIONS')):
     function &planetGetUnameFromId($userid, $usereal = 0, $linked = false)
     {
         if (!is_array($userid)) {
-            $userid = array($userid);
+            $userid = [$userid];
         }
         $users =& mod_getUnameFromIds($userid, $usereal, $linked);
 
@@ -219,7 +219,7 @@ if (!defined('planet_FUNCTIONS')):
     {
         $myts       = MyTextSanitizer::getInstance();
         $link_array = preg_split("/(\r\n|\r|\n)( *)/", $text);
-        $links      = array();
+        $links      = [];
         if (count($link_array) > 0) {
             foreach ($link_array as $link) {
                 @list($url, $title) = array_map('trim', preg_split('/ /', $link, 2));
@@ -227,7 +227,7 @@ if (!defined('planet_FUNCTIONS')):
                     continue;
                 }
                 //if(empty($title)) $title = $url;
-                $links[] = array('url' => $url, 'title' => $myts->htmlSpecialChars($title));
+                $links[] = ['url' => $url, 'title' => $myts->htmlSpecialChars($title)];
             }
         }
 
@@ -398,7 +398,7 @@ if (!defined('planet_FUNCTIONS')):
     function planetSetCookie($name, $string = '', $expire = 0)
     {
         if (is_array($string)) {
-            $value = array();
+            $value = [];
             foreach ($string as $key => $val) {
                 $value[] = $key . '|' . $val;
             }
@@ -416,8 +416,8 @@ if (!defined('planet_FUNCTIONS')):
     {
         $value = isset($_COOKIE[$GLOBALS['VAR_PREFIX'] . $name]) ? $_COOKIE[$GLOBALS['VAR_PREFIX'] . $name] : null;
         if ($isArray) {
-            $_value = $value ? explode(',', $value) : array();
-            $value  = array();
+            $_value = $value ? explode(',', $value) : [];
+            $value  = [];
             if (count($_value) > 0) {
                 foreach ($_value as $string) {
                     $key         = substr($string, 0, strpos($string, '|'));

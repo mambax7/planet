@@ -239,7 +239,7 @@ class FeedItem extends HtmlDescribable
      * if $value contains markup. This may be abused to embed tags not implemented by
      * the FeedCreator class used.
      */
-    public $additionalElements = array();
+    public $additionalElements = [];
 
     // on hold
     // var $source;
@@ -538,7 +538,7 @@ class FeedCreator extends HtmlDescribable
     /**
      * @access private
      */
-    public $items = array();
+    public $items = [];
 
     /**
      * This feed's MIME content type.
@@ -561,7 +561,7 @@ class FeedCreator extends HtmlDescribable
      * if $value contains markup. This may be abused to embed tags not implemented by
      * the FeedCreator class used.
      */
-    public $additionalElements = array();
+    public $additionalElements = [];
 
     /**
      * Adds an FeedItem to the feed.
@@ -795,7 +795,7 @@ class FeedDate
             return;
         }
         if (preg_match("~(?:(?:Mon|Tue|Wed|Thu|Fri|Sat|Sun),\\s+)?(\\d{1,2})\\s+([a-zA-Z]{3})\\s+(\\d{4})\\s+(\\d{2}):(\\d{2}):(\\d{2})\\s+(.*)~", $dateString, $matches)) {
-            $months     = array(
+            $months     = [
                 'Jan' => 1,
                 'Feb' => 2,
                 'Mar' => 3,
@@ -808,7 +808,7 @@ class FeedDate
                 'Oct' => 10,
                 'Nov' => 11,
                 'Dec' => 12
-            );
+            ];
             $this->unix = mktime($matches[4], $matches[5], $matches[6], $months[$matches[2]], $matches[1], $matches[3]);
             if (substr($matches[7], 0, 1) == '+' || substr($matches[7], 0, 1) == '-') {
                 $tzOffset = (substr($matches[7], 0, 3) * 60 + substr($matches[7], -2)) * 60;
@@ -1302,7 +1302,7 @@ class MBOXCreator extends FeedCreator
      */
     public function qp_enc($input = '', $line_max = 76)
     {
-        $hex    = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F');
+        $hex    = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
         $lines  = preg_split("/(?:\r\n|\r|\n)/", $input);
         $eol    = "\r\n";
         $escape = '=';
@@ -1522,7 +1522,7 @@ class HTMLCreator extends FeedCreator
         }
 
         // use this array to put the lines in and implode later with "document.write" javascript
-        $feedArray = array();
+        $feedArray = [];
         if ($this->image != null) {
             $imageStr = "<a href='" . $this->image->link . "'" . $targetInsert . '>' . "<img src='" . $this->image->url . "' border='0' alt='" . FeedCreator::iTrunc(htmlspecialchars($this->image->title), 100) . "' align='" . $this->imageAlign . "' ";
             if ($this->image->width) {

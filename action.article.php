@@ -53,12 +53,12 @@ if ($op === 'del' || !empty(Request::getString('del', '', 'POST'))) {
         redirect_header('javascript:history.go(-1);', 1, planet_constant('MD_TEXTEMPTY'));
     }
 
-    foreach (array(
+    foreach ([
                  'art_title',
                  'art_link',
                  'art_author',
                  'art_content'
-             ) as $tag) {
+             ] as $tag) {
         if (@Request::getString('tag', '', 'POST') != $article_obj->getVar($tag)) {
             $article_obj->setVar($tag, @Request::getString('tag', '', 'POST'));
         }

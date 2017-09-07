@@ -46,7 +46,7 @@ $uid = Request::getInt('uid', @$args['uid'], 'GET'); //(int)(empty($_GET['uid'])
 $type = Request::getString('type', Request::getString('op', @$args['type'], 'POST'), 'GET'); // empty($_GET['type']) ? (empty($_GET['op']) ? @$args['type'] : $_GET['op']) : $_GET['type'];
 $type = strtoupper($type);
 
-$valid_format = array('RSS0.91', 'RSS1.0', 'RSS2.0', 'PIE0.1', 'MBOX', 'OPML', 'ATOM', 'ATOM0.3', 'HTML', 'JS');
+$valid_format = ['RSS0.91', 'RSS1.0', 'RSS2.0', 'PIE0.1', 'MBOX', 'OPML', 'ATOM', 'ATOM0.3', 'HTML', 'JS'];
 if ($type === 'RDF') {
     $type = 'RSS1.0';
 }
@@ -99,7 +99,7 @@ $xoopsCachedTemplateId = md5($xoopsModule->getVar('mid') . ',' . $article_id . '
 if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
     $criteria = new CriteriaCompo();
     $criteria->setLimit($xoopsModuleConfig['articles_perpage']);
-    $articles_obj = array();
+    $articles_obj = [];
     switch ($source) {
         case 'article':
             $pagetitle = planet_constant('MD_ARTICLE');
@@ -151,11 +151,11 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
             $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php';
             break;
     }
-    $items = array();
+    $items = [];
     foreach (array_keys($articles_obj) as $id) {
         $content = $articles_obj[$id]->getVar('art_content');
         $content .= '<br>' . planet_constant('MD_SOURCE') . ': ' . $articles_obj[$id]->getVar('art_link') . ' ' . $articles_obj[$id]->getVar('art_author');
-        $items[] = array(
+        $items[] = [
             'title'                     => $articles_obj[$id]->getVar('art_title'),
             'link'                      => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $articles_obj[$id]->getVar('art_id'),
             'description'               => $content,
@@ -163,7 +163,7 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
             'date'                      => $articles_obj[$id]->getTime('rss'),
             'source'                    => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/',
             'author'                    => $articles_obj[$id]->getVar('art_author')
-        );
+        ];
     }
     unset($articles_obj, $criteria);
 
@@ -182,14 +182,14 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
     $xml->setVar('language', _LANGCODE);
 
     $dimention = @getimagesize(XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/' . $xoopsModule->getInfo('image'));
-    $image     = array(
+    $image     = [
         'width'       => $dimention[0],
         'height'      => $dimention[1],
         'title'       => $xoopsConfig['sitename'] . ' :: ' . $pagetitle,
         'url'         => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/' . $xoopsModule->getInfo('image'),
         'link'        => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/',
         'description' => $rssdesc
-    );
+    ];
     $xml->setImage($image);
 
     /*

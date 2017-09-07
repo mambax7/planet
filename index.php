@@ -51,8 +51,8 @@ $list = (int)(empty($_GET['list']) ? @$args['list'] : $_GET['list']);
 
 // restore $_SERVER['REQUEST_URI']
 if (!empty($REQUEST_URI_parsed)) {
-    $args_REQUEST_URI = array();
-    $_args            = array('start', 'sort', 'uid', 'list');
+    $args_REQUEST_URI = [];
+    $_args            = ['start', 'sort', 'uid', 'list'];
     foreach ($_args as $arg) {
         if (!empty(${$arg})) {
             $args_REQUEST_URI[] = $arg . '=' . ${$arg};
@@ -93,7 +93,7 @@ if ($category_id > 0) {
     $criteria->add(new Criteria('bc.cat_id', $category_id));
     $uid            = 0;
     $blog_id        = 0;
-    $category_data  = array('id' => $category_id, 'title' => $category_obj->getVar('cat_title'));
+    $category_data  = ['id' => $category_id, 'title' => $category_obj->getVar('cat_title')];
     $query_type     = 'category';
     $article_prefix = 'a.';
 }
@@ -107,7 +107,7 @@ if ($blog_id > 0) {
         $category_id     = 0;
         $uid             = 0;
         $bookmarkHandler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
-        $blog_data       = array(
+        $blog_data       = [
             'id'    => $blog_id,
             'title' => $blog_obj->getVar('blog_title'),
             'image' => $blog_obj->getImage(),
@@ -119,7 +119,7 @@ if ($blog_id > 0) {
             'star'  => $blog_obj->getStar(),
             'rates' => $blog_obj->getVar('blog_rates'),
             'marks' => $blog_obj->getVar('blog_marks')
-        );
+        ];
     }
     $query_type     = 'blog';
     $article_prefix = '';
@@ -130,11 +130,11 @@ if ($uid > 0) {
     $category_id     = 0;
     $blog_id         = 0;
     $bookmarkHandler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
-    $user_data       = array(
+    $user_data       = [
         'uid'   => $uid,
         'name'  => XoopsUser::getUnameFromId($uid),
         'marks' => $bookmarkHandler->getCount(new Criteria('bm_uid', $uid))
-    );
+    ];
     $query_type      = 'bookmark';
     $article_prefix  = 'a.';
 }
@@ -162,11 +162,11 @@ $criteria->setOrder($order);
 $criteria->setStart($start);
 $criteria->setLimit($limit);
 
-$tags = empty($list) ? '' : array(
+$tags = empty($list) ? '' : [
     $article_prefix . 'art_title',
     $article_prefix . 'blog_id',
     $article_prefix . 'art_time'
-);
+];
 switch ($query_type) {
     case 'category':
         $articles_obj  = $articleHandler->getByCategory($criteria, $tags);
@@ -185,7 +185,7 @@ switch ($query_type) {
 if (!empty($blog_data)) {
     $blogs[$blog_data['id']] = $blog_data['title'];
 } else {
-    $blog_array = array();
+    $blog_array = [];
     foreach (array_keys($articles_obj) as $id) {
         $blog_array[$articles_obj[$id]->getVar('blog_id')] = 1;
     }
@@ -194,25 +194,25 @@ if (!empty($blog_data)) {
 }
 
 /* Objects to array */
-$articles = array();
+$articles = [];
 foreach (array_keys($articles_obj) as $id) {
-    $_article = array(
+    $_article = [
         'id'    => $id,
         'title' => $articles_obj[$id]->getVar('art_title'),
         'time'  => $articles_obj[$id]->getTime(),
-        'blog'  => array(
+        'blog'  => [
             'id'    => $articles_obj[$id]->getVar('blog_id'),
             'title' => $blogs[$articles_obj[$id]->getVar('blog_id')]
-        )
-    );
+        ]
+    ];
     if (empty($list)) {
-        $_article = array_merge($_article, array(
+        $_article = array_merge($_article, [
             'author'   => $articles_obj[$id]->getVar('art_author'),
             'views'    => $articles_obj[$id]->getVar('art_views'),
             'comments' => $articles_obj[$id]->getVar('art_comments'),
             'star'     => $articles_obj[$id]->getStar(),
             'rates'    => $articles_obj[$id]->getVar('art_rates')
-        ));
+        ]);
         if (!empty($xoopsModuleConfig['display_summary'])) {
             $_article['content'] = $articles_obj[$id]->getSummary();
         } else {
@@ -226,7 +226,7 @@ unset($articles_obj);
 
 if ($count_article > $limit) {
     include XOOPS_ROOT_PATH . '/class/pagenav.php';
-    $start_link = array();
+    $start_link = [];
     if ($sort) {
         $start_link[] = 'sort=' . $sort;
     }
@@ -294,13 +294,13 @@ if (empty($xoopsModuleConfig['anonymous_rate']) && !is_object($xoopsUser)) {
 }
 
 $sort_link   = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . (empty($category_id) ? '' : '/c' . $category_id) . (empty($uid) ? '' : '/u' . $uid) . (empty($blog_id) ? '' : '/b' . $blog_id) . (empty($list) ? '' : '/l1');
-$valid_sorts = array(
+$valid_sorts = [
     'views'   => planet_constant('MD_VIEWS'),
     'rating'  => planet_constant('MD_RATING'),
     'time'    => planet_constant('MD_TIME'),
     'default' => planet_constant('MD_DEFAULT')
-);
-$sortlinks   = array();
+];
+$sortlinks   = [];
 foreach ($valid_sorts as $val => $name) {
     if ($val == $sort) {
         continue;

@@ -43,19 +43,22 @@ include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/incl
 require_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/include/search.inc.php';
 $limit = $xoopsModuleConfig['articles_perpage'];
 
-$queries  = array();
+$queries  = [];
 $andor    = Request::getString('andor', Request::getString('andor', '', 'GET'), 'POST');//isset($_POST['andor']) ? $_POST['andor'] : (isset($_GET['andor']) ? $_GET['andor'] : '');
 $start    = Request::getInt('start', 0, 'GET');//isset($_GET['start']) ? $_GET['start'] : 0;
 $category = Request::getInt('category', Request::getInt('category', 0, 'GET'), 'POST'); //(int)(isset($_POST['category']) ? $_POST['category'] : (isset($_GET['category']) ? $_GET['category'] : null));
 $blog     = Request::getInt('blog', Request::getInt('blog', 0, 'GET'), 'POST');//(int)(isset($_POST['blog']) ? $_POST['blog'] : (isset($_GET['blog']) ? $_GET['blog'] : null));
 $uid      = Request::getInt('uid', Request::getInt('uid', 0, 'GET'), 'POST');//(int)(isset($_POST['uid']) ? $_POST['uid'] : (isset($_GET['uid']) ? $_GET['uid'] : null));
-$searchin = Request::getArray('searchin', 0 !== count(Request::getArray('searchin', array(), 'GET')) ? explode('|', Request::getArray('searchin', array(), 'GET')) : array(),
-                              'POST'); //isset($_POST['searchin']) ? $_POST['searchin'] : (isset($_GET['searchin']) ? explode('|', $_GET['searchin']) : array());
+$searchin = Request::getArray(
+    'searchin',
+    0 !== count(Request::getArray('searchin', [], 'GET')) ? explode('|', Request::getArray('searchin', [], 'GET')) : [],
+                              'POST'
+); //isset($_POST['searchin']) ? $_POST['searchin'] : (isset($_GET['searchin']) ? explode('|', $_GET['searchin']) : array());
 $sortby   = Request::getString('sortby', Request::getString('sortby', null, 'GET'), 'POST');//isset($_POST['sortby']) ? $_POST['sortby'] : (isset($_GET['sortby']) ? $_GET['sortby'] : null);
 $term     = Request::getString('term', Request::getString('term', '', 'GET'), 'POST');//isset($_POST['term']) ? $_POST['term'] : (isset($_GET['term']) ? $_GET['term'] : '');
 
-$andor  = in_array(strtoupper($andor), array('OR', 'AND', 'EXACT')) ? strtoupper($andor) : 'OR';
-$sortby = in_array(strtolower($sortby), array(
+$andor  = in_array(strtoupper($andor), ['OR', 'AND', 'EXACT']) ? strtoupper($andor) : 'OR';
+$sortby = in_array(strtolower($sortby), [
     'a.art_id desc',
     'a.art_time desc',
     'a.art_title',
@@ -64,7 +67,7 @@ $sortby = in_array(strtolower($sortby), array(
     'b.blog_feed',
     'b.blog_title',
     'b.blog_time'
-)) ? strtolower($sortby) : '';
+]) ? strtolower($sortby) : '';
 
 if (!(empty(Request::getString('submit', '', 'POST')) && empty(Request::getString('term', '', 'GET')))) {
     $next_search['category'] = $category;
@@ -76,7 +79,7 @@ if (!(empty(Request::getString('submit', '', 'POST')) && empty(Request::getStrin
     $query               = trim($term);
 
     if ($andor !== 'EXACT') {
-        $ignored_queries = array(); // holds kewords that are shorter than allowed minmum length
+        $ignored_queries = []; // holds kewords that are shorter than allowed minmum length
         $temp_queries    = preg_split("/[\s,]+/", $query);
         foreach ($temp_queries as $q) {
             $q = trim($q);
@@ -93,7 +96,7 @@ if (!(empty(Request::getString('submit', '', 'POST')) && empty(Request::getStrin
         if (strlen($query) < $xoopsConfigSearch['keyword_min']) {
             redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/search.php', 2, sprintf(_SR_KEYTOOSHORT, $xoopsConfigSearch['keyword_min']));
         }
-        $queries = array($myts->addSlashes($query));
+        $queries = [$myts->addSlashes($query)];
     }
 
     $next_search['sortby']   = $sortby;
@@ -119,7 +122,7 @@ if (!(empty(Request::getString('submit', '', 'POST')) && empty(Request::getStrin
         $xoopsTpl->assign('results', $results);
 
         if (count($next_search) > 0) {
-            $items = array();
+            $items = [];
             foreach ($next_search as $para => $val) {
                 if (!empty($val)) {
                     $items[] = "$para=$val";

@@ -30,7 +30,7 @@
 The functions loaded on initializtion
 */
 
-// defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
+// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
 if (!defined('PLANET_INI')) {
     exit();
 }
@@ -103,7 +103,7 @@ if (!defined('PLANET_FUNCTIONS_INI')):
     function planet_define_url_delimiter()
     {
         if (defined('URL_DELIMITER')) {
-            if (!in_array(URL_DELIMITER, array('?', '/'))) {
+            if (!in_array(URL_DELIMITER, ['?', '/'])) {
                 die('Exit on security');
             }
         } else {

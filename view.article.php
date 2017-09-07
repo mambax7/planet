@@ -65,7 +65,7 @@ $xoopsOption['template_main']   = PlanetUtility::planetGetTemplate('article');
 require_once XOOPS_ROOT_PATH . '/header.php';
 include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
 
-$article_data = array(
+$article_data = [
     'id'       => $article_id,
     'title'    => $article_obj->getVar('art_title'),
     'content'  => $article_obj->getVar('art_content'),
@@ -76,8 +76,8 @@ $article_data = array(
     'comments' => $article_obj->getVar('art_comments'),
     'star'     => $article_obj->getStar(),
     'rates'    => $article_obj->getVar('art_rates'),
-    'blog'     => array('id' => $article_obj->getVar('blog_id'), 'title' => $blog_obj->getVar('blog_title'))
-);
+    'blog'     => ['id' => $article_obj->getVar('blog_id'), 'title' => $blog_obj->getVar('blog_title')]
+];
 
 if (!empty($xoopsModuleConfig['do_sibling'])) {
     $articles_sibling = $articleHandler->getSibling($article_obj, $blog_id);

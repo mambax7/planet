@@ -25,11 +25,11 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 
-// defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
+// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
 
 include __DIR__ . '/include/vars.php';
 
-$modversion                 = array(
+$modversion                 = [
     'name'          => planet_constant('MI_NAME'),
     'version'       => 2.10,
     'module_status' => 'Final',
@@ -40,7 +40,7 @@ $modversion                 = array(
     'image'         => 'assets/images/logoModule.png',
     'dirname'       => $GLOBALS['moddirname'],
     'help'          => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/readme.html'
-);
+];
 $modversion['help']         = 'page=help';
 $modversion['license']      = 'GNU see LICENSE';
 $modversion['license_file'] = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/gpl.txt';
@@ -57,18 +57,18 @@ $modversion['module_website_name'] = 'XOOPS';
 $modversion['min_php']             = '5.5';
 $modversion['min_xoops']           = '2.5.9';
 $modversion['min_admin']           = '1.2';
-$modversion['min_db']              = array('mysql' => '5.5');
+$modversion['min_db']              = ['mysql' => '5.5'];
 
 // database tables
 $modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
-$modversion['tables']           = array(
+$modversion['tables']           = [
     $GLOBALS['MOD_DB_PREFIX'] . '_category',
     $GLOBALS['MOD_DB_PREFIX'] . '_article',
     $GLOBALS['MOD_DB_PREFIX'] . '_blog',
     $GLOBALS['MOD_DB_PREFIX'] . '_blogcat',
     $GLOBALS['MOD_DB_PREFIX'] . '_bookmark',
     $GLOBALS['MOD_DB_PREFIX'] . '_rate'
-);
+];
 
 // Admin things
 $modversion['hasAdmin']    = 1;
@@ -78,11 +78,11 @@ $modversion['adminmenu']   = 'admin/menu.php';
 
 // Menu
 $modversion['hasMain']  = 1;
-$modversion['pages'][2] = array('url' => 'index.php', 'name' => planet_constant('MI_PAGE_INDEX'));
-$modversion['pages'][3] = array('url' => 'view.article.php', 'name' => planet_constant('MI_PAGE_ARTICLE'));
-$modversion['pages'][4] = array('url' => 'view.archive.php', 'name' => planet_constant('MI_PAGE_ARCHIVE'));
-$modversion['pages'][5] = array('url' => 'view.list.php', 'name' => planet_constant('MI_PAGE_LIST'));
-$modversion['sub'][1]   = array('name' => planet_constant('MI_SUBMIT'), 'url' => 'action.blog.php');
+$modversion['pages'][2] = ['url' => 'index.php', 'name' => planet_constant('MI_PAGE_INDEX')];
+$modversion['pages'][3] = ['url' => 'view.article.php', 'name' => planet_constant('MI_PAGE_ARTICLE')];
+$modversion['pages'][4] = ['url' => 'view.archive.php', 'name' => planet_constant('MI_PAGE_ARCHIVE')];
+$modversion['pages'][5] = ['url' => 'view.list.php', 'name' => planet_constant('MI_PAGE_LIST')];
+$modversion['sub'][1]   = ['name' => planet_constant('MI_SUBMIT'), 'url' => 'action.blog.php'];
 
 // Use smarty
 $modversion['use_smarty'] = 1;
@@ -93,11 +93,11 @@ $modversion['onUpdate']  = 'include/action.module.php';
 /**
  * Templates
  */
-$modversion['templates'][] = array('file' => $GLOBALS['VAR_PREFIX'] . '_index.tpl', 'description' => '');
-$modversion['templates'][] = array('file' => $GLOBALS['VAR_PREFIX'] . '_article.tpl', 'description' => '');
-$modversion['templates'][] = array('file' => $GLOBALS['VAR_PREFIX'] . '_archive.tpl', 'description' => '');
-$modversion['templates'][] = array('file' => $GLOBALS['VAR_PREFIX'] . '_blogs.tpl', 'description' => '');
-$modversion['templates'][] = array('file' => $GLOBALS['VAR_PREFIX'] . '_search.tpl', 'description' => '');
+$modversion['templates'][] = ['file' => $GLOBALS['VAR_PREFIX'] . '_index.tpl', 'description' => ''];
+$modversion['templates'][] = ['file' => $GLOBALS['VAR_PREFIX'] . '_article.tpl', 'description' => ''];
+$modversion['templates'][] = ['file' => $GLOBALS['VAR_PREFIX'] . '_archive.tpl', 'description' => ''];
+$modversion['templates'][] = ['file' => $GLOBALS['VAR_PREFIX'] . '_blogs.tpl', 'description' => ''];
+$modversion['templates'][] = ['file' => $GLOBALS['VAR_PREFIX'] . '_search.tpl', 'description' => ''];
 
 //module css
 $modversion['css'] = 'templates/style.css';
@@ -148,164 +148,164 @@ $modversion['comments']['callback']['update']  = $GLOBALS['VAR_PREFIX'] . '_com_
 
 // Configs
 // Config items
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'do_debug',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_DODEBUG',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_DODEBUG_DESC',
     'formtype'    => 'yesno',
     'valuetype'   => 'int',
     'default'     => 1
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'do_urw',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_DOURLREWRITE',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_DOURLREWRITE_DESC',
     'formtype'    => 'yesno',
     'valuetype'   => 'int',
-    'default'     => in_array(php_sapi_name(), array('apache', 'apache2handler'))
-);
+    'default'     => in_array(php_sapi_name(), ['apache', 'apache2handler'])
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'theme_set',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_THEMESET',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_THEMESET_DESC',
     'formtype'    => 'select',
     'valuetype'   => 'text',
-    'options'     => array(_NONE => '0'),
+    'options'     => [_NONE => '0'],
     'default'     => ''
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'timeformat',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_TIMEFORMAT',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_TIMEFORMAT_DESC',
     'formtype'    => 'select',
     'valuetype'   => 'text',
-    'options'     => array(
+    'options'     => [
         _DATESTRING                                       => 'l',
         _MEDIUMDATESTRING                                 => 'm',
         _SHORTDATESTRING                                  => 's',
         $GLOBALS['VAR_PREFIXU'] . '_MI_TIMEFORMAT_CUSTOM' => 'c'
-    ),
+    ],
     'default'     => 'c'
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'articles_perpage',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLESPERPAGE',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLESPERPAGE_DESC',
     'formtype'    => 'textbox',
     'valuetype'   => 'int',
     'default'     => 10
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'list_perpage',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_LISTPERPAGE',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_LISTPERPAGE_DESC',
     'formtype'    => 'textbox',
     'valuetype'   => 'int',
     'default'     => 20
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'blogs_perupdate',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_BLOGSPERUPDATE',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_BLOGSPERUPDATE_DESC',
     'formtype'    => 'textbox',
     'valuetype'   => 'int',
     'default'     => 10
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'article_expire',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_EXPIRE',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_EXPIRE_DESC',
     'formtype'    => 'textbox',
     'valuetype'   => 'int',
     'default'     => 30
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'display_summary',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_DISPLAY_SUMMARY',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_DISPLAY_SUMMARY_DESC',
     'formtype'    => 'textbox',
     'valuetype'   => 'int',
     'default'     => 0
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'do_sibling',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_DOSIBLING',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_DOSIBLING_DESC',
     'formtype'    => 'yesno',
     'valuetype'   => 'int',
     'default'     => 1
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'pings',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_PING',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_PING_DESC',
     'formtype'    => 'textarea',
     'valuetype'   => 'text',
     'default'     => ''
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'trackback_option',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_TRACKBACK_OPTION',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_TRACKBACK_OPTION_DESC',
     'formtype'    => 'select',
     'valuetype'   => 'int',
     'default'     => 0,
-    'options'     => array(planet_constant('MI_MODERATION') => 0, _ALL => 1, _NONE => 2)
-);
+    'options'     => [planet_constant('MI_MODERATION') => 0, _ALL => 1, _NONE => 2]
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'copyright',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_COPYRIGHT',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_COPYRIGHT_DESC',
     'formtype'    => 'textbox',
     'valuetype'   => 'text',
     'default'     => 'Copyright&copy; %s & ' . $xoopsConfig['sitename']
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'newblog_submit',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_NEWBLOG_SUBMIT',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_NEWBLOG_SUBMIT_DESC',
     'formtype'    => 'select',
     'valuetype'   => 'int',
     'default'     => 2,
-    'options'     => array(
+    'options'     => [
         _NONE                            => 0,
         planet_constant('MI_MODERATION') => 1,
         planet_constant('MI_MEMBER')     => 2,
         _ALL                             => 3
-    )
+    ]
     // 0 - Only admin; 1 - all but need approval; 2 - members auto approved; 3 - all
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'anonymous_rate',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_ANONYMOUSRATE',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_ANONYMOUSRATE_DESC',
     'formtype'    => 'yesno',
     'valuetype'   => 'int',
     'default'     => 0
-);
+];
 
-$modversion['config'][] = array(
+$modversion['config'][] = [
     'name'        => 'do_pseudocron',
     'title'       => $GLOBALS['VAR_PREFIXU'] . '_MI_PSEUDOCRON',
     'description' => $GLOBALS['VAR_PREFIXU'] . '_MI_PSEUDOCRON_DESC',
     'formtype'    => 'yesno',
     'valuetype'   => 'int',
     'default'     => 1
-);
+];
 
 // Notification
 
@@ -318,14 +318,14 @@ $i = 0;
 $modversion['notification']['category'][$i]['name']           = 'global';
 $modversion['notification']['category'][$i]['title']          = planet_constant('MI_GLOBAL_NOTIFY');
 $modversion['notification']['category'][$i]['description']    = planet_constant('MI_GLOBAL_NOTIFYDSC');
-$modversion['notification']['category'][$i]['subscribe_from'] = array('index.php');
+$modversion['notification']['category'][$i]['subscribe_from'] = ['index.php'];
 $modversion['notification']['category'][$i]['allow_bookmark'] = 1;
 
 ++$i;
 $modversion['notification']['category'][$i]['name']           = 'blog';
 $modversion['notification']['category'][$i]['title']          = planet_constant('MI_BLOG_NOTIFY');
 $modversion['notification']['category'][$i]['description']    = planet_constant('MI_BLOG_NOTIFYDSC');
-$modversion['notification']['category'][$i]['subscribe_from'] = array('index.php');
+$modversion['notification']['category'][$i]['subscribe_from'] = ['index.php'];
 $modversion['notification']['category'][$i]['item_name']      = 'blog';
 $modversion['notification']['category'][$i]['allow_bookmark'] = 1;
 
@@ -333,7 +333,7 @@ $modversion['notification']['category'][$i]['allow_bookmark'] = 1;
 $modversion['notification']['category'][$i]['name']           = 'article';
 $modversion['notification']['category'][$i]['title']          = planet_constant('MI_ARTICLE_NOTIFY');
 $modversion['notification']['category'][$i]['description']    = planet_constant('MI_ARTICLE_NOTIFYDSC');
-$modversion['notification']['category'][$i]['subscribe_from'] = array('view.article.php');
+$modversion['notification']['category'][$i]['subscribe_from'] = ['view.article.php'];
 $modversion['notification']['category'][$i]['item_name']      = 'article';
 $modversion['notification']['category'][$i]['allow_bookmark'] = 1;
 

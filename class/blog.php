@@ -29,7 +29,7 @@
  * @copyright copyright &copy; 2005 XoopsForge.com
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('XOOPS root path not defined');
+// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
 require_once __DIR__ . '/../include/vars.php';
 //mod_loadFunctions('', $GLOBALS['moddirname']);
 

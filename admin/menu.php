@@ -32,39 +32,49 @@ if (false !== ($moduleHelper = Xmf\Module\Helper::getHelper($moduleDirName))) {
     $moduleHelper = Xmf\Module\Helper::getHelper('system');
 }
 
-
 $pathIcon32 = \Xmf\Module\Admin::menuIconPath('');
 //$pathModIcon32 = $moduleHelper->getModule()->getInfo('modicons32');
 
 $moduleHelper->loadLanguage('modinfo');
 
-$adminmenu              = [];
-$i                      = 0;
-'title' =>  _AM_MODULEADMIN_HOME,
-'link' =>  'admin/index.php',
-'icon' =>  $pathIcon32 . '/home.png',
-++$i;
-'title' =>  planet_constant('MI_ADMENU_INDEX'),
-'link' =>  'admin/main.php',
-'icon' =>  $pathIcon32 . '/manage.png',
+$adminmenu[] = [
+    'title' => _AM_MODULEADMIN_HOME,
+    'link'  => 'admin/index.php',
+    'icon'  => $pathIcon32 . '/home.png',
+];
 
-++$i;
-'title' =>  planet_constant('MI_ADMENU_CATEGORY'),
-'link' =>  'admin/admin.category.php',
-'icon' =>  $pathIcon32 . '/category.png',
-++$i;
-'title' =>  planet_constant('MI_ADMENU_BLOG'),
-'link' =>  'admin/admin.blog.php',
-'icon' =>  $pathIcon32 . '/translations.png',
-++$i;
-'title' =>  planet_constant('MI_ADMENU_ARTICLE'),
-'link' =>  'admin/admin.article.php',
-'icon' =>  $pathIcon32 . '/content.png',
-//++$i;
+$adminmenu[] = [
+    'title' => planet_constant('MI_ADMENU_INDEX'),
+    'link'  => 'admin/main.php',
+    'icon'  => $pathIcon32 . '/manage.png',
+];
+
+$adminmenu[] = [
+    'title' => planet_constant('MI_ADMENU_CATEGORY'),
+    'link'  => 'admin/admin.category.php',
+    'icon'  => $pathIcon32 . '/category.png',
+];
+
+$adminmenu[] = [
+    'title' => planet_constant('MI_ADMENU_BLOG'),
+    'link'  => 'admin/admin.blog.php',
+    'icon'  => $pathIcon32 . '/translations.png',
+];
+
+$adminmenu[] = [
+    'title' => planet_constant('MI_ADMENU_ARTICLE'),
+    'link'  => 'admin/admin.article.php',
+    'icon'  => $pathIcon32 . '/content.png',
+];
+
+//$adminmenu[] = [
 //'title' =>  planet_constant("MI_ADMENU_BLOCK"),
 //'link' =>  "admin/admin.block.php",
 //$adminmenu[$i]["icon"]  = $pathIcon32 . '/manage.png';
-++$i;
-'title' =>  _AM_MODULEADMIN_ABOUT,
-'link' =>  'admin/about.php',
-'icon' =>  $pathIcon32 . '/about.png',
+//];
+
+$adminmenu[] = [
+    'title' => _AM_MODULEADMIN_ABOUT,
+    'link'  => 'admin/about.php',
+    'icon'  => $pathIcon32 . '/about.png',
+];

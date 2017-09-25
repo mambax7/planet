@@ -88,7 +88,7 @@ class xmlparser extends MagpieRSS
      */
     public function is_atom()
     {
-        if ($this->feed_type == ATOM) {
+        if (ATOM == $this->feed_type) {
             $this->feed_version = empty($this->feed_version) ? '0.3' : $this->feed_version;
 
             return $this->feed_version;
@@ -123,7 +123,7 @@ class xmlparser extends MagpieRSS
                 $date = @$this->items[$i]['created'];
             }
             $this->items[$i]['modified'] = $date;
-        } elseif ($this->is_rss() !== '1.0'):
+        } elseif ('1.0' !== $this->is_rss()):
             for ($i = 0, $iMax = count($this->items); $i < $iMax; ++$i) {
                 if ($date = @$this->items[$i]['pubdate']) {
                     continue;

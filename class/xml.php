@@ -167,7 +167,7 @@ if (!class_exists('Xmlfeed')) {
          */
         public function addItems(&$items)
         {
-            if (!is_array($items) || count($items) == 0) {
+            if (!is_array($items) || 0 == count($items)) {
                 return;
             }
             foreach ($items as $item) {

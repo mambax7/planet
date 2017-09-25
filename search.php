@@ -78,7 +78,7 @@ if (!(empty(Request::getString('submit', '', 'POST')) && empty(Request::getStrin
     $next_search['term'] = $term;
     $query               = trim($term);
 
-    if ($andor !== 'EXACT') {
+    if ('EXACT' !== $andor) {
         $ignored_queries = []; // holds kewords that are shorter than allowed minmum length
         $temp_queries    = preg_split("/[\s,]+/", $query);
         foreach ($temp_queries as $q) {
@@ -89,7 +89,7 @@ if (!(empty(Request::getString('submit', '', 'POST')) && empty(Request::getStrin
                 $ignored_queries[] = $myts->addSlashes($q);
             }
         }
-        if (count($queries) == 0) {
+        if (0 == count($queries)) {
             redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/search.php', 2, sprintf(_SR_KEYTOOSHORT, $xoopsConfigSearch['keyword_min']));
         }
     } else {

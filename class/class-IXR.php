@@ -29,13 +29,13 @@ class IXR_Value
             $type = $this->calculateType();
         }
         $this->type = $type;
-        if ($type === 'struct') {
+        if ('struct' === $type) {
             /* Turn all the values in the array in to new IXR_Value objects */
             foreach ($this->data as $key => $value) {
                 $this->data[$key] = new IXR_Value($value);
             }
         }
-        if ($type === 'array') {
+        if ('array' === $type) {
             for ($i = 0, $j = count($this->data); $i < $j; ++$i) {
                 $this->data[$i] = new IXR_Value($this->data[$i]);
             }
@@ -47,7 +47,7 @@ class IXR_Value
      */
     public function calculateType()
     {
-        if ($this->data === true || $this->data === false) {
+        if (true === $this->data || false === $this->data) {
             return 'boolean';
         }
         if (is_int($this->data)) {
@@ -184,7 +184,7 @@ class IXR_Message
     {
         // first remove the XML declaration
         $this->message = preg_replace('/<\?xml(.*)?\?' . '>/', '', $this->message);
-        if (trim($this->message) == '') {
+        if ('' == trim($this->message)) {
             return false;
         }
         $this->_parser = xml_parser_create();
@@ -203,7 +203,7 @@ class IXR_Message
         }
         xml_parser_free($this->_parser);
         // Grab the error messages, if any
-        if ($this->messageType === 'fault') {
+        if ('fault' === $this->messageType) {
             $this->faultCode   = $this->params[0]['faultCode'];
             $this->faultString = $this->params[0]['faultString'];
         }
@@ -278,7 +278,7 @@ class IXR_Message
                 break;
             case 'value':
                 // "If no type is indicated, the type is string."
-                if (trim($this->_currentTagContents) != '') {
+                if ('' != trim($this->_currentTagContents)) {
                     $value                     = (string)$this->_currentTagContents;
                     $this->_currentTagContents = '';
                     $valueFlag                 = true;
@@ -321,7 +321,7 @@ class IXR_Message
             */
             if (count($this->_arraystructs) > 0) {
                 // Add value to struct or array
-                if ($this->_arraystructstypes[count($this->_arraystructstypes) - 1] === 'struct') {
+                if ('struct' === $this->_arraystructstypes[count($this->_arraystructstypes) - 1]) {
                     // Add to struct
                     $this->_arraystructs[count($this->_arraystructs) - 1][$this->_currentStructName[count($this->_currentStructName) - 1]] = $value;
                 } else {
@@ -377,7 +377,7 @@ class IXR_Server
         if (!$this->message->parse()) {
             $this->error(-32700, 'parse error. not well formed');
         }
-        if ($this->message->messageType !== 'methodCall') {
+        if ('methodCall' !== $this->message->messageType) {
             $this->error(-32600, 'server error. invalid xml-rpc. not conforming to spec. Request must be a methodCall');
         }
         $result = $this->call($this->message->methodName, $this->message->params);
@@ -417,12 +417,12 @@ EOD;
         }
         $method = $this->callbacks[$methodname];
         // Perform the callback and send the response
-        if (count($args) == 1) {
+        if (1 == count($args)) {
             // If only one paramater just send that instead of the whole array
             $args = $args[0];
         }
         // Are we dealing with a function or a method?
-        if (substr($method, 0, 5) === 'this:') {
+        if ('this:' === substr($method, 0, 5)) {
             // It's a class method - check it exists
             $method = substr($method, 5);
             if (!method_exists($this, $method)) {
@@ -540,7 +540,7 @@ EOD;
         foreach ($methodcalls as $call) {
             $method = $call['methodName'];
             $params = $call['params'];
-            if ($method === 'system.multicall') {
+            if ('system.multicall' === $method) {
                 $result = new IXR_Error(-32600, 'Recursive calls to system.multicall are forbidden');
             } else {
                 $result = $this->call($method, $params);
@@ -698,7 +698,7 @@ class IXR_Client
                 }
                 $gotFirstLine = true;
             }
-            if (trim($line) == '') {
+            if ('' == trim($line)) {
                 $gettingHeaders = false;
             }
             if (!$gettingHeaders) {
@@ -717,7 +717,7 @@ class IXR_Client
             return false;
         }
         // Is the message a fault?
-        if ($this->message->messageType === 'fault') {
+        if ('fault' === $this->message->messageType) {
             $this->error = new IXR_Error($this->message->faultCode, $this->message->faultString);
 
             return false;
@@ -994,7 +994,7 @@ class IXR_IntrospectionServer extends IXR_Server
                     }
                     break;
                 case 'boolean':
-                    if ($arg !== false && $arg !== true) {
+                    if (false !== $arg && true !== $arg) {
                         $ok = false;
                     }
                     break;

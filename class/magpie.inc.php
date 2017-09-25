@@ -124,7 +124,7 @@ class MagpieRSS
 
         if (!$status) {
             $errorcode = xml_get_error_code($this->parser);
-            if ($errorcode != XML_ERROR_NONE) {
+            if (XML_ERROR_NONE != $errorcode) {
                 $xml_error  = xml_error_string($errorcode);
                 $error_line = xml_get_current_line_number($this->parser);
                 $error_col  = xml_get_current_column_number($this->parser);
@@ -154,7 +154,7 @@ class MagpieRSS
         if (strpos($element, ':')) {
             list($ns, $el) = explode(':', $element, 2);
         }
-        if ($ns && $ns !== 'rdf') {
+        if ($ns && 'rdf' !== $ns) {
             $this->current_namespace = $ns;
         }
 
@@ -162,13 +162,13 @@ class MagpieRSS
         # identify feed from root element
         #
         if (!isset($this->feed_type)) {
-            if ($el === 'rdf') {
+            if ('rdf' === $el) {
                 $this->feed_type    = RSS;
                 $this->feed_version = '1.0';
-            } elseif ($el === 'rss') {
+            } elseif ('rss' === $el) {
                 $this->feed_type    = RSS;
                 $this->feed_version = $attrs['version'];
-            } elseif ($el === 'feed') {
+            } elseif ('feed' === $el) {
                 $this->feed_type    = ATOM;
                 $this->feed_version = $attrs['version'];
                 $this->inchannel    = true;
@@ -177,9 +177,9 @@ class MagpieRSS
             return;
         }
 
-        if ($el === 'channel') {
+        if ('channel' === $el) {
             $this->inchannel = true;
-        } elseif ($el === 'item' || $el === 'entry') {
+        } elseif ('item' === $el || 'entry' === $el) {
             $this->initem = true;
             if (isset($attrs['rdf:about'])) {
                 $this->current_item['about'] = $attrs['rdf:about'];
@@ -188,20 +188,20 @@ class MagpieRSS
 
         // if we're in the default namespace of an RSS feed,
         //  record textinput or image fields
-        elseif ($this->feed_type == RSS && $this->current_namespace === '' && $el === 'textinput') {
+        elseif (RSS == $this->feed_type && '' === $this->current_namespace && 'textinput' === $el) {
             $this->intextinput = true;
-        } elseif ($this->feed_type == RSS && $this->current_namespace === '' && $el === 'image') {
+        } elseif (RSS == $this->feed_type && '' === $this->current_namespace && 'image' === $el) {
             $this->inimage = true;
         } # handle atom content constructs
-        elseif ($this->feed_type == ATOM && in_array($el, $this->_CONTENT_CONSTRUCTS)) {
+        elseif (ATOM == $this->feed_type && in_array($el, $this->_CONTENT_CONSTRUCTS)) {
             // avoid clashing w/ RSS mod_content
-            if ($el === 'content') {
+            if ('content' === $el) {
                 $el = 'atom_content';
             }
 
             $this->incontent = $el;
         } // if inside an Atom content construct (e.g. content or summary) field treat tags as text
-        elseif ($this->feed_type == ATOM && $this->incontent) {
+        elseif (ATOM == $this->feed_type && $this->incontent) {
             // if tags are inlined, then flatten
             $attrs_str = implode(' ', array_map('map_attrs', array_keys($attrs), array_values($attrs)));
 
@@ -214,8 +214,8 @@ class MagpieRSS
         // Magpie treats link elements of type rel='alternate'
         // as being equivalent to RSS's simple link element.
         //
-        elseif ($this->feed_type == ATOM && $el === 'link') {
-            if (isset($attrs['rel']) && $attrs['rel'] === 'alternate') {
+        elseif (ATOM == $this->feed_type && 'link' === $el) {
+            if (isset($attrs['rel']) && 'alternate' === $attrs['rel']) {
                 $link_el = 'link';
             } else {
                 $link_el = 'link_' . $attrs['rel'];
@@ -234,7 +234,7 @@ class MagpieRSS
      */
     public function feed_cdata($p, $text)
     {
-        if ($this->feed_type == ATOM && $this->incontent) {
+        if (ATOM == $this->feed_type && $this->incontent) {
             $this->append_content($text);
         } else {
             $current_el = implode('_', array_reverse($this->stack));
@@ -250,19 +250,19 @@ class MagpieRSS
     {
         $el = strtolower($el);
 
-        if ($el === 'item' || $el === 'entry') {
+        if ('item' === $el || 'entry' === $el) {
             $this->items[]      = $this->current_item;
             $this->current_item = [];
             $this->initem       = false;
-        } elseif ($this->feed_type == RSS && $this->current_namespace === '' && $el === 'textinput') {
+        } elseif (RSS == $this->feed_type && '' === $this->current_namespace && 'textinput' === $el) {
             $this->intextinput = false;
-        } elseif ($this->feed_type == RSS && $this->current_namespace === '' && $el === 'image') {
+        } elseif (RSS == $this->feed_type && '' === $this->current_namespace && 'image' === $el) {
             $this->inimage = false;
-        } elseif ($this->feed_type == ATOM && in_array($el, $this->_CONTENT_CONSTRUCTS)) {
+        } elseif (ATOM == $this->feed_type && in_array($el, $this->_CONTENT_CONSTRUCTS)) {
             $this->incontent = false;
-        } elseif ($el === 'channel' || $el === 'feed') {
+        } elseif ('channel' === $el || 'feed' === $el) {
             $this->inchannel = false;
-        } elseif ($this->feed_type == ATOM && $this->incontent) {
+        } elseif (ATOM == $this->feed_type && $this->incontent) {
             // balance tags properly
             // note:  i don't think this is actually neccessary
             if ($this->stack[0] == $el) {
@@ -372,7 +372,7 @@ class MagpieRSS
                     $item['atom_content'] = $item['content']['encoded'];
                 }
 
-                if ($this->is_rss() === '1.0' && isset($item['dc']['date'])) {
+                if ('1.0' === $this->is_rss() && isset($item['dc']['date'])) {
                     $epoch = @parse_w3cdtf($item['dc']['date']);
                     if ($epoch && $epoch > 0) {
                         $item['date_timestamp'] = $epoch;
@@ -394,7 +394,7 @@ class MagpieRSS
      */
     public function is_rss()
     {
-        if ($this->feed_type == RSS) {
+        if (RSS == $this->feed_type) {
             return $this->feed_version;
         } else {
             return false;
@@ -406,7 +406,7 @@ class MagpieRSS
      */
     public function is_atom()
     {
-        if ($this->feed_type == ATOM) {
+        if (ATOM == $this->feed_type) {
             return $this->feed_version;
         } else {
             return false;
@@ -423,7 +423,7 @@ class MagpieRSS
      */
     public function create_parser($source, $out_enc, $in_enc, $detect)
     {
-        if (substr(PHP_VERSION, 0, 1) == 5) {
+        if (5 == substr(PHP_VERSION, 0, 1)) {
             $parser = $this->php5_create_parser($in_enc, $detect);
         } else {
             list($parser, $source) = $this->php4_create_parser($source, $in_enc, $detect);
@@ -598,7 +598,7 @@ function parse_w3cdtf($date_str)
         $epoch = gmmktime((int)$hours, (int)$minutes, (int)$seconds, (int)$month, (int)$day, (int)$year);
 
         $offset = 0;
-        if ($match[10] === 'Z') {
+        if ('Z' === $match[10]) {
             # zulu time, aka GMT
         } else {
             list($tz_mod, $tz_hour, $tz_min) = [$match[8], $match[9], $match[10]];
@@ -615,7 +615,7 @@ function parse_w3cdtf($date_str)
 
             # is timezone ahead of GMT?  then subtract offset
             #
-            if ($tz_mod == '+') {
+            if ('+' == $tz_mod) {
                 $offset_secs = $offset_secs * -1;
             }
 

@@ -116,12 +116,12 @@ if (!empty($article_id) && !empty($url)) {
 
         // call custom approve function if any
         if (false != $call_approvefunc && isset($comment_config['callback']['approve'])
-            && trim($comment_config['callback']['approve']) != '') {
+            && '' != trim($comment_config['callback']['approve'])) {
             $skip = false;
             if (!function_exists($comment_config['callback']['approve'])) {
                 if (isset($comment_config['callbackFile'])) {
                     $callbackfile = trim($comment_config['callbackFile']);
-                    if ($callbackfile != ''
+                    if ('' != $callbackfile
                         && file_exists(XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile)) {
                         require_once XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile;
                     }
@@ -139,12 +139,12 @@ if (!empty($article_id) && !empty($url)) {
 
         // call custom update function if any
         if (false != $call_updatefunc && isset($comment_config['callback']['update'])
-            && trim($comment_config['callback']['update']) != '') {
+            && '' != trim($comment_config['callback']['update'])) {
             $skip = false;
             if (!function_exists($comment_config['callback']['update'])) {
                 if (isset($comment_config['callbackFile'])) {
                     $callbackfile = trim($comment_config['callbackFile']);
-                    if ($callbackfile != ''
+                    if ('' != $callbackfile
                         && file_exists(XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile)) {
                         require_once XOOPS_ROOT_PATH . '/modules/' . $moddir . '/' . $callbackfile;
                     }

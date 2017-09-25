@@ -274,7 +274,7 @@ switch ($op) {
             $blog_objs = $blogHandler->getByCategory($criteria);
         } else {
             /* All active blogs */
-            if ($category_id == 0) {
+            if (0 == $category_id) {
                 $criteria = new Criteria('1', 1);
                 $criteria->setStart($start);
                 $criteria->setLimit($xoopsModuleConfig['list_perpage']);

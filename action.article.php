@@ -43,12 +43,12 @@ $article_obj    = $articleHandler->get($art_id);
 
 $op = Request::getCmd('op', 'check', 'POST');//isset($_POST['op']) ? $_POST['op'] : '';
 
-if ($op === 'del' || !empty(Request::getString('del', '', 'POST'))) {
+if ('del' === $op || !empty(Request::getString('del', '', 'POST'))) {
     $articleHandler->delete($article_obj);
     $redirect = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php';
     $message  = planet_constant('MD_SAVED');
     redirect_header($redirect, 2, $message);
-} elseif ($op === 'save') {
+} elseif ('save' === $op) {
     if (empty($_POST['art_content'])) {
         redirect_header('javascript:history.go(-1);', 1, planet_constant('MD_TEXTEMPTY'));
     }

@@ -36,11 +36,11 @@ if (empty($xoopsModuleConfig['newblog_submit']) && (!is_object($xoopsUser) || !$
     redirect_header('index.php', 2, _NOPERM);
 }
 
-if ($op === 'save' && !empty(Request::getString('fetch', '', 'POST'))) {//!empty($_POST['fetch'])) {
+if ('save' === $op && !empty(Request::getString('fetch', '', 'POST'))) {//!empty($_POST['fetch'])) {
     $op = 'edit';
 }
 
-if ($op === 'save' && !$GLOBALS['xoopsSecurity']->check()) {
+if ('save' === $op && !$GLOBALS['xoopsSecurity']->check()) {
     redirect_header('javascript:history.go(-1);', 1, planet_constant('MD_INVALID') . ': security check failed');
 }
 include XOOPS_ROOT_PATH . '/header.php';

@@ -101,7 +101,7 @@ if (!defined('planet_FUNCTIONS')):
             }
         }
 
-        return (count($args) + count($args_numeric) + count($args_string) == 0) ? null : true;
+        return (0 == count($args) + count($args_numeric) + count($args_string)) ? null : true;
     }
 
     /**
@@ -536,11 +536,11 @@ if (!defined('planet_FUNCTIONS')):
      */
     function planetStrrPos($haystack, $needle, $offset = 0)
     {
-        if (substr(PHP_VERSION, 0, 1) == 5) {
+        if (5 == substr(PHP_VERSION, 0, 1)) {
             return strrpos($haystack, $needle, $offset);
         }
         $index = strpos(strrev($haystack), strrev($needle));
-        if ($index === false) {
+        if (false === $index) {
             return false;
         }
         $index = strlen($haystack) - strlen($needle) - $index;

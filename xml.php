@@ -47,10 +47,10 @@ $type = Request::getString('type', Request::getString('op', @$args['type'], 'POS
 $type = strtoupper($type);
 
 $valid_format = ['RSS0.91', 'RSS1.0', 'RSS2.0', 'PIE0.1', 'MBOX', 'OPML', 'ATOM', 'ATOM0.3', 'HTML', 'JS'];
-if ($type === 'RDF') {
+if ('RDF' === $type) {
     $type = 'RSS1.0';
 }
-if ($type === 'RSS') {
+if ('RSS' === $type) {
     $type = 'RSS0.91';
 }
 if (empty($type) || !in_array($type, $valid_format)) {

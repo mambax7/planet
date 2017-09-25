@@ -219,7 +219,7 @@ if (empty($uid) && is_object($xoopsUser)) {
     $xoopsTpl->assign('link_bookmark', "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.blogs.php' . URL_DELIMITER . 'u' . $xoopsUser->getVar('uid') . "\" title=\"" . planet_constant('MD_BOOKMARKS') . "\" target=\"_self\">" . planet_constant('MD_BOOKMARKS') . '</a>');
 }
 
-if ($xoopsModuleConfig['newblog_submit'] == 1 || is_object($xoopsUser)) {
+if (1 == $xoopsModuleConfig['newblog_submit'] || is_object($xoopsUser)) {
     $xoopsTpl->assign('link_submit', "<a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . "/action.blog.php\" title=\"" . _SUBMIT . "\" target=\"_blank\">" . _SUBMIT . '</a>');
 }
 

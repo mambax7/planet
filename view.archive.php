@@ -177,11 +177,11 @@ if (empty($start)) {
         $month_next = $month + 1;
         $month_prev = $month - 1;
         $_year      = $year;
-        if ($month == 12) {
+        if (12 == $month) {
             $month_next = 1;
             $_year      = $year + 1;
         }
-        if ($month == 1) {
+        if (1 == $month) {
             $month_pre = 12;
             $_year     = $year - 1;
         }
@@ -273,7 +273,7 @@ function planet_getCalendar($year = null, $month = null, $days = null)
     }
 
     $pad = 7 - planet_calendar_week_mod(date('w', mktime(0, 0, 0, $month, $day, $year)) - $week_begins);
-    if ($pad != 0 && $pad != 7) {
+    if (0 != $pad && 7 != $pad) {
         echo "\n\t\t" . '<td class="pad" colspan="' . $pad . '">&nbsp;</td>';
     }
 

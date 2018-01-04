@@ -32,8 +32,8 @@ $adminObject->displayNavigation(basename(__FILE__));
 
 //planet_adminmenu(0);
 
-echo "
-    <style type=\"text/css\">
+echo '
+    <style type="text/css">
     label,text {
         display: block;
         float: left;
@@ -48,7 +48,7 @@ echo "
         clear: left;
     }
     </style>
-";
+';
 
 echo "<fieldset><legend style='font-weight: bold; color: #900;'>" . planet_constant('AM_PREFERENCES') . '</legend>';
 echo "<div style='padding: 8px;'>";
@@ -105,7 +105,7 @@ echo '<label>' . planet_constant('AM_TOTAL_CATEGORIES') . ':</label><text>' . $c
 echo '</text><br>';
 echo '<label>' . planet_constant('AM_TOTAL_BLOGS') . ':</label><text>' . $blog_count;
 if ($blog_count_pending > 0) {
-    echo " (<font color=\"red\">" . $blog_count_pending . '</font>)';
+    echo ' (<font color="red">' . $blog_count_pending . '</font>)';
 }
 echo '</text><br>';
 echo '<label>' . planet_constant('AM_TOTAL_ARTICLES') . ':</label><text>' . $article_count;

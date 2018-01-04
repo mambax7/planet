@@ -29,7 +29,7 @@ if (!defined('PLANET_INI')) {
     define('PLANET_INI', 1);
 }
 
-require_once __DIR__ . '/../class/utility.php';
+require_once __DIR__ . '/../class/Utility.php';
 /*
  * The prefix for database table name prefix
  * You can change to any term but be consistent with the table names in /sql/mysql.sql, and be unique , no conflict with other modules

@@ -125,3 +125,5 @@ define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFY', 'Article m
 define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFYCAP', 'Notify me of any action taken on this article');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFYDSC', 'Receive notification when an action is taken on this article');
 define($GLOBALS['VAR_PREFIXU'] . '_MI_ARTICLE_ARTICLEMONITOR_NOTIFYSBJ', '[{X_SITENAME}] {X_MODULE} auto-notify : New article published');
+
+define($GLOBALS['VAR_PREFIXU'] . '_MI_ADMENU_HOME', 'Home');

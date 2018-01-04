@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Planet;
+
 //
 // ------------------------------------------------------------------------ //
 // This program is free software; you can redistribute it and/or modify     //
@@ -43,9 +44,9 @@ if (!defined('planet_FUNCTIONS')):
     require_once XOOPS_ROOT_PATH . '/Frameworks/art/functions.php';
 
     /**
-     * Class PlanetUtility
+     * Class Utility
      */
-    class PlanetUtility
+    class Utility
     {
 
         /**
@@ -177,7 +178,9 @@ if (!defined('planet_FUNCTIONS')):
                 }
             }
             $function_string = preg_replace($patterns, $replacements, $function_string);
-            eval($function_string);
+            if (is_array($function_string)) {
+                eval($function_string);
+            }
 
             return true;
         }
@@ -223,7 +226,7 @@ if (!defined('planet_FUNCTIONS')):
          */
         public static function &planetParseLinks($text)
         {
-            $myts       = MyTextSanitizer::getInstance();
+            $myts       = \MyTextSanitizer::getInstance();
             $link_array = preg_split("/(\r\n|\r|\n)( *)/", $text);
             $links      = [];
             if (count($link_array) > 0) {

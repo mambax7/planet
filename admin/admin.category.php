@@ -118,7 +118,7 @@ switch ($op) {
         }
 
         echo "<fieldset><legend style='font-weight: bold; color: #900;'>" . planet_constant('AM_LIST') . '</legend>';
-        echo "<br style=\"clear:both;\">";
+        echo '<br style="clear:both;">';
 
         echo "<form name='list' method='post'>";
         echo "<table border='0' cellpadding='4' cellspacing='1' width='100%' class='outer'>";

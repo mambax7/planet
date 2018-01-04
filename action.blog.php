@@ -143,9 +143,9 @@ switch ($op) {
             $criteria  = new Criteria('blog_feed', $blog_obj->getVar('blog_feed'));
             $blogs_obj = $blogHandler->getList($criteria);
             if (count($blogs_obj) > 0) {
-                echo "<div class=\"errorMsg\">" . planet_constant('MD_BLOGEXISTS');
+                echo '<div class="errorMsg">' . planet_constant('MD_BLOGEXISTS');
                 foreach (array_keys($blogs_obj) as $bid) {
-                    echo "<br><a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $bid . "\" target=\"_blank\">" . $blogs_obj[$bid] . '</a>';
+                    echo '<br><a href="' . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $bid . '" target="_blank">' . $blogs_obj[$bid] . '</a>';
                 }
                 echo '</div>';
                 unset($blogs_obj, $criteria);

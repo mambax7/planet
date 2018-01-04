@@ -33,7 +33,7 @@ if (DIRECTORY_SEPARATOR !== '/') {
 }
 $url_arr = explode('/', strstr($current_path, '/modules/'));
 include XOOPS_ROOT_PATH . '/modules/' . $url_arr[2] . '/include/vars.php';
-include XOOPS_ROOT_PATH . '/modules/' . $url_arr[2] . '/class/utility.php';
+include XOOPS_ROOT_PATH . '/modules/' . $url_arr[2] . '/class/Utility.php';
 //require_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/include/functions.php';
 
 /**

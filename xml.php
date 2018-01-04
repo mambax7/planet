@@ -93,7 +93,7 @@ if (!empty($article_id)) {
 $xml_charset = 'UTF-8';
 require_once XOOPS_ROOT_PATH . '/class/template.php';
 $tpl = new XoopsTpl();
-$tpl->xoops_setCaching(2);
+$tpl->caching=(2);
 $tpl->xoops_setCacheTime(3600);
 $xoopsCachedTemplateId = md5($xoopsModule->getVar('mid') . ',' . $article_id . ',' . $category_id . ',' . $blog_id . ',' . $uid . ',' . $type);
 if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {

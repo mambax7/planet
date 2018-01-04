@@ -229,9 +229,9 @@ switch ($op) {
             $criteria  = new Criteria('blog_feed', $blog_obj->getVar('blog_feed'));
             $blogs_obj = $blogHandler->getList($criteria);
             if (count($blogs_obj) > 0) {
-                echo "<div class=\"errorMsg\">" . planet_constant('AM_BLOGEXISTS');
+                echo '<div class="errorMsg">' . planet_constant('AM_BLOGEXISTS');
                 foreach (array_keys($blogs_obj) as $bid) {
-                    echo "<br><a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $bid . "\" target=\"_blank\">" . $blogs_obj[$bid] . '</a>';
+                    echo '<br><a href="' . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $bid . '" target="_blank">' . $blogs_obj[$bid] . '</a>';
                 }
                 echo '</div>';
             }
@@ -299,7 +299,7 @@ switch ($op) {
         }
 
         echo "<fieldset><legend style='font-weight: bold; color: #900;'>" . planet_constant('AM_LIST') . '</legend>';
-        echo "<br style=\"clear:both\">";
+        echo '<br style="clear:both">';
 
         echo "<form name='list' id='list' method='post' action='" . xoops_getenv('PHP_SELF') . "'>";
         echo "<table border='0' cellpadding='4' cellspacing='1' width='100%' class='outer'>";

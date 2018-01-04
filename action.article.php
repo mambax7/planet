@@ -93,7 +93,7 @@ if ('del' === $op || !empty(Request::getString('del', '', 'POST'))) {
     $butt_del->setExtra("onClick='document.forms.formarticle.op.value=del'");
     $button_tray->addElement($butt_del);
     $butt_cancel = new XoopsFormButton('', 'cancel', _CANCEL, 'button');
-    $butt_cancel->setExtra("onclick='window.document.location=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . (int)$art_id . "\"'");
+    $butt_cancel->setExtra("onclick='window.document.location=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $art_id . "\"'");
     $button_tray->addElement($butt_cancel);
     $form->addElement($button_tray);
     $form->display();

@@ -29,10 +29,10 @@ require_once __DIR__ . '/../../../include/cp_header.php';
 require XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
 //require_once XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/functions.php';
 require_once XOOPS_ROOT_PATH . '/Frameworks/art/functions.admin.php';
-require_once __DIR__ . '/../class/utility.php';
+require_once __DIR__ . '/../class/Utility.php';
 $moduleDirName = basename(dirname(__DIR__));
 // include the default language file for the admin interface
 xoops_loadLanguage('main', $moduleDirName);
 
 planet_define_url_delimiter();
-$myts = MyTextSanitizer::getInstance();
+$myts = \MyTextSanitizer::getInstance();

@@ -109,7 +109,7 @@ if ($blog_id > 0) {
 
 if ($articles_count > $xoopsModuleConfig['articles_perpage']) {
     include XOOPS_ROOT_PATH . '/class/pagenav.php';
-    $nav     = new XoopsPageNav($articles_count, $xoopsModuleConfig['articles_perpage'], $start, 'start', 'month=' . $month . '&amp;day=' . $day . '&amp;year=' . $year . '&amp;blog=' . (int)$blog_id);
+    $nav     = new XoopsPageNav($articles_count, $xoopsModuleConfig['articles_perpage'], $start, 'start', 'month=' . $month . '&amp;day=' . $day . '&amp;year=' . $year . '&amp;blog=' . $blog_id);
     $pagenav = $nav->renderNav(4);
 } else {
     $pagenav = '';
@@ -233,7 +233,7 @@ function planet_getCalendar($year = null, $month = null, $days = null)
     echo '</caption>';
 
     for ($i = 1; $i <= 7; ++$i) {
-        echo "\n\t\t<th abbr=\"" . planet_constant('MD_WEEK_' . $i) . "\" scope=\"col\" title=\"" . planet_constant('MD_WEEK_' . $i) . "\">" . planet_constant('MD_WEEK_' . $i) . '</th>';
+        echo "\n\t\t<th abbr=\"" . planet_constant('MD_WEEK_' . $i) . '" scope="col" title="' . planet_constant('MD_WEEK_' . $i) . '">' . planet_constant('MD_WEEK_' . $i) . '</th>';
     }
 
     echo '<tr>';
@@ -255,13 +255,13 @@ function planet_getCalendar($year = null, $month = null, $days = null)
         echo '<td>';
 
         if (!empty($days[$day]['url'])) {
-            echo '<a href="' . $days[$day]['url'] . "\"";
+            echo '<a href="' . $days[$day]['url'] . '"';
             if (!empty($days[$day]['title'])) {
-                echo "title=\"" . $days[$day]['title'] . "\"";
+                echo 'title="' . $days[$day]['title'] . '"';
             }
             echo ">$day</a>";
         } elseif (!empty($days[$day]['title'])) {
-            echo "<acronym title=\"" . $days[$day]['title'] . "\">$day</acronym>";
+            echo '<acronym title="' . $days[$day]['title'] . "\">$day</acronym>";
         } else {
             echo $day;
         }

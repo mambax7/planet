@@ -11,6 +11,8 @@
  * @package     frameworks
  */
 
+//TODO needs to be refactored for TCPDF
+
 //ob_start();
 
 /**
@@ -80,10 +82,12 @@ if (!empty($_POST['pdf_data'])) {
 }
 $pdf_data['filename'] = preg_replace("/[^0-9a-z\-_\.]/i", '', $pdf_data['title']);
 
-include XOOPS_ROOT_PATH . '/Frameworks/fpdf/init.php';
+require_once XOOPS_ROOT_PATH . '/class/libraries/vendor/tecnickcom/tcpdf/tcpdf.php';
+
 error_reporting(0);
 ob_end_clean();
 
-$pdf = new xoopsPDF($xoopsConfig['language']);
+//$pdf = new xoopsPDF($xoopsConfig['language']);
+$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, _CHARSET, false);
 $pdf->initialize();
 $pdf->output($pdf_data, _CHARSET);

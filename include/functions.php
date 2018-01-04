@@ -217,7 +217,7 @@ if (!defined('planet_FUNCTIONS')):
      */
     function &planetParseLinks($text)
     {
-        $myts       = MyTextSanitizer::getInstance();
+        $myts       = \MyTextSanitizer::getInstance();
         $link_array = preg_split("/(\r\n|\r|\n)( *)/", $text);
         $links      = [];
         if (count($link_array) > 0) {

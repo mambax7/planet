@@ -149,13 +149,13 @@ if (!(empty(Request::getString('submit', '', 'POST')) && empty(Request::getStrin
             $next            = $start + $limit;
             $queries         = implode(',', $queries);
             $search_url_next = $search_url . "&start=$next";
-            $search_next     = "<a href=\"" . htmlspecialchars($search_url_next) . "\">" . _SR_NEXT . '</a>';
+            $search_next     = '<a href="' . htmlspecialchars($search_url_next) . '">' . _SR_NEXT . '</a>';
             $xoopsTpl->assign('search_next', $search_next);
         }
         if ($start > 0) {
             $prev            = $start - $limit;
             $search_url_prev = $search_url . "&start=$prev";
-            $search_prev     = "<a href=\"" . htmlspecialchars($search_url_prev) . "\">" . _SR_PREVIOUS . '</a>';
+            $search_prev     = '<a href="' . htmlspecialchars($search_url_prev) . '">' . _SR_PREVIOUS . '</a>';
             $xoopsTpl->assign('search_prev', $search_prev);
         }
     }
@@ -166,83 +166,83 @@ if (!(empty(Request::getString('submit', '', 'POST')) && empty(Request::getStrin
 }
 
 /* type */
-$type_select = "<select name=\"andor\">";
-$type_select .= "<option value=\"OR\"";
+$type_select = '<select name="andor">';
+$type_select .= '<option value="OR"';
 if ('OR' === $andor) {
-    $type_select .= " selected=\"selected\"";
+    $type_select .= ' selected="selected"';
 }
 $type_select .= '>' . _SR_ANY . '</option>';
-$type_select .= "<option value=\"AND\"";
+$type_select .= '<option value="AND"';
 if ('AND' === $andor) {
-    $type_select .= " selected=\"selected\"";
+    $type_select .= ' selected="selected"';
 }
 $type_select .= '>' . _SR_ALL . '</option>';
-$type_select .= "<option value=\"EXACT\"";
+$type_select .= '<option value="EXACT"';
 if ('exact' === $andor) {
-    $type_select .= " selected=\"selected\"";
+    $type_select .= ' selected="selected"';
 }
 $type_select .= '>' . _SR_EXACT . '</option>';
 $type_select .= '</select>';
 
 /* scope */
 $searchin_select = '';
-$searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"title\"";
+$searchin_select .= '<input type="checkbox" name="searchin[]" value="title"';
 if (in_array('title', $searchin)) {
     $searchin_select .= ' checked';
 }
 $searchin_select .= '>' . planet_constant('MD_TITLE') . '&nbsp;&nbsp;';
-$searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"text\"";
+$searchin_select .= '<input type="checkbox" name="searchin[]" value="text"';
 if (in_array('text', $searchin)) {
     $searchin_select .= ' checked';
 }
 $searchin_select .= '>' . planet_constant('MD_BODY') . '&nbsp;&nbsp;||&nbsp;&nbsp;';
-$searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"blog\"";
+$searchin_select .= '<input type="checkbox" name="searchin[]" value="blog"';
 if (in_array('blog', $searchin)) {
     $searchin_select .= ' checked';
 }
 $searchin_select .= '>' . planet_constant('MD_BLOG') . '&nbsp;&nbsp;';
-$searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"feed\"";
+$searchin_select .= '<input type="checkbox" name="searchin[]" value="feed"';
 if (in_array('feed', $searchin)) {
     $searchin_select .= ' checked';
 }
 $searchin_select .= '>' . planet_constant('MD_FEED') . '&nbsp;&nbsp;';
-$searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"desc\"";
+$searchin_select .= '<input type="checkbox" name="searchin[]" value="desc"';
 if (in_array('desc', $searchin)) {
     $searchin_select .= ' checked';
 }
 $searchin_select .= '>' . planet_constant('MD_DESC') . '&nbsp;&nbsp;';
-$searchin_select .= "<input type=\"checkbox\" name=\"searchin[]\" value=\"all\"";
+$searchin_select .= '<input type="checkbox" name="searchin[]" value="all"';
 if (empty($searchin)) {
     $searchin_select .= ' checked';
 }
 $searchin_select .= '>' . _ALL . '&nbsp;&nbsp;';
 
 /* sortby */
-$sortby_select = "<select name=\"sortby\">";
-$sortby_select .= "<option value=\"\"";
+$sortby_select = '<select name="sortby">';
+$sortby_select .= '<option value=""';
 if (empty($sortby)) {
-    $sortby_select .= " selected=\"selected\"";
+    $sortby_select .= ' selected="selected"';
 }
 $sortby_select .= '>' . _NONE . '</option>';
-$sortby_select .= "<option value=\"a.art_time\"";
+$sortby_select .= '<option value="a.art_time"';
 if ('a.art_time' === $sortby) {
-    $sortby_select .= " selected=\"selected\"";
+    $sortby_select .= ' selected="selected"';
 }
 $sortby_select .= '>' . planet_constant('MD_TIME') . '</option>';
-$sortby_select .= "<option value=\"a.art_title\"";
+$sortby_select .= '<option value="a.art_title"';
 if ('a.art_title' === $sortby) {
-    $sortby_select .= " selected=\"selected\"";
+    $sortby_select .= ' selected="selected"';
 }
 $sortby_select .= '>' . planet_constant('MD_TITLE') . '</option>';
-$sortby_select .= "<option value=\"\">&nbsp;&nbsp;----&nbsp;&nbsp;</option>";
-$sortby_select .= "<option value=\"a.blog_title\"";
+$sortby_select .= '<option value="">&nbsp;&nbsp;----&nbsp;&nbsp;</option>';
+$sortby_select .= '<option value="a.blog_title"';
 if ('a.blog_title' === $sortby) {
-    $sortby_select .= " selected=\"selected\"";
+    $sortby_select .= ' selected="selected"';
 }
 $sortby_select .= '>' . planet_constant('MD_BLOG') . '</option>';
-$sortby_select .= "<option value=\"a.blog_time\"";
+$sortby_select .= '<option value="a.blog_time"';
 if ('b.blog_time' === $sortby) {
-    $sortby_select .= " selected=\"selected\"";
+    $sortby_select .= ' selected="selected"';
 }
 $sortby_select .= '>' . planet_constant('MD_UPDATE') . '</option>';
 $sortby_select .= '</select>';

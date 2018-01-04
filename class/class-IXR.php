@@ -266,7 +266,7 @@ class IXR_Message
                 $valueFlag                 = true;
                 break;
             case 'string':
-                $value                     = (string)trim($this->_currentTagContents);
+                $value                     = trim($this->_currentTagContents);
                 $this->_currentTagContents = '';
                 $valueFlag                 = true;
                 break;

@@ -56,15 +56,15 @@ if (!empty($xoopsModuleConfig['article_expire'])) {
 }
 $article_count = $articleHandler->getCount();
 
-echo "<fieldset><legend style=\"font-weight: bold; color: #900;\">" . planet_constant('AM_ARTICLES') . '</legend>';
-echo "<div style=\"padding: 8px;\">";
-echo "<br clear=\"all\">" . planet_constant('AM_COUNT') . ': ' . $article_count;
-echo "<br clear=\"all\">";
+echo '<fieldset><legend style="font-weight: bold; color: #900;">' . planet_constant('AM_ARTICLES') . '</legend>';
+echo '<div style="padding: 8px;">';
+echo '<br clear="all">' . planet_constant('AM_COUNT') . ': ' . $article_count;
+echo '<br clear="all">';
 if ($article_count_expire > 0) {
-    echo "<br clear=\"all\"><a href=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . "/admin/admin.article.php?purge=1\" >" . planet_constant('AM_EXPIRED') . ': ' . $article_count_expire . '</a>';
-    echo "<br clear=\"all\">";
+    echo '<br clear="all"><a href="' . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/admin/admin.article.php?purge=1" >' . planet_constant('AM_EXPIRED') . ': ' . $article_count_expire . '</a>';
+    echo '<br clear="all">';
 }
 echo '</div>';
-echo "</fieldset><br clear=\"all\">";
+echo '</fieldset><br clear="all">';
 
 xoops_cp_footer();

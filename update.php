@@ -25,6 +25,9 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 include __DIR__ . '/header.php';
 
@@ -41,16 +44,16 @@ if (planetGetCookie('upd') + 30 * 60 > time()) {
 PlanetUtility::planetSetCookie('upd', time());
 $start = 0;
 @include XOOPS_CACHE_PATH . '/' . $xoopsModule->getVar('dirname') . '_update.php';
-$criteria = new Criteria('blog_status', 0, '>');
+$criteria = new \Criteria('blog_status', 0, '>');
 $criteria->setSort('blog_id');
 $criteria->setStart($start);
-$criteria->setLimit($xoopsModuleConfig['blogs_perupdate']);
+$criteria->setLimit($helper->getConfig('blogs_perupdate'));
 $blogs = $blogHandler->getAll($criteria);
 foreach (array_keys($blogs) as $id) {
     $blogHandler->do_update($blogs[$id]);
 }
 $start += count($blogs);
-if (count($blogs) < $xoopsModuleConfig['blogs_perupdate']) {
+if (count($blogs) < $helper->getConfig('blogs_perupdate')) {
     $start = 0;
 }
 $fp = fopen(XOOPS_CACHE_PATH . '/' . $xoopsModule->getVar('dirname') . '_update.php', 'w');

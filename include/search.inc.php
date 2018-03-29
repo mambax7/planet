@@ -25,7 +25,7 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 
 include __DIR__ . '/vars.php';
 //mod_loadFunctions('', $GLOBALS['moddirname']);
@@ -115,7 +115,7 @@ function &[VAR_PREFIX]_search($queryarray, $andor, $limit, $offset,
     $ret = array();
     $articleHandler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
     $blogHandler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
-     while ($myrow = $xoopsDB->fetchArray($result)) {
+     while (false !== ($myrow = $xoopsDB->fetchArray($result))) {
         if(empty($isArticle)):
         $object = $blogHandler->create(false);
         else:

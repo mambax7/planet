@@ -86,16 +86,16 @@ switch ($op) {
         // no break
     case 'edit':
         $category_obj = $categoryHandler->get($cat_id);
-        $form         = new XoopsThemeForm(_EDIT, 'edit', xoops_getenv('PHP_SELF'), 'post', true);
-        $form->addElement(new XoopsFormText(planet_constant('AM_TITLE'), 'cat_title', 50, 80, $category_obj->getVar('cat_title', 'E')), true);
-        $form->addElement(new XoopsFormText(planet_constant('AM_ORDER'), 'cat_order', 5, 10, $category_obj->getVar('cat_order')), false);
-        $form->addElement(new XoopsFormHidden('category', $cat_id));
-        $form->addElement(new XoopsFormHidden('op', 'save'));
+        $form         = new \XoopsThemeForm(_EDIT, 'edit', xoops_getenv('PHP_SELF'), 'post', true);
+        $form->addElement(new \XoopsFormText(planet_constant('AM_TITLE'), 'cat_title', 50, 80, $category_obj->getVar('cat_title', 'E')), true);
+        $form->addElement(new \XoopsFormText(planet_constant('AM_ORDER'), 'cat_order', 5, 10, $category_obj->getVar('cat_order')), false);
+        $form->addElement(new \XoopsFormHidden('category', $cat_id));
+        $form->addElement(new \XoopsFormHidden('op', 'save'));
 
-        $button_tray = new XoopsFormElementTray('', '');
-        $butt_save   = new XoopsFormButton('', 'submit', _SUBMIT, 'submit');
+        $button_tray = new \XoopsFormElementTray('', '');
+        $butt_save   = new \XoopsFormButton('', 'submit', _SUBMIT, 'submit');
         $button_tray->addElement($butt_save);
-        $butt_cancel = new XoopsFormButton('', '', _CANCEL, 'reset');
+        $butt_cancel = new \XoopsFormButton('', '', _CANCEL, 'reset');
         $button_tray->addElement($butt_cancel);
         $form->addElement($button_tray);
 
@@ -106,7 +106,7 @@ switch ($op) {
         break;
 
     default:
-        $crit = new Criteria('1', 1);
+        $crit = new \Criteria('1', 1);
         $crit->setSort('cat_order');
         $crit->setOrder('ASC');
         $categories  = $categoryHandler->getList($crit);
@@ -154,15 +154,15 @@ switch ($op) {
         echo '</table></form>';
         echo "</fieldset><br style='clear:both;'>";
 
-        $form = new XoopsThemeForm(_ADD, 'mod', xoops_getenv('PHP_SELF'), 'post', true);
-        $form->addElement(new XoopsFormText(planet_constant('AM_TITLE'), 'cat_title', 50, 80), true);
-        $form->addElement(new XoopsFormText(planet_constant('AM_ORDER'), 'cat_order', 5, 10), false);
-        $form->addElement(new XoopsFormHidden('op', 'save'));
+        $form = new \XoopsThemeForm(_ADD, 'mod', xoops_getenv('PHP_SELF'), 'post', true);
+        $form->addElement(new \XoopsFormText(planet_constant('AM_TITLE'), 'cat_title', 50, 80), true);
+        $form->addElement(new \XoopsFormText(planet_constant('AM_ORDER'), 'cat_order', 5, 10), false);
+        $form->addElement(new \XoopsFormHidden('op', 'save'));
 
-        $button_tray = new XoopsFormElementTray('', '');
-        $butt_save   = new XoopsFormButton('', 'submit', _SUBMIT, 'submit');
+        $button_tray = new \XoopsFormElementTray('', '');
+        $butt_save   = new \XoopsFormButton('', 'submit', _SUBMIT, 'submit');
         $button_tray->addElement($butt_save);
-        $butt_cancel = new XoopsFormButton('', '', _CANCEL, 'reset');
+        $butt_cancel = new \XoopsFormButton('', '', _CANCEL, 'reset');
         $button_tray->addElement($butt_cancel);
         $form->addElement($button_tray);
 

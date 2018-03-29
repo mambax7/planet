@@ -29,7 +29,7 @@
  * @copyright copyright &copy; 2005 XoopsForge.com
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 require_once __DIR__ . '/../include/vars.php';
 //mod_loadFunctions('', $GLOBALS['moddirname']);
 
@@ -176,7 +176,7 @@ class [CLASS_PREFIX]ArticleHandler extends XoopsPersistableObjectHandler
      *
      * @param object $db reference to the {@link XoopsDatabase} object
      **/
-    public function __construct(XoopsDatabase $db) {
+    public function __construct(\XoopsDatabase $db) {
         parent::__construct($db, planet_DB_prefix("article", true), "Barticle", "art_id", "art_title");
     }
 
@@ -190,19 +190,19 @@ class [CLASS_PREFIX]ArticleHandler extends XoopsPersistableObjectHandler
     public function do_update(&$articles, $blog_id = 0)
     {
         if ($blog_id>0) {
-            $crit_blog = new Criteria("blog_id", $blog_id);
+            $crit_blog = new \Criteria("blog_id", $blog_id);
         } else {
             $crit_blog = null;
         }
         $count = 0;
         foreach ($articles as $article) {
-            $criteria = new CriteriaCompo();
+            $criteria = new \CriteriaCompo();
             if ($article["blog_id"]) {
-                $criteria->add(new Criteria("blog_id", $article["blog_id"]));
+                $criteria->add(new \Criteria("blog_id", $article["blog_id"]));
             } else {
                 $criteria->add($crit_blog);
             }
-            $criteria->add(new Criteria("art_link", $article["art_link"]));
+            $criteria->add(new \Criteria("art_link", $article["art_link"]));
             $_count = $this->getCount($criteria);
             unset($criteria);
             if($_count>0) continue;
@@ -248,7 +248,7 @@ class [CLASS_PREFIX]ArticleHandler extends XoopsPersistableObjectHandler
         if(empty($orderSet)) $sql .= " ORDER BY ".$this->keyName." DESC";
         $result = $this->db->query($sql, $limit, $start);
         $ret = array();
-        while ($myrow = $this->db->fetchArray($result)) {
+       while (false !== ($myrow = $this->db->fetchArray($result))) {
             $object = $this->create(false);
             $object->assignVars($myrow);
             if ($asObject) {
@@ -301,7 +301,7 @@ class [CLASS_PREFIX]ArticleHandler extends XoopsPersistableObjectHandler
             return false;
         }
         $ret = array();
-        while (list($id, $count) = $this->db->fetchRow($result)) {
+        while (false !== (list($id, $count) = $this->db->fetchRow($result))) {
             $ret[$id] = $count;
         }
 
@@ -340,7 +340,7 @@ class [CLASS_PREFIX]ArticleHandler extends XoopsPersistableObjectHandler
         if(empty($orderSet)) $sql .= " ORDER BY ".$this->keyName." DESC";
         $result = $this->db->query($sql, $limit, $start);
         $ret = array();
-        while ($myrow = $this->db->fetchArray($result)) {
+       while (false !== ($myrow = $this->db->fetchArray($result))) {
             $object = $this->create(false);
             $object->assignVars($myrow);
             if ($asObject) {
@@ -390,27 +390,27 @@ class [CLASS_PREFIX]ArticleHandler extends XoopsPersistableObjectHandler
     {
         $ret = array();
 
-        $crit_prev = new CriteriaCompo(new Criteria("art_id", $article->getVar("art_id"), "<"));
+        $crit_prev = new \CriteriaCompo(new \Criteria("art_id", $article->getVar("art_id"), "<"));
         if ($blog>0) {
-            $crit_prev->add(new Criteria("blog_id", $blog));
+            $crit_prev->add(new \Criteria("blog_id", $blog));
         }
         $crit_prev->setSort("art_id");
         $crit_prev->setOrder("DESC");
         $crit_prev->setLimit(1);
-        $art_prev = $this->getObjects($crit_prev);
+        $art_prev =& $this->getObjects($crit_prev);
         if (count($art_prev)>0) {
             $ret["previous"] = array("id"=>$art_prev[0]->getVar("art_id"),"title"=>$art_prev[0]->getVar("art_title"));
             unset($art_prev);
         }
 
-        $crit_next = new CriteriaCompo(new Criteria("art_id", $article->getVar("art_id"), ">"));
+        $crit_next = new \CriteriaCompo(new \Criteria("art_id", $article->getVar("art_id"), ">"));
         if ($blog>0) {
-            $crit_next->add(new Criteria("blog_id", $blog));
+            $crit_next->add(new \Criteria("blog_id", $blog));
         }
         $crit_next->setSort("art_id");
         $crit_next->setOrder("DESC");
         $crit_next->setLimit(1);
-        $art_next = $this->getObjects($crit_next);
+        $art_next =& $this->getObjects($crit_next);
         if (count($art_next)>0) {
             $ret["next"] = array("id"=>$art_next[0]->getVar("art_id"),"title"=>$art_next[0]->getVar("art_title"));
             unset($art_next);
@@ -442,10 +442,10 @@ class [CLASS_PREFIX]ArticleHandler extends XoopsPersistableObjectHandler
      * @param  bool   $force   flag to force the query execution despite security settings
      * @return bool   true on success
      */
-    public function delete(XoopsObject $article, $force = true)
+    public function delete(\XoopsObject $article, $force = true)
     {
         $rateHandler = xoops_getModuleHandler("rate", $GLOBALS["moddirname"]);
-        $rateHandler->deleteAll(new Criteria("art_id", $article->getVar("art_id")));
+        $rateHandler->deleteAll(new \Criteria("art_id", $article->getVar("art_id")));
 
         xoops_comment_delete($GLOBALS["xoopsModule"]->getVar("mid"), $article->getVar("art_id"));
         xoops_notification_deletebyitem($GLOBALS["xoopsModule"]->getVar("mid"), "article", $article->getVar("art_id"));

@@ -29,7 +29,7 @@
  * @copyright copyright &copy; 2005 XoopsForge.com
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 require_once __DIR__ . '/../include/vars.php';
 //mod_loadFunctions('', $GLOBALS['moddirname']);
 
@@ -168,7 +168,7 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
      *
      * @param object $db reference to the {@link XoopsDatabase} object
      **/
-    public function __construct(XoopsDatabase $db) {
+    public function __construct(\XoopsDatabase $db) {
         parent::__construct($db, planet_DB_prefix("blog", true), "Bblog", "blog_id", "blog_title");
     }
 
@@ -377,7 +377,7 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
         if(empty($orderSet)) $sql .= " ORDER BY b.".$this->keyName." DESC";
         $result = $this->db->query($sql, $limit, $start);
         $ret = array();
-        while ($myrow = $this->db->fetchArray($result)) {
+       while (false !== ($myrow = $this->db->fetchArray($result))) {
             $object = $this->create(false);
             $object->assignVars($myrow);
             if ($asObject) {
@@ -427,7 +427,7 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
             return false;
         }
         $ret = array();
-        while (list($id, $count) = $this->db->fetchRow($result)) {
+        while (false !== (list($id, $count) = $this->db->fetchRow($result))) {
             $ret[$id] = $count;
         }
 
@@ -466,7 +466,7 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
         if(empty($orderSet)) $sql .= " ORDER BY b.".$this->keyName." DESC";
         $result = $this->db->query($sql, $limit, $start);
         $ret = array();
-        while ($myrow = $this->db->fetchArray($result)) {
+       while (false !== ($myrow = $this->db->fetchArray($result))) {
             $object = $this->create(false);
             $object->assignVars($myrow);
             if ($asObject) {
@@ -504,13 +504,13 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
         return (int)($myrow["count"]);
     }
 
-    function delete(XoopsObject $blog, $force=false)
+    function delete(\XoopsObject $blog, $force=false)
     {
         $queryFunc = empty($force)?"query":"queryF";
 
         /* remove bookmarks */
         $bookmarkHandler = xoops_getModuleHandler("bookmark", $GLOBALS["moddirname"]);
-        $bookmarkHandler->deleteAll(new Criteria("blog_id", $blog->getVar("blog_id")));
+        $bookmarkHandler->deleteAll(new \Criteria("blog_id", $blog->getVar("blog_id")));
 
         /* remove category-blog links */
         $sql = "DELETE FROM ".planet_DB_prefix("blogcat")." WHERE blog_id = ".$blog->getVar("blog_id");
@@ -519,7 +519,7 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
 
         /* remove articles */
         $articleHandler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
-        $arts_obj = $articleHandler->getAll(new Criteria("blog_id", $blog->getVar("blog_id")));
+        $arts_obj = $articleHandler->getAll(new \Criteria("blog_id", $blog->getVar("blog_id")));
         foreach (array_keys($arts_obj) as $id) {
             $articleHandler->delete($arts_obj[$id]);
         }
@@ -534,7 +534,7 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
     {
         /* remove articles */
         $articleHandler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
-        $arts_obj = $articleHandler->getAll(new Criteria("blog_id", $blog->getVar("blog_id")));
+        $arts_obj = $articleHandler->getAll(new \Criteria("blog_id", $blog->getVar("blog_id")));
         foreach (array_keys($arts_obj) as $id) {
             $articleHandler->delete($arts_obj[$id]);
         }
@@ -555,7 +555,7 @@ class [CLASS_PREFIX]BlogHandler extends XoopsPersistableObjectHandler
        function setCategories($blog, $categories)
     {
         $categoryHandler = xoops_getModuleHandler("category", $GLOBALS["moddirname"]);
-        $crit = new Criteria("bc.blog_id", $blog);
+        $crit = new \Criteria("bc.blog_id", $blog);
         $cats = array_keys($categoryHandler->getByBlog($crit));
         $cats_add = array_diff($categories, $cats);
         $cats_rmv = array_diff($cats, $categories);

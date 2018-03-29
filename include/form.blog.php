@@ -24,31 +24,31 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 
 require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
 $categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
 
-$form = new XoopsThemeForm(_EDIT, 'formblog', xoops_getenv('PHP_SELF'), 'POST', true);
+$form = new \XoopsThemeForm(_EDIT, 'formblog', xoops_getenv('PHP_SELF'), 'POST', true);
 
-$form->addElement(new XoopsFormText(planet_constant('MD_FEED'), 'blog_feed', 50, 255, $blog_obj->getVar('blog_feed', 'E')), true);
-$form->addElement(new XoopsFormText(planet_constant('MD_TITLE'), 'blog_title', 50, 255, $blog_obj->getVar('blog_title', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_DESC'), 'blog_desc', 50, 255, $blog_obj->getVar('blog_desc', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_LINK'), 'blog_link', 50, 255, $blog_obj->getVar('blog_link', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_LANGUAGE'), 'blog_language', 50, 255, $blog_obj->getVar('blog_language', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_CHARSET'), 'blog_charset', 50, 255, $blog_obj->getVar('blog_charset', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_TRACKBACKPATTERN'), 'blog_trackback', 80, 255, $blog_obj->getVar('blog_trackback', 'E')));
-$form->addElement(new XoopsFormText(planet_constant('MD_IMAGE'), 'blog_image', 50, 255, $blog_obj->getVar('blog_image', 'E')));
+$form->addElement(new \XoopsFormText(planet_constant('MD_FEED'), 'blog_feed', 50, 255, $blog_obj->getVar('blog_feed', 'E')), true);
+$form->addElement(new \XoopsFormText(planet_constant('MD_TITLE'), 'blog_title', 50, 255, $blog_obj->getVar('blog_title', 'E')));
+$form->addElement(new \XoopsFormText(planet_constant('MD_DESC'), 'blog_desc', 50, 255, $blog_obj->getVar('blog_desc', 'E')));
+$form->addElement(new \XoopsFormText(planet_constant('MD_LINK'), 'blog_link', 50, 255, $blog_obj->getVar('blog_link', 'E')));
+$form->addElement(new \XoopsFormText(planet_constant('MD_LANGUAGE'), 'blog_language', 50, 255, $blog_obj->getVar('blog_language', 'E')));
+$form->addElement(new \XoopsFormText(planet_constant('MD_CHARSET'), 'blog_charset', 50, 255, $blog_obj->getVar('blog_charset', 'E')));
+$form->addElement(new \XoopsFormText(planet_constant('MD_TRACKBACKPATTERN'), 'blog_trackback', 80, 255, $blog_obj->getVar('blog_trackback', 'E')));
+$form->addElement(new \XoopsFormText(planet_constant('MD_IMAGE'), 'blog_image', 50, 255, $blog_obj->getVar('blog_image', 'E')));
 
 $categories_option = $categoryHandler->getList();
 natsort($categories_option);
 if (count($categories_option)) {
-    $cat_option_tray = new XoopsFormElementTray(planet_constant('MD_CATEGORY'), '<br>');
+    $cat_option_tray = new \XoopsFormElementTray(planet_constant('MD_CATEGORY'), '<br>');
     $options         = [0 => _NONE];
     foreach ($categories_option as $id => $title) {
         $options[$id] = $title;
     }
-    $cat_select = new XoopsFormSelect('', 'categories', $categories, 3, true);
+    $cat_select = new \XoopsFormSelect('', 'categories', $categories, 3, true);
     $cat_select->addOptionArray($options);
     $cat_option_tray->addElement($cat_select);
     $form->addElement($cat_option_tray);
@@ -56,8 +56,8 @@ if (count($categories_option)) {
 
 /* For admin only */
 if (is_object($xoopsUser) && $xoopsUser->isAdmin()) {
-    $status_option_tray = new XoopsFormElementTray(planet_constant('MD_STATUS'), '<br>');
-    $status_select      = new XoopsFormSelect('', 'blog_status', $blog_obj->getVar('blog_status'));
+    $status_option_tray = new \XoopsFormElementTray(planet_constant('MD_STATUS'), '<br>');
+    $status_select      = new \XoopsFormSelect('', 'blog_status', $blog_obj->getVar('blog_status'));
     $status_select->addOptionArray([
                                        '0' => planet_constant('MD_PENDING'),
                                        '1' => planet_constant('MD_ACTIVE'),
@@ -67,15 +67,15 @@ if (is_object($xoopsUser) && $xoopsUser->isAdmin()) {
     $form->addElement($status_option_tray);
 }
 
-$form->addElement(new XoopsFormHidden('blog', $blog_id));
-$form->addElement(new XoopsFormHidden('op', 'save'));
+$form->addElement(new \XoopsFormHidden('blog', $blog_id));
+$form->addElement(new \XoopsFormHidden('op', 'save'));
 
-$button_tray = new XoopsFormElementTray('', '');
-$butt_fetch  = new XoopsFormButton('', 'fetch', planet_constant('MD_FETCH'), 'submit');
+$button_tray = new \XoopsFormElementTray('', '');
+$butt_fetch  = new \XoopsFormButton('', 'fetch', planet_constant('MD_FETCH'), 'submit');
 $button_tray->addElement($butt_fetch);
-$butt_save = new XoopsFormButton('', 'submit', _SUBMIT, 'submit');
+$butt_save = new \XoopsFormButton('', 'submit', _SUBMIT, 'submit');
 $button_tray->addElement($butt_save);
-$butt_cancel = new XoopsFormButton('', 'cancel', _CANCEL, 'button');
+$butt_cancel = new \XoopsFormButton('', 'cancel', _CANCEL, 'button');
 $butt_cancel->setExtra("onclick='window.document.location=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . (int)$blog_id . "\"'");
 $button_tray->addElement($butt_cancel);
 $form->addElement($button_tray);

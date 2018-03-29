@@ -4,7 +4,7 @@
 // _CHARSET : ISO-8859-1
 // Translator: D.J., http://xoopsforge.com, https://xoops.org.cn
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 
 $current_path = __FILE__;
 if (DIRECTORY_SEPARATOR !== '/') {

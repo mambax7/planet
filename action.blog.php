@@ -25,6 +25,9 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 include __DIR__ . '/header.php';
 
@@ -32,7 +35,7 @@ $op      = Request::getString('op', Request::getString('op', '', 'POST'), 'GET')
 $blog_id = Request::getArray('blog', Request::getArray('blog', [], 'POST'), 'GET');//!empty($_POST['blog']) ? $_POST['blog'] : (!empty($_GET['blog']) ? $_GET['blog'] : 0);
 $blog_id = is_array($blog_id) ? array_map('intval', $blog_id) : (int)$blog_id;
 
-if (empty($xoopsModuleConfig['newblog_submit']) && (!is_object($xoopsUser) || !$xoopsUser->isAdmin())) {
+if (empty($helper->getConfig('newblog_submit')) && (!is_object($xoopsUser) || !$xoopsUser->isAdmin())) {
     redirect_header('index.php', 2, _NOPERM);
 }
 
@@ -59,7 +62,7 @@ switch ($op) {
                 $blog_obj->setVar('blog_status', Request::getInt('blog_status', 0, 'POST'));// @$_POST['blog_status']);
             }
         } else {
-            if ($blog_exists = $blogHandler->getCount(new Criteria('blog_feed', $myts->addSlashes(trim(Request::getText('blog_feed', '', 'POST')))))  //$_POST['blog_feed']))))
+            if ($blog_exists = $blogHandler->getCount(new \Criteria('blog_feed', $myts->addSlashes(trim(Request::getText('blog_feed', '', 'POST')))))  //$_POST['blog_feed']))))
             ) {
                 redirect_header('index.php', 2, planet_constant('MD_BLOGEXISTS'));
             }
@@ -67,7 +70,7 @@ switch ($op) {
             $blog_obj = $blogHandler->create();
             $blog_obj->setVar('blog_submitter', is_object($xoopsUser) ? $xoopsUser->getVar('uid') : PlanetUtility::planetGetIP(true));
 
-            switch ($xoopsModuleConfig['newblog_submit']) {
+            switch ($helper->getConfig('newblog_submit')) {
                 case 2:
                     if (!is_object($xoopsUser)) {
                         $status = 0;
@@ -130,7 +133,7 @@ switch ($op) {
             $categories = [];
         }
         if (empty($categories) && $blog_id > 0) {
-            $crit       = new Criteria('bc.blog_id', $blog_id);
+            $crit       = new \Criteria('bc.blog_id', $blog_id);
             $categories = array_keys($categoryHandler->getByBlog($crit));
         }
         if (empty($categories)) {
@@ -140,7 +143,7 @@ switch ($op) {
         echo "<fieldset><legend style='font-weight: bold; color: #900;'>" . _EDIT . '</legend>';
         echo '<br>';
         if (empty($blog_id) && $blog_obj->getVar('blog_feed')) {
-            $criteria  = new Criteria('blog_feed', $blog_obj->getVar('blog_feed'));
+            $criteria  = new \Criteria('blog_feed', $blog_obj->getVar('blog_feed'));
             $blogs_obj = $blogHandler->getList($criteria);
             if (count($blogs_obj) > 0) {
                 echo '<div class="errorMsg">' . planet_constant('MD_BLOGEXISTS');

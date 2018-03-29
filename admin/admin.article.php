@@ -24,6 +24,11 @@
 // URL: https://xoops.org                         //
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
+
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
+
 require_once __DIR__ . '/admin_header.php';
 
 xoops_cp_header();
@@ -40,11 +45,11 @@ require XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/incl
 //planet_adminmenu(3);
 
 $articleHandler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
-if (!empty($xoopsModuleConfig['article_expire'])) {
-    $criteria = new Criteria('art_time', time() - $xoopsModuleConfig['article_expire'] * 60 * 60 * 24, '<');
+if (!empty($helper->getConfig('article_expire'))) {
+    $criteria = new \Criteria('art_time', time() - $helper->getConfig('article_expire') * 60 * 60 * 24, '<');
     if (!empty($_GET['purge'])) {
-        $crit = new CriteriaCompo($criteria);
-        $crit->add(new Criteria('art_comments', 0));
+        $crit = new \CriteriaCompo($criteria);
+        $crit->add(new \Criteria('art_comments', 0));
         $article_expires = $articleHandler->getObjects($criteria);
         foreach ($article_expires as $id => $article_obj) {
             $articleHandler->delete($article_obj);

@@ -25,7 +25,7 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 require_once __DIR__ . '/../include/vars.php';
 //mod_loadFunctions('', $GLOBALS['moddirname']);
 
@@ -61,16 +61,16 @@ class [CLASS_PREFIX]RateHandler extends XoopsPersistableObjectHandler
      *
      * @param object $db reference to the {@link XoopsDatabase} object
      **/
-    public function __construct(XoopsDatabase $db) {
+    public function __construct(\XoopsDatabase $db) {
         parent::__construct($db, planet_DB_prefix("rate", true), "Brate", "rate_id");
     }
 
     public function &getByArticle($art_id, $criteria = null)
     {
         if (isset($criteria) && is_subclass_of($criteria, "criteriaelement")) {
-            $criteria->add(new Criteria("art_id", (int)($art_id)), "AND");
+            $criteria->add(new \Criteria("art_id", (int)($art_id)), "AND");
         } else {
-            $criteria = new CriteriaCompo(new Criteria("art_id", (int)($art_id)));
+            $criteria = new \CriteriaCompo(new \Criteria("art_id", (int)($art_id)));
         }
         $ret = $this->getAll($criteria);
 
@@ -80,9 +80,9 @@ class [CLASS_PREFIX]RateHandler extends XoopsPersistableObjectHandler
     public function &getRatingByArticle($art_id, $criteria = null)
     {
         if (isset($criteria) && is_subclass_of($criteria, "criteriaelement")) {
-            $criteria->add(new Criteria("art_id", (int)($art_id)), "AND");
+            $criteria->add(new \Criteria("art_id", (int)($art_id)), "AND");
         } else {
-            $criteria = new CriteriaCompo(new Criteria("art_id", (int)($art_id)));
+            $criteria = new \CriteriaCompo(new \Criteria("art_id", (int)($art_id)));
         }
         $sql = "SELECT COUNT(*) AS rates, SUM(rate_rating) AS rating FROM " . planet_DB_prefix("rate");
         $sql .= " ".$criteria->renderWhere();

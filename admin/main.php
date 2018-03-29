@@ -99,7 +99,7 @@ $blogHandler        = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
 $blog_count         = $blogHandler->getCount();
 $articleHandler     = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
 $article_count      = $articleHandler->getCount();
-$criteria           = new Criteria('blog_status', 0);
+$criteria           = new \Criteria('blog_status', 0);
 $blog_count_pending = $blogHandler->getCount($criteria);
 echo '<label>' . planet_constant('AM_TOTAL_CATEGORIES') . ':</label><text>' . $category_count;
 echo '</text><br>';

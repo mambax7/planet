@@ -25,7 +25,7 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 
 $current_path = __FILE__;
 if (DIRECTORY_SEPARATOR !== '/') {
@@ -112,7 +112,7 @@ function [VAR_PREFIX]_article_show($options)
     }
     $rows = array();
     $articleHandler = xoops_getModuleHandler("article", $GLOBALS["moddirname"]);
-    while ($row = $xoopsDB->fetchArray($result)) {
+    while (false !== ($row = $xoopsDB->fetchArray($result))) {
         if(!empty($row["ave_rating"])) $row["art_rating"] = $row["ave_rating"];
         $article = $articleHandler->create(false);
         $article->assignVars($row);
@@ -137,7 +137,7 @@ function [VAR_PREFIX]_article_show($options)
     }
 
     $blogHandler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
-    $blogs = $blogHandler->getList(new Criteria("blog_id", "(".implode(",", array_keys($bids)).")", "IN"));
+    $blogs = $blogHandler->getList(new \Criteria("blog_id", "(".implode(",", array_keys($bids)).")", "IN"));
 
     for ($i=0;$i<count($arts);++$i) {
         $arts[$i]["blog"] = @$blogs[$arts[$i]["blog_id"]];
@@ -247,7 +247,7 @@ function [VAR_PREFIX]_blog_show($options)
     }
     $rows = array();
     $blogHandler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
-    while ($row = $xoopsDB->fetchArray($result)) {
+    while (false !== ($row = $xoopsDB->fetchArray($result))) {
         if(!empty($row["ave_rating"])) $row["art_rating"] = $row["ave_rating"];
         $blog = $blogHandler->create(false);
         $blog->assignVars($row);
@@ -326,7 +326,7 @@ function [VAR_PREFIX]_category_show($options)
     $block = array();
     $categoryHandler = xoops_getModuleHandler("category", $GLOBALS["moddirname"]);
     $blogHandler = xoops_getModuleHandler("blog", $GLOBALS["moddirname"]);
-    $crit = new Criteria("1", 1);
+    $crit = new \Criteria("1", 1);
     $crit->setSort("cat_order");
     $crit->setOrder("ASC");
     $categories = $categoryHandler->getList($crit);

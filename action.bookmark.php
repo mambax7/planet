@@ -36,8 +36,8 @@ if (!is_object($xoopsUser) || empty($blog_id)) {
 
 $bookmarkHandler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
 $uid             = is_object($xoopsUser) ? $xoopsUser->getVar('uid') : 0;
-$criteria        = new CriteriaCompo(new Criteria('blog_id', $blog_id));
-$criteria->add(new Criteria('bm_uid', $uid));
+$criteria        = new \CriteriaCompo(new \Criteria('blog_id', $blog_id));
+$criteria->add(new \Criteria('bm_uid', $uid));
 if ($count = $bookmarkHandler->getCount($criteria)) {
     $message = planet_constant('MD_ALREADYBOOKMARKED');
     redirect_header(XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'u' . $uid, 2, $message);

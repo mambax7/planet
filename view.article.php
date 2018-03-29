@@ -25,6 +25,9 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 include __DIR__ . '/header.php';
 
@@ -79,7 +82,7 @@ $article_data = [
     'blog'     => ['id' => $article_obj->getVar('blog_id'), 'title' => $blog_obj->getVar('blog_title')]
 ];
 
-if (!empty($xoopsModuleConfig['do_sibling'])) {
+if (!empty($helper->getConfig('do_sibling'))) {
     $articles_sibling = $articleHandler->getSibling($article_obj, $blog_id);
     if (!empty($articles_sibling['previous'])) {
         $articles_sibling['previous']['url']   = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $articles_sibling['previous']['id'] . '/b' . $blog_id;
@@ -97,7 +100,7 @@ $xoopsTpl->assign('article', $article_data);
 $xoopsTpl->assign('sibling', $articles_sibling);
 
 $xoopsTpl->assign('user_level', !is_object($xoopsUser) ? 0 : ($xoopsUser->isAdmin() ? 2 : 1));
-if (empty($xoopsModuleConfig['anonymous_rate']) && !is_object($xoopsUser)) {
+if (empty($helper->getConfig('anonymous_rate')) && !is_object($xoopsUser)) {
 } else {
     $xoopsTpl->assign('canrate', 1);
 }

@@ -26,8 +26,11 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 
 $current_path = __FILE__;
 if (DIRECTORY_SEPARATOR !== '/') {
@@ -290,7 +293,9 @@ if (!defined('planet_FUNCTIONS')):
          */
         public static function planetTrackback($trackback_url, $article)
         {
-            global $myts, $xoopsConfig, $xoopsModule, $xoopsModuleConfig;
+            global $myts, $xoopsConfig, $xoopsModule;
+            /** @var Planet\Helper $helper */
+            $helper = Planet\Helper::getInstance();
 
             $title         = $article->getVar('art_title');
             $excerpt       = $article->getVar('art_content');
@@ -318,7 +323,7 @@ if (!defined('planet_FUNCTIONS')):
             }
             $fs = @fsockopen($trackback_url['host'], $trackback_url['port'], $errno, $errstr, 4);
             @fwrite($fs, $http_request);
-            if ($xoopsModuleConfig['do_debug']) {
+            if ($helper->getConfig('do_debug')) {
                 $debug_file = XOOPS_CACHE_PATH . '/' . $GLOBALS['moddirname'] . '_trackback.log';
                 $fr         = "\n*****\nRequest:\n\n$http_request\n\nResponse:\n\n";
                 $fr         .= "CHARSET:$charset\n";

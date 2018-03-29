@@ -29,7 +29,7 @@
  * @copyright copyright &copy; 2005 XoopsForge.com
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 require_once __DIR__ . '/../include/vars.php';
 //mod_loadFunctions('', $GLOBALS['moddirname']);
 
@@ -84,7 +84,7 @@ class [CLASS_PREFIX]BookmarkHandler extends XoopsPersistableObjectHandler
      *
      * @param object $db reference to the {@link XoopsDatabase} object
      **/
-    public function __construct(XoopsDatabase $db) {
+    public function __construct(\XoopsDatabase $db) {
         parent::__construct($db, planet_DB_prefix("bookmark", true), "Bookmark", "bm_id");
     }
 }

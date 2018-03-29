@@ -76,23 +76,23 @@ if ('del' === $op || !empty(Request::getString('del', '', 'POST'))) {
 } else {
     require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
 
-    $form = new XoopsThemeForm(_EDIT, 'formarticle', xoops_getenv('PHP_SELF'), 'post', true);
+    $form = new \XoopsThemeForm(_EDIT, 'formarticle', xoops_getenv('PHP_SELF'), 'post', true);
 
-    $form->addElement(new XoopsFormText(planet_constant('MD_TITLE'), 'art_title', 50, 255, $article_obj->getVar('art_title', 'E')), true);
-    $form->addElement(new XoopsFormText(planet_constant('MD_LINK'), 'art_link', 50, 255, $article_obj->getVar('art_link', 'E')), true);
-    $form->addElement(new XoopsFormText(planet_constant('MD_AUTHOR'), 'art_author', 80, 255, $article_obj->getVar('art_author', 'E')));
-    $form->addElement(new XoopsFormTextArea(planet_constant('MD_CONTENT'), 'art_content', $article_obj->getVar('art_content', 'E')), true);
+    $form->addElement(new \XoopsFormText(planet_constant('MD_TITLE'), 'art_title', 50, 255, $article_obj->getVar('art_title', 'E')), true);
+    $form->addElement(new \XoopsFormText(planet_constant('MD_LINK'), 'art_link', 50, 255, $article_obj->getVar('art_link', 'E')), true);
+    $form->addElement(new \XoopsFormText(planet_constant('MD_AUTHOR'), 'art_author', 80, 255, $article_obj->getVar('art_author', 'E')));
+    $form->addElement(new \XoopsFormTextArea(planet_constant('MD_CONTENT'), 'art_content', $article_obj->getVar('art_content', 'E')), true);
 
-    $form->addElement(new XoopsFormHidden('article', $art_id));
-    $form->addElement(new XoopsFormHidden('op', 'save'));
+    $form->addElement(new \XoopsFormHidden('article', $art_id));
+    $form->addElement(new \XoopsFormHidden('op', 'save'));
 
-    $button_tray = new XoopsFormElementTray('', '');
-    $butt_save   = new XoopsFormButton('', 'submit', _SUBMIT, 'submit');
+    $button_tray = new \XoopsFormElementTray('', '');
+    $butt_save   = new \XoopsFormButton('', 'submit', _SUBMIT, 'submit');
     $button_tray->addElement($butt_save);
-    $butt_del = new XoopsFormButton('', 'del', _DELETE, 'submit');
+    $butt_del = new \XoopsFormButton('', 'del', _DELETE, 'submit');
     $butt_del->setExtra("onClick='document.forms.formarticle.op.value=del'");
     $button_tray->addElement($butt_del);
-    $butt_cancel = new XoopsFormButton('', 'cancel', _CANCEL, 'button');
+    $butt_cancel = new \XoopsFormButton('', 'cancel', _CANCEL, 'button');
     $butt_cancel->setExtra("onclick='window.document.location=\"" . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.article.php' . URL_DELIMITER . '' . $art_id . "\"'");
     $button_tray->addElement($butt_cancel);
     $form->addElement($button_tray);

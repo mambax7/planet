@@ -25,6 +25,9 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 include __DIR__ . '/header.php';
 
@@ -67,19 +70,19 @@ if ($xoopsUser) {
     $timeoffset = ($xoopsConfig['default_TZ'] - $xoopsConfig['server_TZ']) * 3600;
 }
 
-$criteria = new CriteriaCompo();
+$criteria = new \CriteriaCompo();
 if ($blog_id) {
-    $criteria->add(new Criteria('blog_id', $blog_id));
+    $criteria->add(new \Criteria('blog_id', $blog_id));
 }
-$criteria->add(new Criteria("YEAR(FROM_UNIXTIME(art_time_publish - $timeoffset))", $year));
+$criteria->add(new \Criteria("YEAR(FROM_UNIXTIME(art_time_publish - $timeoffset))", $year));
 if ($month) {
-    $criteria->add(new Criteria("MONTH(FROM_UNIXTIME(art_time_publish - $timeoffset))", $month));
+    $criteria->add(new \Criteria("MONTH(FROM_UNIXTIME(art_time_publish - $timeoffset))", $month));
     if ($day) {
-        $criteria->add(new Criteria("DAY(FROM_UNIXTIME(art_time_publish - $timeoffset))", $day));
+        $criteria->add(new \Criteria("DAY(FROM_UNIXTIME(art_time_publish - $timeoffset))", $day));
     }
 }
 $criteria->setStart($start);
-$criteria->setLimit($xoopsModuleConfig['articles_perpage']);
+$criteria->setLimit($helper->getConfig('articles_perpage'));
 
 $articles_obj   = $articleHandler->getAll($criteria, ['uid', 'art_title', 'art_time', 'blog_id', 'art_content']);
 $articles_count = $articleHandler->getCount($criteria);
@@ -98,7 +101,7 @@ foreach ($articles_obj as $id => $article) {
     $blogs_id[$article->getVar('blog_id')] = 1;
     unset($_article);
 }
-$criteria_blog = new Criteria('blog_id', '(' . implode(',', array_keys($blog_array)) . ')', 'IN');
+$criteria_blog = new \Criteria('blog_id', '(' . implode(',', array_keys($blog_array)) . ')', 'IN');
 $blogs         = $blogHandler->getList($criteria_blog);
 foreach (array_keys($articles) as $key) {
     $articles[$key]['blog']['title'] = $blogs[$articles[$key]['blog']['id']];
@@ -107,9 +110,9 @@ if ($blog_id > 0) {
     $page['blog'] = $blogs[$blog_id];
 }
 
-if ($articles_count > $xoopsModuleConfig['articles_perpage']) {
+if ($articles_count > $helper->getConfig('articles_perpage')) {
     include XOOPS_ROOT_PATH . '/class/pagenav.php';
-    $nav     = new XoopsPageNav($articles_count, $xoopsModuleConfig['articles_perpage'], $start, 'start', 'month=' . $month . '&amp;day=' . $day . '&amp;year=' . $year . '&amp;blog=' . $blog_id);
+    $nav     = new \XoopsPageNav($articles_count, $helper->getConfig('articles_perpage'), $start, 'start', 'month=' . $month . '&amp;day=' . $day . '&amp;year=' . $year . '&amp;blog=' . $blog_id);
     $pagenav = $nav->renderNav(4);
 } else {
     $pagenav = '';
@@ -134,7 +137,7 @@ if (empty($start)) {
             ';
         $result = $xoopsDB->query($sql);
         $months = [];
-        while ($myrow = $xoopsDB->fetchArray($result)) {
+        while (false !== ($myrow = $xoopsDB->fetchArray($result))) {
             $months[] = [
                 'title' => planet_constant('MD_MONTH_' . (int)$myrow['mon']) . ' (' . (int)$myrow['count'] . ')',
                 'url'   => XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/view.archive.php' . URL_DELIMITER . '' . $year . '/' . $myrow['mon'] . '/b' . $blog_id
@@ -161,7 +164,7 @@ if (empty($start)) {
             ';
         $result = $xoopsDB->query($sql);
         $days   = [];
-        while ($myrow = $xoopsDB->fetchArray($result)) {
+        while (false !== ($myrow = $xoopsDB->fetchArray($result))) {
             $days[$myrow['day']]['count'] = $myrow['count'];
         }
         for ($i = 1; $i <= 31; ++$i) {

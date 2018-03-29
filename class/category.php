@@ -29,7 +29,7 @@
  * @copyright copyright &copy; 2005 XoopsForge.com
  */
 
-// defined('XOOPS_ROOT_PATH') || exit('Restricted access.');
+// defined('XOOPS_ROOT_PATH') || die('Restricted access');
 require_once __DIR__ . '/../include/vars.php';
 //mod_loadFunctions('', $GLOBALS['moddirname']);
 
@@ -83,11 +83,11 @@ class [CLASS_PREFIX]CategoryHandler extends XoopsPersistableObjectHandler
      *
      * @param object $db reference to the {@link XoopsDatabase} object
      **/
-    public function __construct(XoopsDatabase $db) {
+    public function __construct(\XoopsDatabase $db) {
         parent::__construct($db, planet_DB_prefix("category", true), "Bcategory", "cat_id", "cat_title");
     }
 
-    public function delete(XoopsObject $category, $force = false)
+    public function delete(\XoopsObject $category, $force = false)
     {
         xoops_notification_deletebyitem($GLOBALS["xoopsModule"]->getVar("mid"), "category", $category->getVar("cat_id"));
 
@@ -124,12 +124,12 @@ class [CLASS_PREFIX]CategoryHandler extends XoopsPersistableObjectHandler
         if(empty($orderSet)) $sql .= " ORDER BY cat_id DESC";
         $result = $this->db->query($sql, $limit, $start);
         $ret = array();
-        while ($myrow = $this->db->fetchArray($result)) {
+       while (false !== ($myrow = $this->db->fetchArray($result))) {
             $ret[$myrow["cat_id"]] = 1;
         }
         if (!empty($asObject)) {
-            $crit = new Criteria("cat_id", "(".implode(",",array_keys($ret)).")", "IN");
-            $ret = $this->getObjects($crit);
+            $crit = new \Criteria("cat_id", "(".implode(",",array_keys($ret)).")", "IN");
+            $ret =& $this->getObjects($crit);
         }
 
         return $ret;

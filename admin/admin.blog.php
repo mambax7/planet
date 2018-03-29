@@ -25,6 +25,9 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 require_once __DIR__ . '/admin_header.php';
 require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
@@ -62,7 +65,7 @@ switch ($op) {
         if ($blog_id) {
             $blog_obj = $blogHandler->get($blog_id);
         } else {
-            if ($blog_exists = $blogHandler->getCount(new Criteria('blog_feed', Request::getString('blog_feed', '', 'POST')))) {
+            if ($blog_exists = $blogHandler->getCount(new \Criteria('blog_feed', Request::getString('blog_feed', '', 'POST')))) {
                 redirect_header('admin.blog.php', 2, planet_constant('AM_BLOGEXISTS'));
             }
             $blog_obj = $blogHandler->create();
@@ -96,7 +99,7 @@ switch ($op) {
         $links = PlanetUtility::planetParseLinks(Request::getArray('links', [], 'POST'));
         $blogs = [];
         foreach ($links as $link) {
-            if ($blog_exist = $blogHandler->getCount(new Criteria('blog_feed', $link['url']))) {
+            if ($blog_exist = $blogHandler->getCount(new \Criteria('blog_feed', $link['url']))) {
                 continue;
             }
             $blog_obj = $blogHandler->fetch($link['url']);
@@ -189,7 +192,7 @@ switch ($op) {
         if (!is_array($blog_id)) {
             $blog_id = [$blog_id];
         }
-        $criteria = new Criteria('blog_id', '(' . implode(',', $blog_id) . ')', 'IN');
+        $criteria = new \Criteria('blog_id', '(' . implode(',', $blog_id) . ')', 'IN');
         $blogHandler->updateAll('blog_status', 1, $criteria, true);
         $message = planet_constant('AM_DBUPDATED');
         redirect_header('admin.blog.php?category=' . $category_id . '&amp;start=' . $start, 2, $message);
@@ -200,7 +203,7 @@ switch ($op) {
         if (!is_array($blog_id)) {
             $blog_id = [$blog_id];
         }
-        $criteria = new Criteria('blog_id', '(' . implode(',', $blog_id) . ')', 'IN');
+        $criteria = new \Criteria('blog_id', '(' . implode(',', $blog_id) . ')', 'IN');
         $blogHandler->updateAll('blog_status', 2, $criteria, true);
         $message = planet_constant('AM_DBUPDATED');
         redirect_header('admin.blog.php?category=' . $category_id . '&amp;start=' . $start, 2, $message);
@@ -216,7 +219,7 @@ switch ($op) {
         }
         $categories = Request::getArray('categories', [], 'POST');
         if (empty($categories) && $blog_id > 0) {
-            $crit       = new Criteria('bc.blog_id', $blog_id);
+            $crit       = new \Criteria('bc.blog_id', $blog_id);
             $categories = array_keys($categoryHandler->getByBlog($crit));
         }
         if (empty($categories)) {
@@ -226,7 +229,7 @@ switch ($op) {
         echo "<fieldset><legend style='font-weight: bold; color: #900;'>" . _EDIT . '</legend>';
         echo '<br>';
         if (empty($blog_id) && $blog_obj->getVar('blog_feed')) {
-            $criteria  = new Criteria('blog_feed', $blog_obj->getVar('blog_feed'));
+            $criteria  = new \Criteria('blog_feed', $blog_obj->getVar('blog_feed'));
             $blogs_obj = $blogHandler->getList($criteria);
             if (count($blogs_obj) > 0) {
                 echo '<div class="errorMsg">' . planet_constant('AM_BLOGEXISTS');
@@ -243,14 +246,14 @@ switch ($op) {
 
     default:
 
-        $crit = new Criteria('1', 1);
+        $crit = new \Criteria('1', 1);
         $crit->setSort('cat_order');
         $crit->setOrder('ASC');
         $categories = $categoryHandler->getList($crit);
 
         // Display category option form
-        $opform    = new XoopsSimpleForm('', 'opform', 'admin.blog.php', 'get');
-        $op_select = new XoopsFormSelect('', 'category', $category_id);
+        $opform    = new \XoopsSimpleForm('', 'opform', 'admin.blog.php', 'get');
+        $op_select = new \XoopsFormSelect('', 'category', $category_id);
         $op_select->setExtra('onchange="document.forms.opform.submit()"');
         $options = [
             '0'  => _ALL,
@@ -266,33 +269,33 @@ switch ($op) {
         $opform->display();
 
         if ($category_id > 0) {
-            $criteria = new CriteriaCompo(new Criteria('b.blog_status', 0, '>'));
-            $criteria->add(new Criteria('bc.cat_id', $category_id));
+            $criteria = new \CriteriaCompo(new \Criteria('b.blog_status', 0, '>'));
+            $criteria->add(new \Criteria('bc.cat_id', $category_id));
             $blog_count = $blogHandler->getCountByCategory($criteria);
             $criteria->setStart($start);
-            $criteria->setLimit($xoopsModuleConfig['list_perpage']);
+            $criteria->setLimit($helper->getConfig('list_perpage'));
             $blog_objs = $blogHandler->getByCategory($criteria);
         } else {
             /* All active blogs */
             if (0 == $category_id) {
-                $criteria = new Criteria('1', 1);
+                $criteria = new \Criteria('1', 1);
                 $criteria->setStart($start);
-                $criteria->setLimit($xoopsModuleConfig['list_perpage']);
-                /* Active blogs */
-            } elseif ($category_id == -1) {
-                $criteria = new Criteria('blog_status', 1);
+                $criteria->setLimit($helper->getConfig('list_perpage'));
+            /* Active blogs */
+            } elseif (-1 == $category_id) {
+                $criteria = new \Criteria('blog_status', 1);
                 $criteria->setStart($start);
-                $criteria->setLimit($xoopsModuleConfig['list_perpage']);
-                /* Featured blogs */
-            } elseif ($category_id == -2) {
-                $criteria = new Criteria('blog_status', 2);
+                $criteria->setLimit($helper->getConfig('list_perpage'));
+            /* Featured blogs */
+            } elseif (-2 == $category_id) {
+                $criteria = new \Criteria('blog_status', 2);
                 $criteria->setStart($start);
-                $criteria->setLimit($xoopsModuleConfig['list_perpage']);
-                /* Pending blogs */
+                $criteria->setLimit($helper->getConfig('list_perpage'));
+            /* Pending blogs */
             } else {
-                $criteria = new Criteria('blog_status', 0);
+                $criteria = new \Criteria('blog_status', 0);
                 $criteria->setStart($start);
-                $criteria->setLimit($xoopsModuleConfig['list_perpage']);
+                $criteria->setLimit($helper->getConfig('list_perpage'));
             }
             $blog_count = $blogHandler->getCount($criteria);
             $blog_objs  = $blogHandler->getAll($criteria);
@@ -362,9 +365,9 @@ switch ($op) {
         echo "<input name='' value='" . _CANCEL . "' type='reset'>";
         echo '</td>';
         echo '</tr>';
-        if ($blog_count > $xoopsModuleConfig['list_perpage']) {
+        if ($blog_count > $helper->getConfig('list_perpage')) {
             include XOOPS_ROOT_PATH . '/class/pagenav.php';
-            $nav     = new XoopsPageNav($blog_count, $xoopsModuleConfig['list_perpage'], $start, 'start', 'category=' . $category_id);
+            $nav     = new \XoopsPageNav($blog_count, $helper->getConfig('list_perpage'), $start, 'start', 'category=' . $category_id);
             $pagenav = $nav->renderNav(4);
             echo "<tr align='right'><td colspan='6'>" . $pagenav . '</td></tr>';
         }
@@ -372,23 +375,23 @@ switch ($op) {
         echo "</fieldset><br style='clear:both;'>";
 
         if (empty($start) && empty($category_id)) {
-            $form = new XoopsThemeForm(_ADD, 'edit', xoops_getenv('PHP_SELF'), 'post', true);
-            $form->addElement(new XoopsFormText(planet_constant('AM_FEED'), 'blog_feed', 50, 255), true);
-            $form->addElement(new XoopsFormHidden('op', 'edit'));
-            $button_tray = new XoopsFormElementTray('', '');
-            $butt_save   = new XoopsFormButton('', 'fetch', _SUBMIT, 'submit');
+            $form = new \XoopsThemeForm(_ADD, 'edit', xoops_getenv('PHP_SELF'), 'post', true);
+            $form->addElement(new \XoopsFormText(planet_constant('AM_FEED'), 'blog_feed', 50, 255), true);
+            $form->addElement(new \XoopsFormHidden('op', 'edit'));
+            $button_tray = new \XoopsFormElementTray('', '');
+            $butt_save   = new \XoopsFormButton('', 'fetch', _SUBMIT, 'submit');
             $button_tray->addElement($butt_save);
-            $butt_cancel = new XoopsFormButton('', '', _CANCEL, 'reset');
+            $butt_cancel = new \XoopsFormButton('', '', _CANCEL, 'reset');
             $button_tray->addElement($butt_cancel);
             $form->addElement($button_tray);
 
-            $form_add = new XoopsThemeForm(_ADD, 'add', xoops_getenv('PHP_SELF'), 'post', true);
-            $form_add->addElement(new XoopsFormTextArea(planet_constant('AM_FEED'), 'links'));
-            $form_add->addElement(new XoopsFormHidden('op', 'add'));
-            $button_tray = new XoopsFormElementTray('', '');
-            $butt_save   = new XoopsFormButton('', 'submit', _SUBMIT, 'submit');
+            $form_add = new \XoopsThemeForm(_ADD, 'add', xoops_getenv('PHP_SELF'), 'post', true);
+            $form_add->addElement(new \XoopsFormTextArea(planet_constant('AM_FEED'), 'links'));
+            $form_add->addElement(new \XoopsFormHidden('op', 'add'));
+            $button_tray = new \XoopsFormElementTray('', '');
+            $butt_save   = new \XoopsFormButton('', 'submit', _SUBMIT, 'submit');
             $button_tray->addElement($butt_save);
-            $butt_cancel = new XoopsFormButton('', '', _CANCEL, 'reset');
+            $butt_cancel = new \XoopsFormButton('', '', _CANCEL, 'reset');
             $button_tray->addElement($butt_cancel);
             $form_add->addElement($button_tray);
 

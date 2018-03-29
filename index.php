@@ -25,6 +25,9 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 include __DIR__ . '/header.php';
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 if (preg_match("/\/notification_update\.php/i", $_SERVER['REQUEST_URI'], $matches)) {
     include XOOPS_ROOT_PATH . '/include/notification_update.php';
@@ -83,14 +86,14 @@ $categoryHandler = xoops_getModuleHandler('category', $GLOBALS['moddirname']);
 $blogHandler     = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
 $articleHandler  = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
 
-$limit          = empty($list) ? $xoopsModuleConfig['articles_perpage'] : $xoopsModuleConfig['list_perpage'];
+$limit          = empty($list) ? $helper->getConfig('articles_perpage') : $helper->getConfig('list_perpage');
 $query_type     = '';
-$criteria       = new CriteriaCompo();
+$criteria       = new \CriteriaCompo();
 $article_prefix = '';
 /* Specific category */
 if ($category_id > 0) {
     $category_obj = $categoryHandler->get($category_id);
-    $criteria->add(new Criteria('bc.cat_id', $category_id));
+    $criteria->add(new \Criteria('bc.cat_id', $category_id));
     $uid            = 0;
     $blog_id        = 0;
     $category_data  = ['id' => $category_id, 'title' => $category_obj->getVar('cat_title')];
@@ -103,7 +106,7 @@ if ($blog_id > 0) {
     if ($blog_obj->getVar('blog_status')
         || (is_object($xoopsUser)
             && $xoopsUser->getVar('uid') == $blog_obj->getVar('blog_submitter'))) {
-        $criteria->add(new Criteria('blog_id', $blog_id));
+        $criteria->add(new \Criteria('blog_id', $blog_id));
         $category_id     = 0;
         $uid             = 0;
         $bookmarkHandler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
@@ -126,14 +129,14 @@ if ($blog_id > 0) {
 }
 /* User bookmarks(favorites) */
 if ($uid > 0) {
-    $criteria->add(new Criteria('bm.bm_uid', $uid));
+    $criteria->add(new \Criteria('bm.bm_uid', $uid));
     $category_id     = 0;
     $blog_id         = 0;
     $bookmarkHandler = xoops_getModuleHandler('bookmark', $GLOBALS['moddirname']);
     $user_data       = [
         'uid'   => $uid,
         'name'  => XoopsUser::getUnameFromId($uid),
-        'marks' => $bookmarkHandler->getCount(new Criteria('bm_uid', $uid))
+        'marks' => $bookmarkHandler->getCount(new \Criteria('bm_uid', $uid))
     ];
     $query_type      = 'bookmark';
     $article_prefix  = 'a.';
@@ -189,7 +192,7 @@ if (!empty($blog_data)) {
     foreach (array_keys($articles_obj) as $id) {
         $blog_array[$articles_obj[$id]->getVar('blog_id')] = 1;
     }
-    $criteria_blog = new Criteria('blog_id', '(' . implode(',', array_keys($blog_array)) . ')', 'IN');
+    $criteria_blog = new \Criteria('blog_id', '(' . implode(',', array_keys($blog_array)) . ')', 'IN');
     $blogs         = $blogHandler->getList($criteria_blog);
 }
 
@@ -213,7 +216,7 @@ foreach (array_keys($articles_obj) as $id) {
             'star'     => $articles_obj[$id]->getStar(),
             'rates'    => $articles_obj[$id]->getVar('art_rates')
         ]);
-        if (!empty($xoopsModuleConfig['display_summary'])) {
+        if (!empty($helper->getConfig('display_summary'))) {
             $_article['content'] = $articles_obj[$id]->getSummary();
         } else {
             $_article['content'] = $articles_obj[$id]->getVar('art_content');
@@ -239,7 +242,7 @@ if ($count_article > $limit) {
     if ($list) {
         $start_link[] = 'list=' . $list;
     }
-    $nav     = new XoopsPageNav($count_article, $limit, $start, 'start', implode('&amp;', $start_link));
+    $nav     = new \XoopsPageNav($count_article, $limit, $start, 'start', implode('&amp;', $start_link));
     $pagenav = $nav->renderNav(4);
 } else {
     $pagenav = '';
@@ -275,7 +278,7 @@ if (empty($uid) && is_object($xoopsUser)) {
     $xoopsTpl->assign('link_bookmark', '<a href="' . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'u' . $xoopsUser->getVar('uid') . '" title="' . planet_constant('MD_BOOKMARKS') . '" target="_self">' . planet_constant('MD_BOOKMARKS') . '</a>');
 }
 
-if (1 == $xoopsModuleConfig['newblog_submit'] || is_object($xoopsUser)) {
+if (1 == $helper->getConfig('newblog_submit') || is_object($xoopsUser)) {
     $xoopsTpl->assign('link_submit', '<a href="' . XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/action.blog.php" title="' . _SUBMIT . '" target="_blank">' . _SUBMIT . '</a>');
 }
 
@@ -288,7 +291,7 @@ $xoopsTpl->assign('pagenav', $pagenav);
 $xoopsTpl->assign('is_list', !empty($list));
 
 $xoopsTpl->assign('user_level', !is_object($xoopsUser) ? 0 : ($xoopsUser->isAdmin() ? 2 : 1));
-if (empty($xoopsModuleConfig['anonymous_rate']) && !is_object($xoopsUser)) {
+if (empty($helper->getConfig('anonymous_rate')) && !is_object($xoopsUser)) {
 } elseif ($blog_id > 0) {
     $xoopsTpl->assign('canrate', 1);
 }
@@ -310,7 +313,7 @@ foreach ($valid_sorts as $val => $name) {
 $xoopsTpl->assign('link_sort', implode(' | ', $sortlinks));
 $xoopsTpl->assign('version', $xoopsModule->getVar('version'));
 
-$xoopsTpl->assign('do_pseudocron', $xoopsModuleConfig['do_pseudocron']);
+$xoopsTpl->assign('do_pseudocron', $helper->getConfig('do_pseudocron'));
 
 // for notification
 if (!empty($blog_id)) {

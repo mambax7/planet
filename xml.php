@@ -25,6 +25,9 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 ob_start();
 include __DIR__ . '/header.php';
@@ -92,13 +95,13 @@ if (!empty($article_id)) {
 
 $xml_charset = 'UTF-8';
 require_once XOOPS_ROOT_PATH . '/class/template.php';
-$tpl = new XoopsTpl();
+$tpl = new \XoopsTpl();
 $tpl->caching=(2);
 $tpl->xoops_setCacheTime(3600);
 $xoopsCachedTemplateId = md5($xoopsModule->getVar('mid') . ',' . $article_id . ',' . $category_id . ',' . $blog_id . ',' . $uid . ',' . $type);
 if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
-    $criteria = new CriteriaCompo();
-    $criteria->setLimit($xoopsModuleConfig['articles_perpage']);
+    $criteria = new \CriteriaCompo();
+    $criteria->setLimit($helper->getConfig('articles_perpage'));
     $articles_obj = [];
     switch ($source) {
         case 'article':
@@ -114,7 +117,7 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
             $pagetitle = planet_constant('MD_CATEGORY');
             $rssdesc   = sprintf(planet_constant('MD_XMLDESC_CATEGORY'), $category_obj->getVar('cat_title'));
 
-            $criteria->add(new Criteria('bc.cat_id', $category_id));
+            $criteria->add(new \Criteria('bc.cat_id', $category_id));
             $articles_obj = $articleHandler->getByCategory($criteria);
 
             $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'c' . $category_id;
@@ -124,7 +127,7 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
             $pagetitle = planet_constant('MD_BLOG');
             $rssdesc   = sprintf(planet_constant('MD_XMLDESC_BLOG'), $blog_obj->getVar('blog_title'));
 
-            $criteria->add(new Criteria('blog_id', $blog_id));
+            $criteria->add(new \Criteria('blog_id', $blog_id));
             $articles_obj = $articleHandler->getAll($criteria);
 
             $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'b' . $blog_id;
@@ -135,7 +138,7 @@ if (!$tpl->is_cached('db:system_dummy.tpl', $xoopsCachedTemplateId)) {
             $pagetitle   = planet_constant('MD_BOOKMARKS');
             $rssdesc     = sprintf(planet_constant('MD_XMLDESC_BOOKMARK'), $author_name);
 
-            $criteria->add(new Criteria('bm.bm_uid', $uid));
+            $criteria->add(new \Criteria('bm.bm_uid', $uid));
             $articles_obj = $articleHandler->getByBookmark($criteria);
 
             $xml_link = XOOPS_URL . '/modules/' . $GLOBALS['moddirname'] . '/index.php' . URL_DELIMITER . 'u' . $uid;

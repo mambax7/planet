@@ -25,6 +25,9 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 $xoopsOption['pagetype'] = 'search';
 include __DIR__ . '/header.php';
@@ -41,7 +44,7 @@ include XOOPS_ROOT_PATH . '/header.php';
 include XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/include/vars.php';
 
 require_once XOOPS_ROOT_PATH . '/modules/' . $GLOBALS['moddirname'] . '/include/search.inc.php';
-$limit = $xoopsModuleConfig['articles_perpage'];
+$limit = $helper->getConfig('articles_perpage');
 
 $queries  = [];
 $andor    = Request::getString('andor', Request::getString('andor', '', 'GET'), 'POST');//isset($_POST['andor']) ? $_POST['andor'] : (isset($_GET['andor']) ? $_GET['andor'] : '');
@@ -149,13 +152,13 @@ if (!(empty(Request::getString('submit', '', 'POST')) && empty(Request::getStrin
             $next            = $start + $limit;
             $queries         = implode(',', $queries);
             $search_url_next = $search_url . "&start=$next";
-            $search_next     = '<a href="' . htmlspecialchars($search_url_next) . '">' . _SR_NEXT . '</a>';
+            $search_next     = '<a href="' . htmlspecialchars($search_url_next, ENT_QUOTES | ENT_HTML5) . '">' . _SR_NEXT . '</a>';
             $xoopsTpl->assign('search_next', $search_next);
         }
         if ($start > 0) {
             $prev            = $start - $limit;
             $search_url_prev = $search_url . "&start=$prev";
-            $search_prev     = '<a href="' . htmlspecialchars($search_url_prev) . '">' . _SR_PREVIOUS . '</a>';
+            $search_prev     = '<a href="' . htmlspecialchars($search_url_prev, ENT_QUOTES | ENT_HTML5) . '">' . _SR_PREVIOUS . '</a>';
             $xoopsTpl->assign('search_prev', $search_prev);
         }
     }

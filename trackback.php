@@ -25,6 +25,9 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 include __DIR__ . '/header.php';
 
@@ -37,7 +40,7 @@ $excerpt    = Request::getString('excerpt', '', 'POST');//$_POST['excerpt'];
 $blog_name  = Request::getString('blog_name', '', 'POST');//$_POST['blog_name'];
 $charset    = trim(Request::getString('charset', '', 'POST'));//trim($_POST['charset']);
 
-if (empty($xoopsModuleConfig['trackback_option'])) {
+if (empty($helper->getConfig('trackback_option'))) {
     PlanetUtility::planetRespondToTrackback(1, 'Trackback is closed');
 }
 if (!strlen($title . $url . $blog_name)) {
@@ -46,8 +49,8 @@ if (!strlen($title . $url . $blog_name)) {
 
 if (!empty($article_id) && !empty($url)) {
     $trackbackHandler = xoops_getModuleHandler('trackback', $GLOBALS['moddirname']);
-    $criteria         = new CriteriaCompo(new Criteria('art_id', $article_id));
-    $criteria->add(new Criteria('tb_url', $url));
+    $criteria         = new \CriteriaCompo(new \Criteria('art_id', $article_id));
+    $criteria->add(new \Criteria('tb_url', $url));
     if ($trackbackHandler->getCount($criteria) > 0) {
         PlanetUtility::planetRespondToTrackback(1, 'We already have a ping from that URI for this article.');
     }
@@ -56,7 +59,7 @@ if (!empty($article_id) && !empty($url)) {
     $title     = XoopsLocal::convert_encoding($title, _CHARSET, $charset);
     $excerpt   = XoopsLocal::convert_encoding($excerpt, _CHARSET, $charset);
     $blog_name = XoopsLocal::convert_encoding($blog_name, _CHARSET, $charset);
-    $tb_status = (int)$xoopsModuleConfig['trackback_option'];
+    $tb_status = (int)$helper->getConfig('trackback_option');
 
     $com_pid    = 0;
     $com_itemid = $article_id;
@@ -156,9 +159,9 @@ if (!empty($article_id) && !empty($url)) {
                 }
             }
             if (!$skip) {
-                $criteria = new CriteriaCompo(new Criteria('com_modid', $com_modid));
-                $criteria->add(new Criteria('com_itemid', $com_itemid));
-                $criteria->add(new Criteria('com_status', XOOPS_COMMENT_ACTIVE));
+                $criteria = new \CriteriaCompo(new \Criteria('com_modid', $com_modid));
+                $criteria->add(new \Criteria('com_itemid', $com_itemid));
+                $criteria->add(new \Criteria('com_status', XOOPS_COMMENT_ACTIVE));
                 $comment_count = $commentHandler->getCount($criteria);
                 $func          = $comment_config['callback']['update'];
                 call_user_func_array($func, [$com_itemid, $comment_count, $comment->getVar('com_id')]);

@@ -25,6 +25,9 @@
 // Project: Article Project                                                 //
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
+use XoopsModules\Planet;
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 include __DIR__ . '/header.php';
 
@@ -38,21 +41,21 @@ if (empty($article_id) && empty($blog_id)) {
 
 $articleHandler = xoops_getModuleHandler('article', $GLOBALS['moddirname']);
 $blogHandler    = xoops_getModuleHandler('blog', $GLOBALS['moddirname']);
-if (empty($xoopsModuleConfig['anonymous_rate']) && !is_object($xoopsUser)) {
+if (empty($helper->getConfig('anonymous_rate')) && !is_object($xoopsUser)) {
     $message = planet_constant('MD_NOACCESS');
 } else {
     $uid = is_object($xoopsUser) ? $xoopsUser->getVar('uid') : 0;
     $ip  = PlanetUtility::planetGetIP();
     if ($article_id > 0) {
-        $criteria = new CriteriaCompo(new Criteria('art_id', $article_id));
+        $criteria = new \CriteriaCompo(new \Criteria('art_id', $article_id));
     } else {
-        $criteria = new CriteriaCompo(new Criteria('blog_id', $blog_id));
+        $criteria = new \CriteriaCompo(new \Criteria('blog_id', $blog_id));
     }
     if ($uid > 0) {
-        $criteria->add(new Criteria('rate_uid', $uid));
+        $criteria->add(new \Criteria('rate_uid', $uid));
     } else {
-        $criteria->add(new Criteria('rate_ip', $ip));
-        $criteria->add(new Criteria('rate_time', time() - 24 * 3600, '>'));
+        $criteria->add(new \Criteria('rate_ip', $ip));
+        $criteria->add(new \Criteria('rate_time', time() - 24 * 3600, '>'));
     }
     $rateHandler = xoops_getModuleHandler('rate', $GLOBALS['moddirname']);
     if ($count = $rateHandler->getCount($criteria)) {

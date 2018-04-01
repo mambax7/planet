@@ -26,10 +26,11 @@
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
 use XoopsModules\Planet;
-/** @var Planet\Helper $helper */
-$helper = Planet\Helper::getInstance();
 
 include __DIR__ . '/header.php';
+
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 $rate       = Request::getInt('rate', Request::getInt('rate', 0, 'POST'), 'GET'); //(int)(!empty($_POST['rate']) ? $_POST['rate'] : (!empty($_GET['rate']) ? $_GET['rate'] : 0));
 $article_id = Request::getInt('article', Request::getInt('article', 0, 'POST'), 'GET'); //(int)(!empty($_POST['article']) ? $_POST['article'] : (!empty($_GET['article']) ? $_GET['article'] : 0));

@@ -26,10 +26,11 @@
 // ------------------------------------------------------------------------ //
 use Xmf\Request;
 use XoopsModules\Planet;
-/** @var Planet\Helper $helper */
-$helper = Planet\Helper::getInstance();
 
 include __DIR__ . '/header.php';
+
+/** @var Planet\Helper $helper */
+$helper = Planet\Helper::getInstance();
 
 $op      = Request::getString('op', Request::getString('op', '', 'POST'), 'GET');//!empty($_POST['op']) ? $_POST['op'] : (!empty($_GET['op']) ? $_GET['op'] : '');
 $blog_id = Request::getArray('blog', Request::getArray('blog', [], 'POST'), 'GET');//!empty($_POST['blog']) ? $_POST['blog'] : (!empty($_GET['blog']) ? $_GET['blog'] : 0);
